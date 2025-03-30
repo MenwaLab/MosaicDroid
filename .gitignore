@@ -1,0 +1,36 @@
+# Ignorar resultados del build
+[Dd]ebug/
+[Dd]ebugPublic/
+[Dd]ist/
+[Dd]istPublic/
+
+# Ignorar los directorios bin y obj
+bin/
+obj/
+
+# Ignorar archivos específicos del usuario
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Ignorar archivos de dependencia
+/packages/
+
+# Ignorar archivos específicos del IDE
+.vscode/
+.idea/
+
+# Ignorar arcivos temp de ASP.NET
+[Tt]emp/
+[Tt]mp/
+
+# Ignorar archivos de Windows Installer
+*.cab
+*.msi
+*.msm
+*.msp
+
+# Ignorar ajustes de JetBrains Rider
+.idea/
+.fake
