@@ -1,10 +1,10 @@
 public class IsCanvasColorExpression : IExpression
 {
-    private readonly string color;
+    private readonly Lexer.AllColors color;
     private readonly IExpression vertical;
     private readonly IExpression horizontal;
     
-    public IsCanvasColorExpression(string color, IExpression vertical, IExpression horizontal)
+    public IsCanvasColorExpression(Lexer.AllColors color, IExpression vertical, IExpression horizontal)
     {
         this.color = color;
         this.vertical = vertical;

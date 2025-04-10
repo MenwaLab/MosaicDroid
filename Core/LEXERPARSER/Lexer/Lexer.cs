@@ -6,21 +6,37 @@ public class Lexer
     private static readonly Dictionary<string, TokenType> Language = new()
     {
         // Only these are COMMANDS
-        { "Spawn", TokenType.COMMAND },
-        { "Color", TokenType.COMMAND },
-        { "Size", TokenType.COMMAND },
-        { "DrawLine", TokenType.COMMAND },
-        { "DrawCircle", TokenType.COMMAND },
-        { "DrawRectangle", TokenType.COMMAND },
-        { "Fill", TokenType.COMMAND },
-        { "GoTo", TokenType.GOTO }  // GoTo is a command-like jump
+        { "Spawn", TokenType.INSTRUCTION },
+        { "Color", TokenType.INSTRUCTION },
+        { "Size", TokenType.INSTRUCTION },
+        { "DrawLine", TokenType.INSTRUCTION },
+        { "DrawCircle", TokenType.INSTRUCTION },
+        { "DrawRectangle", TokenType.INSTRUCTION },
+        { "Fill", TokenType.INSTRUCTION },
+        { "GoTo", TokenType.GOTO },  // GoTo is a command-like jump
+
+        { "GetActualX", TokenType.FUNCTION },
+        { "GetActualY", TokenType.FUNCTION },
+        { "GetCanvasSize", TokenType.FUNCTION },
+        { "GetColorCount", TokenType.FUNCTION },
+        { "IsBrushColor", TokenType.FUNCTION },
+        { "IsBrushSize", TokenType.FUNCTION },
+        { "IsCanvasColor", TokenType.FUNCTION }
     };
 
-    private static readonly HashSet<string> AllColors = new()
-    {
-        "Red", "Blue", "Green", "Yellow", "Orange",
-        "Purple", "Black", "White", "Transparent"
-    };
+    public enum AllColors
+{
+    Red,
+    Blue,
+    Green,
+    Yellow,
+    Orange,
+    Purple,
+    Black,
+    White,
+    Transparent
+}
+
 
     // Updated regex:
     // Group 1: newline (\r?\n)
@@ -58,7 +74,8 @@ public class Lexer
             else if (match.Groups[4].Success)
             {
                 string insideString = value.Substring(1, value.Length - 2); // Remove quotes
-                if (AllColors.Contains(insideString))
+                if (Enum.TryParse<AllColors>(insideString, out _))
+
                     tokens.Add(new Token(TokenType.COLOR, insideString));
                 else
                     tokens.Add(new Token(TokenType.STRING, value));
@@ -80,7 +97,7 @@ public class Lexer
                 tokens.Add(new Token(TokenType.DELIMETER, value));
             // Otherwise, treat it as an identifier.
             else
-                tokens.Add(new Token(TokenType.IDENTIFIER, value));
+                tokens.Add(new Token(TokenType.VARIABLE, value));
         }
 
         return tokens;

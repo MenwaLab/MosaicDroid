@@ -1,8 +1,8 @@
 public class IsBrushColorExpression : IExpression
 {
-    private readonly string color;
+    private readonly Lexer.AllColors color;
     
-    public IsBrushColorExpression(string color)
+    public IsBrushColorExpression(Lexer.AllColors color)
     {
         this.color = color;
     }

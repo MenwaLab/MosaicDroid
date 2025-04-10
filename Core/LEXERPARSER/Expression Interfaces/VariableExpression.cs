@@ -1,8 +1,8 @@
-public class IdentifierExpression : IExpression
+public class VariableExpression : IExpression
 {
     private readonly string name;
 
-    public IdentifierExpression(string name)
+    public VariableExpression(string name)
     {
         this.name = name;
     }

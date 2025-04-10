@@ -8,6 +8,13 @@ public class Parser
         this.tokens = tokens;
     }
 
+    private Token? Peek(int offset)
+    {
+        int index = current + offset;
+        return index < tokens.Count ? tokens[index] : null;
+    }
+
+
     private Token Current => current < tokens.Count 
     ? tokens[current] 
     : throw new Exception("No more tokens"); //asi?
@@ -26,31 +33,48 @@ public class Parser
 
         while (current < tokens.Count)
         {
-            // Skip any extra newline tokens.
+            //Salta extra newline tokens.
             if (Match(TokenType.JUMPLINE))
             {
                 Advance();
-                // Optionally add a jump-line to represent a statement separator.
                 statements.Add(new JumpLineExpression());
                 continue;
             }
-            // If the token is a label declaration (e.g. a token of type LABEL), produce a LabelDeclarationExpression.
+            //Si el token es un label obvio (dentro de []) crear LabelDeclarationExpression.
             if (Match(TokenType.LABEL))
             {
                 string label = Advance().Value;
                 statements.Add(new LabelDeclarationExpression(label));
                 continue;
             }
-            // Otherwise, parse a statement.
+            //si el token actual es un identifier y el siguiente es un JUMPLINE,es un label declaration.
+            if (Match(TokenType.VARIABLE))
+{
+    Token? next = Peek(1);
+    Token? afterNext = Peek(2);
+    bool nextIsJumpLine = next != null && next.Type == TokenType.JUMPLINE;
+    bool nextIsNotAssignOrOperator = afterNext != null &&
+        afterNext.Type != TokenType.ASSIGN &&
+        afterNext.Type != TokenType.BOOL_OP &&
+        afterNext.Type != TokenType.OPERATOR;
+
+    if (nextIsJumpLine && nextIsNotAssignOrOperator && IsValidLabelName(Current.Value))
+    {
+        string label = Advance().Value;
+        statements.Add(new LabelDeclarationExpression(label));
+        continue;
+        
+    }
+}
+
+            // Sino parse a statement.
             IExpression stmt = ParseStatement();
             statements.Add(stmt);
 
-            // Optionally, if a newline follows the statement, consume it.
+            //si un newline le sigue, consumirlo.
             if (current < tokens.Count && Match(TokenType.JUMPLINE))
             {
                 Advance();
-                // You may choose to add a JumpLineExpression here or simply ignore it.
-                // statements.Add(new JumpLineExpression());
             }
         }
 
@@ -59,11 +83,11 @@ public class Parser
     private IExpression ParseStatement()
 {
     // If the token is a command-like token (either COMMAND or GOTO), parse it as a command.
-    if (Match(TokenType.COMMAND) || Match(TokenType.GOTO))
-        return ParseCommand();
+    if (Match(TokenType.INSTRUCTION) || Match(TokenType.GOTO))
+        return ParseInstruction();
     
     // For assignments: if the next token is an identifier and is followed by ASSIGN, treat it as an assignment.
-    if (Match(TokenType.IDENTIFIER))
+    if (Match(TokenType.VARIABLE))
     {
         // Lookahead: if the next token is ASSIGN, then it's an assignment.
         Token idToken = Advance();
@@ -78,10 +102,10 @@ public class Parser
         {
             // It might be a function call if immediately followed by "(".
             if (Match(TokenType.DELIMETER) && Current.Value == "(")
-                return ParseFunctionCall(idToken.Value);
+                return ParseFunction(idToken.Value);
             
             // Otherwise, simply an identifier expression.
-            return new IdentifierExpression(idToken.Value);
+            return new VariableExpression(idToken.Value);
         }
     }
     
@@ -199,7 +223,7 @@ public class Parser
         }
         return left;
     }
-    private IExpression ParseFunctionCall(string functionName)
+    private IExpression ParseFunction(string function)
     {
         Expect(TokenType.DELIMETER); // consume "("
         List<IExpression> arguments = new List<IExpression>();
@@ -217,7 +241,7 @@ public class Parser
         Expect(TokenType.DELIMETER); // consume ")"
 
         // Create the proper function call node.
-        switch (functionName)
+        switch (function)
         {
             case "GetActualX":
                 return new GetActualXExpression();
@@ -228,27 +252,24 @@ public class Parser
             case "GetColorCount":
                 if (arguments.Count != 5)
                     throw new Exception("GetColorCount expects 5 arguments");
-                if (!(arguments[0] is StringExpression lse))
-                    throw new Exception("First argument for GetColorCount must be a literal string");
-                return new GetColorCountExpression(lse.Value, arguments[1], arguments[2], arguments[3], arguments[4]);
+                if (!(arguments[0] is LiteralColorExpression colorEx))
+                    throw new Exception("First argument for GetColorCount must be a color literal");
+                return new GetColorCountExpression(colorEx.Value, arguments[1], arguments[2], arguments[3], arguments[4]);
             case "IsBrushColor":
-                if (arguments.Count != 1)
-                    throw new Exception("IsBrushColor expects 1 argument");
-                if (!(arguments[0] is StringExpression lse2))
-                    throw new Exception("Argument for IsBrushColor must be a literal string");
-                return new IsBrushColorExpression(lse2.Value);
+            if (arguments.Count != 1 || arguments[0] is not LiteralColorExpression bc)
+                throw new Exception("Argument for IsBrushColor must be a color literal");
+            return new IsBrushColorExpression(bc.Value);
             case "IsBrushSize":
-                if (arguments.Count != 1)
-                    throw new Exception("IsBrushSize expects 1 argument");
-                return new IsBrushSizeExpression(arguments[0]);
+            if (arguments.Count != 1)
+                throw new Exception("IsBrushSize expects 1 argument");
+            return new IsBrushSizeExpression(arguments[0]);
+
             case "IsCanvasColor":
-                if (arguments.Count != 3)
-                    throw new Exception("IsCanvasColor expects 3 arguments");
-                if (!(arguments[0] is StringExpression lse3))
-                    throw new Exception("First argument for IsCanvasColor must be a literal string");
-                return new IsCanvasColorExpression(lse3.Value, arguments[1], arguments[2]);
+            if (arguments.Count != 3 || arguments[0] is not LiteralColorExpression canvasColor)
+                throw new Exception("First argument for IsCanvasColor must be a color literal");
+            return new IsCanvasColorExpression(canvasColor.Value, arguments[1], arguments[2]);
             default:
-                throw new Exception($"Unknown function: {functionName}");
+                throw new Exception($"Unknown function: {function}");
         }
     }
 
@@ -259,7 +280,7 @@ public class Parser
 
     private IExpression ParseAssignment()
     {
-        if (Match(TokenType.IDENTIFIER))
+        if (Match(TokenType.VARIABLE))
         {
             string varName = Advance().Value;
 
@@ -270,13 +291,13 @@ public class Parser
                 return new AssignExpression(varName, expr);
             }
 
-            return new IdentifierExpression(varName);
+            return new VariableExpression(varName);
         }
 
         return ParseExpression();
     }
 
-    private IExpression ParseCommand()
+    private IExpression ParseInstruction()
     {
         Token token = Advance(); // consume the COMMAND token.
         switch (token.Value)
@@ -367,16 +388,21 @@ private void SkipNewlines()
         Token strToken = Advance();
         return new StringExpression(strToken.Value);
     }
+    if (Match(TokenType.COLOR))
+{
+    Token colorToken = Advance();
+    return new LiteralColorExpression(colorToken.Value);
+}
 
-    if (Match(TokenType.IDENTIFIER) || Match(TokenType.COMMAND))
+    if (Match(TokenType.VARIABLE) || Match(TokenType.INSTRUCTION) || Match(TokenType.FUNCTION) )
 {
     Token idToken = Advance();
     string identifier = idToken.Value;
 
     if (Match(TokenType.DELIMETER) && Current.Value == "(")
-        return ParseFunctionCall(identifier);
+        return ParseFunction(identifier);
 
-    return new IdentifierExpression(identifier);
+    return new VariableExpression(identifier);
 }
 
 
@@ -392,5 +418,14 @@ private void SkipNewlines()
     throw new Exception($"Unexpected token in factor: {Current.Value}");
 
     }
-    
+    private bool IsValidLabelName(string value)
+{
+    // Must start with a letter (no digits or '-')
+    if (string.IsNullOrEmpty(value) || !char.IsLetter(value[0]))
+        return false;
+
+    // Can only contain letters, numbers, and hyphens
+    return value.All(c => char.IsLetterOrDigit(c) || c == '-');
+}
+
 }
