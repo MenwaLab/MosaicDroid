@@ -4,9 +4,9 @@
     {
         string code = @"
         Spawn(0, 0) 
-        n <- 5 
-        k <- 3 + 3 * 10 
-        n <- k * 2 
+        n <- 5 % 2
+        k <- 3 - 3 / 10 
+        n <- k * 2 ** 3
         actual-x <- GetActualX() 
         i <- 0 
         

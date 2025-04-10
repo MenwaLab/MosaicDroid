@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using System.Collections.Generic;
 
 public class Lexer
 {
@@ -21,8 +22,18 @@ public class Lexer
         "Purple", "Black", "White", "Transparent"
     };
 
+    // Updated regex:
+    // Group 1: newline (\r?\n)
+    // Group 2: integer (\d+)
+    // Group 3: identifier (allowing letters, digits, underscores and hyphens)
+    // Group 4: string literal (""[^""]*"")
+    // Group 5: assignment (<-)
+    // Group 6: math operators (order matters: ** first)
+    // Group 7: boolean operators (==, >=, etc.)
+    // Group 8: label (\[.*?\])
+    // Group 9: delimiters ([(),])
     private static readonly Regex TokenOp = new(
-        @"(\r?\n)|(\d+)|(\w+)|(""[^""]*"")|(<\-)|(==|>=|<=|>|<|&&|\|\|)|(\[.*?\])|([(),])",
+        @"(\r?\n)|(\d+)|([A-Za-z_][A-Za-z0-9_-]*)|(""[^""]*"")|(<\-)|(\*\*|\+|\-|\*|/|%)|(==|>=|<=|>|<|&&|\|\|)|(\[.*?\])|([(),])",
         RegexOptions.Compiled
     );
 
@@ -34,15 +45,17 @@ public class Lexer
         {
             string value = match.Value;
 
-            if (Language.ContainsKey(value)) tokens.Add(new Token(Language[value], value));
-            else if (Regex.IsMatch(value, @"^\r?\n$")) tokens.Add(new Token(TokenType.JUMPLINE, value));
-            else if (int.TryParse(value, out _)) tokens.Add(new Token(TokenType.INTEGER, value));
-            else if (Regex.IsMatch(value, @"^(\+|\-|\*|/|\*\*|%)$")) tokens.Add(new Token(TokenType.OPERATOR, value));
-            else if (Regex.IsMatch(value, @"^(==|>=|<=|>|<|&&|\|\|)$")) tokens.Add(new Token(TokenType.BOOL_OP, value));
-            else if (value == "<-") tokens.Add(new Token(TokenType.ASSIGN, value));
-            else if (Regex.IsMatch(value, @"^[(),]$")) tokens.Add(new Token(TokenType.DELIMETER, value));
-            else if (Regex.IsMatch(value, @"^\[.*\]$")) tokens.Add(new Token(TokenType.LABEL, value));
-            else if (Regex.IsMatch(value, "^\"[^\"]*\"$"))
+            // Check for newline (jump line). Group 1.
+            if (match.Groups[1].Success)
+                tokens.Add(new Token(TokenType.JUMPLINE, value));
+            // Check if it's a known command word (group 3) from Language.
+            else if (match.Groups[3].Success && Language.ContainsKey(value))
+                tokens.Add(new Token(Language[value], value));
+            // Check for integer (group 2).
+            else if (match.Groups[2].Success && int.TryParse(value, out _))
+                tokens.Add(new Token(TokenType.INTEGER, value));
+            // Check for string literal (group 4).
+            else if (match.Groups[4].Success)
             {
                 string insideString = value.Substring(1, value.Length - 2); // Remove quotes
                 if (AllColors.Contains(insideString))
@@ -50,7 +63,24 @@ public class Lexer
                 else
                     tokens.Add(new Token(TokenType.STRING, value));
             }
-            else tokens.Add(new Token(TokenType.IDENTIFIER, value)); // Default catch-all for functions and vars
+            // Check for assignment operator (group 5).
+            else if (match.Groups[5].Success && value == "<-")
+                tokens.Add(new Token(TokenType.ASSIGN, value));
+            // Check for math operators (group 6).
+            else if (match.Groups[6].Success && System.Text.RegularExpressions.Regex.IsMatch(value, @"^(\*\*|\+|\-|\*|/|%)$"))
+                tokens.Add(new Token(TokenType.OPERATOR, value));
+            // Check for boolean operators (group 7).
+            else if (match.Groups[7].Success && System.Text.RegularExpressions.Regex.IsMatch(value, @"^(==|>=|<=|>|<|&&|\|\|)$"))
+                tokens.Add(new Token(TokenType.BOOL_OP, value));
+            // Check for label (group 8).
+            else if (match.Groups[8].Success && System.Text.RegularExpressions.Regex.IsMatch(value, @"^\[.*\]$"))
+                tokens.Add(new Token(TokenType.LABEL, value));
+            // Check for delimiters (group 9).
+            else if (match.Groups[9].Success && System.Text.RegularExpressions.Regex.IsMatch(value, @"^[(),]$"))
+                tokens.Add(new Token(TokenType.DELIMETER, value));
+            // Otherwise, treat it as an identifier.
+            else
+                tokens.Add(new Token(TokenType.IDENTIFIER, value));
         }
 
         return tokens;
