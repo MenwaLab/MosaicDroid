@@ -4,7 +4,6 @@
     {
         string code = @" 
 Spawn(0, 0)
-Spawn(3, 0)
 Color(""Black"")
 n <- 5 % 2
 k <- 3 - 3 / 10

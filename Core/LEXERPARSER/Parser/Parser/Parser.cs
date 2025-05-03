@@ -14,29 +14,32 @@ public enum ColorOptions
         }
 
         public ProgramExpression ParseProgram()
-        {
-            var program = new ProgramExpression(new CodeLocation());
-            var statements = new List<ASTNode>();
-            bool spawnPresent=false;
+{
+    var program = new ProgramExpression(new CodeLocation());
+    var statements = new List<ASTNode>();
+    bool spawnSeen = false;
 
-            // 1) Saltar los Jumpline del principio para q no salte error: debe empezar con Spawn
+    // 1) Saltar líneas en blanco (Jumpline) al inicio
     while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
         _stream.MoveNext();
 
-            if (!_stream.CanLookAhead())
-                return program;
+    // 2) Debe comenzar con Spawn(...)
+    if (!_stream.CanLookAhead())
+        return program;
 
-            var first = _stream.LookAhead();
-            if (first.Type != TokenType.Instruction || first.Value != TokenValues.Spawn)
+    var first = _stream.LookAhead();
+    if (first.Type != TokenType.Instruction || first.Value != TokenValues.Spawn)
     {
         _errors.Add(new CompilingError(first.Location, ErrorCode.Expected, "Se esperaba Spawn(x, y) al inicio"));
         return program;  // no seguimos parseando
     }
+    // Parseamos el Spawn inicial
     statements.Add(ParseSpawnCommand());
-    spawnPresent = true;
+    spawnSeen = true;
     ExpectNewLine();
 
-            while (_stream.CanLookAhead())
+    // 3) Ahora, cero o más líneas
+    while (_stream.CanLookAhead())
     {
         var la = _stream.LookAhead();
         ASTNode node;
@@ -48,67 +51,58 @@ public enum ColorOptions
             _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, "Solo se permite una única instrucción Spawn"));
             break;
         }
-                switch (la.Type)
-                {
-                    case TokenType.Jumpline:
+
+        switch (la.Type)
+        {
+            case TokenType.Jumpline:
                 // líneas en blanco dentro del código las saltamos
                 _stream.MoveNext();
                 continue;
 
-                    case TokenType.Label:
-                        node = ParseLabel();
-                        break;
-                        
-                    case TokenType.Instruction:
-                        node = la.Value == TokenValues.GoTo 
-                        ? ParseGoTo()
-                        : ParseInstruction();
-                        break;
-                        
-                    case TokenType.Variable:
-    if (_stream.CanLookAhead(1))
-    {
-        if (_stream.LookAhead(1).Type == TokenType.Jumpline)
-        {
-            // Treat as LabelExpression if followed by a newline
-            node = new LabelExpression(_stream.Advance().Value, la.Location);
-            _stream.Advance(); // Consume the newline
-        }
-        else if (_stream.LookAhead(1).Type == TokenType.Assign)
-        {
-            // Treat as a variable assignment
-            node = ParseAssignment();
-        }
-        else
-        {
-            _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Unexpected var: {la.Value}"));
-            _stream.MoveNext();
-            continue;
-        }
-    }
-    else
-    {
-        _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Unexpected token: {la.Value}"));
-        _stream.MoveNext();
-        continue;
-    }
-    break;
-                    default:
-                        _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Unexpected token: {la.Value}"));
-                        _stream.MoveNext();
-                        continue;
+            case TokenType.Label:
+                node = ParseLabel();
+                break;
+
+            case TokenType.Instruction:
+                node = la.Value == TokenValues.GoTo
+                    ? (ASTNode)ParseGoTo()
+                    : ParseInstruction();
+                break;
+
+            case TokenType.Variable:
+                // asignaciones vs etiquetas-islas
+                if (_stream.CanLookAhead(1) && _stream.LookAhead(1).Type == TokenType.Assign)
+                    node = ParseAssignment();
+                else if (_stream.CanLookAhead(1) && _stream.LookAhead(1).Type == TokenType.Jumpline)
+                {
+                    node = new LabelExpression(_stream.Advance().Value, la.Location);
+                    _stream.Advance();  // comerse el jumpline
                 }
+                else
+                {
+                    _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Variable inesperada: {la.Value}"));
+                    _stream.MoveNext();
+                    continue;
+                }
+                break;
 
-                statements.Add(node);
-                ExpectNewLine();
-            }
-
-            // Populate
-            foreach (var stmt in statements)
-                program.Statements.Add(stmt);
-            program.Errors.AddRange(_errors);
-            return program;
+            default:
+                _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Token inesperado: {la.Value}"));
+                _stream.MoveNext();
+                continue;
         }
+
+        statements.Add(node);
+        ExpectNewLine();
+    }
+
+    // Montar el programa
+    foreach (var stmt in statements)
+        program.Statements.Add(stmt);
+    program.Errors.AddRange(_errors);
+    return program;
+}
+
 
         private void ExpectNewLine()
         {
