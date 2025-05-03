@@ -28,58 +28,46 @@ public class Parser
         Advance();
     }
     public ProgramExpression ParseProgram()
-    {
-        List<IExpression> statements = new List<IExpression>();
-
-        while (current < tokens.Count)
-        {
-            //Salta extra newline tokens.
-            if (Match(TokenType.JUMPLINE))
-            {
-                Advance();
-                statements.Add(new JumpLineExpression());
-                continue;
-            }
-            //Si el token es un label obvio (dentro de []) crear LabelDeclarationExpression.
-            if (Match(TokenType.LABEL))
-            {
-                string label = Advance().Value;
-                statements.Add(new LabelDeclarationExpression(label));
-                continue;
-            }
-            //si el token actual es un identifier y el siguiente es un JUMPLINE,es un label declaration.
-            if (Match(TokenType.VARIABLE))
 {
-    Token? next = Peek(1);
-    Token? afterNext = Peek(2);
-    bool nextIsJumpLine = next != null && next.Type == TokenType.JUMPLINE;
-    bool nextIsNotAssignOrOperator = afterNext != null &&
-        afterNext.Type != TokenType.ASSIGN &&
-        afterNext.Type != TokenType.BOOL_OP &&
-        afterNext.Type != TokenType.OPERATOR;
+    List<IExpression> statements = new List<IExpression>();
 
-    if (nextIsJumpLine && nextIsNotAssignOrOperator && IsValidLabelName(Current.Value))
+    while (current < tokens.Count)
     {
-        string label = Advance().Value;
-        statements.Add(new LabelDeclarationExpression(label));
-        continue;
-        
-    }
-}
+        // Skip empty lines (JUMPLINEs)
+        if (Match(TokenType.JUMPLINE))
+        {
+            Advance();
+            statements.Add(new JumpLineExpression());
+            continue;
+        }
 
-            // Sino parse a statement.
-            IExpression stmt = ParseStatement();
-            statements.Add(stmt);
+        // Check for label declarations: VARIABLE followed by JUMPLINE
+        if (Match(TokenType.VARIABLE))
+        {
+            Token currentToken = Current;
+            Token? nextToken = Peek(1);
 
-            //si un newline le sigue, consumirlo.
-            if (current < tokens.Count && Match(TokenType.JUMPLINE))
+            if (nextToken != null && nextToken.Type == TokenType.JUMPLINE && IsValidLabelName(currentToken.Value))
             {
-                Advance();
+                // Consume the VARIABLE token and add as label
+                string labelName = currentToken.Value;
+                Advance(); // Consume VARIABLE
+                statements.Add(new LabelDeclarationExpression(labelName));
+                continue; // Skip further processing for this iteration
             }
         }
 
-        return new ProgramExpression(statements);
+        // Parse other statements (instructions, assignments, etc.)
+        IExpression statement = ParseStatement();
+        statements.Add(statement);
+
+        // Skip JUMPLINE after the statement if present
+        if (current < tokens.Count && Match(TokenType.JUMPLINE))
+            Advance();
     }
+
+    return new ProgramExpression(statements);
+}
     private IExpression ParseStatement()
 {
     // If the token is a command-like token (either COMMAND or GOTO), parse it as a command.
