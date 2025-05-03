@@ -17,7 +17,7 @@ public class LexicalAnalyzer
         {
             if (stream.Peek() == '\n')
     {
-        tokens.Add(new Token(TokenType.Jumpline, "\n", stream.Location));
+        tokens.Add(new Token(TokenType.Jumpline, TokenValues.Jumpline, stream.Location));
         stream.ReadAny();
         continue;
     }
@@ -26,11 +26,11 @@ public class LexicalAnalyzer
             // Handle Labels (e.g., [loop1])
             if (stream.Match("["))
             {
-                tokens.Add(new Token(TokenType.Delimeter, "[", stream.Location));
+                tokens.Add(new Token(TokenType.Delimeter, TokenValues.OpenBrackets, stream.Location));
                 if (stream.ReadID(out string label))
                     tokens.Add(new Token(TokenType.Label, label, stream.Location));
                 if (stream.Match("]"))
-                    tokens.Add(new Token(TokenType.Delimeter, "]", stream.Location));
+                    tokens.Add(new Token(TokenType.Delimeter, TokenValues.ClosedBrackets, stream.Location));
                 continue;
             }
 

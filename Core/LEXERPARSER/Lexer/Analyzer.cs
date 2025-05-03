@@ -32,7 +32,7 @@ public class Compiling
         //analyzer.RegisterOperator(",",",");
         analyzer.RegisterOperator("[", TokenValues.OpenBrackets); // Label delimiters
         analyzer.RegisterOperator("]",  TokenValues.ClosedBrackets);
-        analyzer.RegisterText(" ", TokenValues.Jumpline);
+        //analyzer.RegisterText(" ", TokenValues.Jumpline);
 
         // Instructions (e.g., Spawn, Color)
         analyzer.RegisterKeyword("Spawn", TokenValues.Spawn);

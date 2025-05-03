@@ -67,13 +67,13 @@ public class TokenValues
     public const string IsCanvasColor = "IsCanvasColor";
 
     // Operators
-    public const string Add = "Addition";
-    public const string Sub = "Subtraction";
-    public const string Mul = "Multiplication";
-    public const string Div = "Division";
-    public const string Mod = "Modulus";
-    public const string Pow = "Power";
-    public const string Assign = "Assign";
+    public const string Add = "+";
+    public const string Sub = "-";
+    public const string Mul = "*";
+    public const string Div = "/";
+    public const string Mod = "%";
+    public const string Pow = "**";
+    public const string Assign = "<-";
 
     // Boolean Operators
     public const string And = "And";           
