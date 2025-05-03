@@ -17,7 +17,7 @@ public class LexicalAnalyzer
         {
             if (stream.Peek() == '\n')
     {
-        tokens.Add(new Token(TokenType.Jumpline, "\\n", stream.Location));
+        tokens.Add(new Token(TokenType.Jumpline, "\n", stream.Location));
         stream.ReadAny();
         continue;
     }
@@ -42,11 +42,11 @@ public class LexicalAnalyzer
                     // Determine TokenType based on TokenValue
                     TokenType type = tokenValue switch
                     {
-                        TokenValues.Spawn or TokenValues.Color or TokenValues.DrawLine 
-                            or TokenValues.DrawCircle or TokenValues.DrawRectangle or TokenValues.Fill 
+                        TokenValues.Spawn or TokenValues.Color or TokenValues.DrawLine
+                            or TokenValues.DrawCircle or TokenValues.DrawRectangle or TokenValues.Fill
                             or TokenValues.GoTo => TokenType.Instruction,
-                        TokenValues.GetActualX or TokenValues.GetActualY or TokenValues.GetCanvasSize 
-                            or TokenValues.GetColorCount or TokenValues.IsBrushColor 
+                        TokenValues.GetActualX or TokenValues.GetActualY or TokenValues.GetCanvasSize
+                            or TokenValues.GetColorCount or TokenValues.IsBrushColor
                             or TokenValues.IsBrushSize or TokenValues.IsCanvasColor => TokenType.Function,
                         _ => TokenType.Variable // Fallback (should not happen)
                     };
@@ -54,7 +54,12 @@ public class LexicalAnalyzer
                 }
                 else
                 {
-                    if (IsValidIdentifier(id))
+                    char nextChar = stream.CanLookAhead(1) ? stream.Peek(1) : '\0';
+        if (nextChar == '\n' || nextChar == '\r' || nextChar == '\0')
+        {
+            tokens.Add(new Token(TokenType.Label, id, stream.Location));
+        }
+                    else if (IsValidIdentifier(id))
                         tokens.Add(new Token(TokenType.Variable, id, stream.Location));
                     else
                         errors.Add(new CompilingError(stream.Location, ErrorCode.Invalid, $"Invalid identifier: {id}"));
@@ -166,6 +171,7 @@ class TokenReader
 
                 return code[pos];
             }
+            
 
             public bool EOF
             {
@@ -213,6 +219,16 @@ class TokenReader
                     id += ReadAny();
                 return id.Length > 0;
             }
+            public char Peek(int offset)
+{
+    if (pos + offset < 0 || pos + offset >= code.Length)
+        return '\0'; // Return null character if out of bounds
+    return code[pos + offset];
+}
+public bool CanLookAhead(int offset = 1)
+{
+    return pos + offset >= 0 && pos + offset < code.Length;
+}
 
             public bool ReadNumber(out string number)
             {

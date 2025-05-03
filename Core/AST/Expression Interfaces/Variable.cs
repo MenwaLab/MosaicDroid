@@ -32,3 +32,4 @@ public class VariableExpression : AtomExpression
 
     public override string ToString() => Name;
 }
+

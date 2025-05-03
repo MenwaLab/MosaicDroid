@@ -13,6 +13,7 @@ public class TokenStream : IEnumerable<Token>
         position = 0;
     }
 
+
     public bool End => position >= tokens.Count;
 
     public void MoveNext(int k = 1) => position += k;

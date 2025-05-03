@@ -90,4 +90,5 @@ public class TokenValues
     public const string OpenBrackets = "OpenBrackets";     
     public const string ClosedBrackets = "ClosedBrackets"; 
     public const string Comma = "Comma"; 
+    public const string Jumpline = "Jumpline"; 
 }

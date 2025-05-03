@@ -3,6 +3,7 @@ public class GotoCommand : ASTNode
         public string Label { get; }
         public Expression Condition { get; }
 
+
         public GotoCommand(string label, Expression condition, CodeLocation loc)
             : base(loc)
         {

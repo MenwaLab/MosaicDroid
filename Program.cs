@@ -2,8 +2,7 @@
 {
     static void Main()
     {
-        string code = @"
-Spawn(0, 0)
+        string code = @"Spawn(0, 0)
 Color(""Black"")
 n <- 5 % 2
 k <- 3 - 3 / 10

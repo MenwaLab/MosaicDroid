@@ -17,3 +17,4 @@ public class LabelExpression : ASTNode
 
         public override string ToString() => $"Label: {Name}";
     }
+    

@@ -30,8 +30,9 @@ public class Compiling
         analyzer.RegisterOperator(")", TokenValues.ClosedParenthesis);
         analyzer.RegisterOperator(",", TokenValues.Comma);
         //analyzer.RegisterOperator(",",",");
-        analyzer.RegisterOperator("[", "LABEL_START"); // Label delimiters
-        analyzer.RegisterOperator("]", "LABEL_END");
+        analyzer.RegisterOperator("[", TokenValues.OpenBrackets); // Label delimiters
+        analyzer.RegisterOperator("]",  TokenValues.ClosedBrackets);
+        analyzer.RegisterText(" ", TokenValues.Jumpline);
 
         // Instructions (e.g., Spawn, Color)
         analyzer.RegisterKeyword("Spawn", TokenValues.Spawn);

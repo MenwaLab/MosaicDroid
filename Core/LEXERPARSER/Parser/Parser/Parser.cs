@@ -53,19 +53,33 @@ public enum ColorOptions
                         : ParseInstruction();
                         break;
                     case TokenType.Variable:
-                    if (_stream.CanLookAhead(1) && _stream.LookAhead(1).Type == TokenType.Jumpline)
-            {
-                node = new LabelExpression(_stream.Advance().Value, la.Location);
-            }
-                        else if (_stream.CanLookAhead(1) && _stream.LookAhead(1).Type == TokenType.Assign)
-                            node = ParseAssignment();
-                        else
-                        {
-                            _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Unexpected var: {la.Value}"));
-                            _stream.MoveNext();
-                            continue;
-                        }
-                        break;
+    if (_stream.CanLookAhead(1))
+    {
+        if (_stream.LookAhead(1).Type == TokenType.Jumpline)
+        {
+            // Treat as LabelExpression if followed by a newline
+            node = new LabelExpression(_stream.Advance().Value, la.Location);
+            _stream.Advance(); // Consume the newline
+        }
+        else if (_stream.LookAhead(1).Type == TokenType.Assign)
+        {
+            // Treat as a variable assignment
+            node = ParseAssignment();
+        }
+        else
+        {
+            _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Unexpected var: {la.Value}"));
+            _stream.MoveNext();
+            continue;
+        }
+    }
+    else
+    {
+        _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Unexpected token: {la.Value}"));
+        _stream.MoveNext();
+        continue;
+    }
+    break;
                     default:
                         _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Unexpected token: {la.Value}"));
                         _stream.MoveNext();
@@ -85,8 +99,10 @@ public enum ColorOptions
 
         private void ExpectNewLine()
         {
-            if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
-                _stream.MoveNext();
+            /* if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
+                _stream.MoveNext(); */
+                while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
+        _stream.MoveNext();
         }
 
         private ASTNode ParseSpawnCommand()
