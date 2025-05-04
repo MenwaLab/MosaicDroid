@@ -17,7 +17,6 @@ public enum ColorOptions
 {
     var program = new ProgramExpression(new CodeLocation());
     var statements = new List<ASTNode>();
-    bool spawnSeen = false;
 
     // 1) Saltar líneas en blanco (Jumpline) al inicio
     while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
@@ -35,7 +34,6 @@ public enum ColorOptions
     }
     // Parseamos el Spawn inicial
     statements.Add(ParseSpawnCommand());
-    spawnSeen = true;
     ExpectNewLine();
 
     // 3) Ahora, cero o más líneas

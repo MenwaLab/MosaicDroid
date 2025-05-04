@@ -5,6 +5,7 @@ public class Context
 
         // Labels: set of declared labels
         public HashSet<string> Labels { get; } = new HashSet<string>();
+        public bool SpawnSeen { get; set; } = false;
 
         /// <summary>
         /// Declare a new variable. Reports an error if already exists.
@@ -24,6 +25,11 @@ public class Context
         {
             return Variables.TryGetValue(name, out var t) ? t : ExpressionType.ErrorType;
         }
+        public void SetVariableType(string name, ExpressionType type)
+{
+    Variables[name] = type;
+}
+
 
         /// <summary>
         /// Declare a new label. Reports an error if already exists.

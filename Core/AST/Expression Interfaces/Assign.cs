@@ -20,6 +20,9 @@ public class AssignExpression : ASTNode
             errors.Add(new CompilingError(Location, ErrorCode.Invalid, $"Cannot assign invalid expression to '{VariableName}'"));
             return false;
         }
+
+        // 2) Declare the variable so future lookups succeed:
+    context.SetVariableType(VariableName, ValueExpr.Type);
         return ok;
     }
 

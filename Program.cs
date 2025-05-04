@@ -3,16 +3,18 @@
     static void Main()
     {
         string code = @" 
-Spawn(0, 0)
-Color(""Black"")
+
+Color(""Pink"")
 n <- 5 % 2
 k <- 3 - 3 / 10
 n <- k * 2 ** 3
 actual-x <- GetActualX()
 i <- 0
 
+
 loop-1
 DrawLine(1, 0, 1)
+Spawn(0, 0)
 i <- i + 1
 is-brush-color-blue <- IsBrushColor(""Blue"")
 GoTo [loop-ends-here] (is-brush-color-blue == 1)
@@ -34,6 +36,7 @@ loop-ends-here
 
         // 2) Build token stream and parse
         var stream = new TokenStream(tokens);
+
         var parserErrors = new List<CompilingError>();
         var parser = new Parser(stream, parserErrors);
         var program = parser.ParseProgram();
@@ -45,9 +48,23 @@ loop-ends-here
             foreach (var err in parserErrors)
                 Console.WriteLine(err.Argument + " at " + err.Location.Line + ":" + err.Location.Column);
         }
-        else
-        {
-            Console.WriteLine("\nParsed AST:");
+        var semanticErrors = new List<CompilingError>();
+var ctx = new Context();
+// you’ll need to fill in or stub a global Scope if your CheckSemantic needs it
+Scope globalScope = new Scope();
+foreach (var stmt in program.Statements)
+    stmt.CheckSemantic(ctx, globalScope, semanticErrors);
+
+// 4) report semantic errors
+if (semanticErrors.Count > 0)
+{
+    Console.WriteLine("\nSemantic errors:");
+    foreach (var e in semanticErrors)
+        Console.WriteLine($"{e.Argument} at {e.Location.Line}:{e.Location.Column}");
+}
+else
+{
+            Console.WriteLine("\nParsed & semantically valid AST:");
             Console.WriteLine(program);
         }
     }
