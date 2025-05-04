@@ -20,5 +20,7 @@ public class CompilingError
         None,
         Expected,
         Invalid,
+        InvalidArgCount,
+        TypeArgMismatch,
         Unknown,
     }

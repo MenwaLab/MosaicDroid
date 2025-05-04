@@ -123,11 +123,17 @@ public enum ColorOptions
             switch (instr.Value)
             {
                 case TokenValues.Color:
-                    EatDelimiter(TokenValues.OpenParenthesis);
-                    var colTok = _stream.Advance();
-                    var colLit = new ColorLiteralExpression(colTok.Value, colTok.Location);
-                    EatDelimiter(TokenValues.ClosedParenthesis);
-                    return new ColorCommand(colLit, instr.Location);
+    EatDelimiter(TokenValues.OpenParenthesis);
+    var colTok = _stream.Advance();
+    
+    // Handle string literals (strip quotes if present)
+    string colorValue = colTok.Type == TokenType.String 
+        ? colTok.Value.Trim('"') 
+        : colTok.Value;
+
+    var colLit = new ColorLiteralExpression(colorValue, colTok.Location);
+    EatDelimiter(TokenValues.ClosedParenthesis);
+    return new ColorCommand(colLit, instr.Location);
 
                 case TokenValues.Size:
                     EatDelimiter(TokenValues.OpenParenthesis);

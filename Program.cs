@@ -3,18 +3,17 @@
     static void Main()
     {
         string code = @" 
-
-Color(""Pink"")
+Spawn()
 n <- 5 % 2
 k <- 3 - 3 / 10
 n <- k * 2 ** 3
+Spawn(0,0)
 actual-x <- GetActualX()
 i <- 0
 
 
 loop-1
 DrawLine(1, 0, 1)
-Spawn(0, 0)
 i <- i + 1
 is-brush-color-blue <- IsBrushColor(""Blue"")
 GoTo [loop-ends-here] (is-brush-color-blue == 1)
