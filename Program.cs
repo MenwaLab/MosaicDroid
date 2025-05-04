@@ -3,11 +3,11 @@
     static void Main()
     {
         string code = @" 
-Spawn()
+Spawn(0,0)
 n <- 5 % 2
 k <- 3 - 3 / 10
 n <- k * 2 ** 3
-Spawn(0,0)
+
 actual-x <- GetActualX()
 i <- 0
 
@@ -19,7 +19,7 @@ is-brush-color-blue <- IsBrushColor(""Blue"")
 GoTo [loop-ends-here] (is-brush-color-blue == 1)
 GoTo [loop-1] (i < 10)
 
-Color(""Blue"")
+Color(""Red,Blue"")
 GoTo [loop-1] (1 == 1)
 loop-ends-here
 ";

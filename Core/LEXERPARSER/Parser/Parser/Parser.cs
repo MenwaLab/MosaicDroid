@@ -33,7 +33,7 @@ public enum ColorOptions
         return program;  // no seguimos parseando
     }
     // Parseamos el Spawn inicial
-    statements.Add(ParseSpawnCommand());
+    statements.Add(ParseInstruction());
     ExpectNewLine();
 
     // 3) Ahora, cero o más líneas
@@ -47,7 +47,10 @@ public enum ColorOptions
         {
             // Error único y salimos
             _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, "Solo se permite una única instrucción Spawn"));
-            break;
+            //break;
+            ParseInstruction();
+            ExpectNewLine();
+            continue;
         }
 
         switch (la.Type)
@@ -108,38 +111,63 @@ public enum ColorOptions
         _stream.MoveNext();
         }
 
-        private ASTNode ParseSpawnCommand()
+        /* private ASTNode ParseSpawnCommand()
         {
             var tok = _stream.Advance();  // Spawn
             EatDelimiter(TokenValues.OpenParenthesis);
             var x = ParseExpression(); EatDelimiter(TokenValues.Comma);
             var y = ParseExpression(); EatDelimiter(TokenValues.ClosedParenthesis);
             return new SpawnCommand(x, y, tok.Location);
-        }
+        } */
 
         private ASTNode ParseInstruction()
         {
             var instr = _stream.Advance();
             switch (instr.Value)
             {
+                case TokenValues.Spawn:
+    var args = ParseArgumentList();
+    return new SpawnCommand(args, instr.Location);
+
                 case TokenValues.Color:
     EatDelimiter(TokenValues.OpenParenthesis);
-    var colTok = _stream.Advance();
-    
-    // Handle string literals (strip quotes if present)
-    string colorValue = colTok.Type == TokenType.String 
-        ? colTok.Value.Trim('"') 
-        : colTok.Value;
 
-    var colLit = new ColorLiteralExpression(colorValue, colTok.Location);
+    // Grab the next token, which may be either a string literal or a bare color token
+    var tokCol = _stream.Advance();
+    string raw;
+
+    if (tokCol.Type == TokenType.String)
+    {
+        // strip the surrounding quotes
+        raw = tokCol.Value.Trim('"');
+    }
+    else if (tokCol.Type == TokenType.Color)
+    {
+        // lexer already gave us the bare text (no quotes)
+        raw = tokCol.Value;
+    }
+    else
+    {
+        // syntax‐level error: neither "foo" nor a color literal
+        _errors.Add(new CompilingError(
+            tokCol.Location,
+            ErrorCode.Invalid,
+            "Color() expects a string or color literal"
+        ));
+        raw = ""; // recover
+    }
+
     EatDelimiter(TokenValues.ClosedParenthesis);
-    return new ColorCommand(colLit, instr.Location);
+
+    // build a single‐literal ColorLiteralExpression
+    var lit = new ColorLiteralExpression(raw, tokCol.Location);
+    return new ColorCommand(new[] { lit }, instr.Location);
+
+
 
                 case TokenValues.Size:
-                    EatDelimiter(TokenValues.OpenParenthesis);
-                    var sizeExpr = ParseExpression();
-                    EatDelimiter(TokenValues.ClosedParenthesis);
-                    return new SizeCommand(sizeExpr, instr.Location);
+                    var sizeArgs = ParseArgumentList();
+           return new SizeCommand(sizeArgs, instr.Location);
 
                 case TokenValues.DrawLine:
                     EatDelimiter(TokenValues.OpenParenthesis);
@@ -337,7 +365,7 @@ public enum ColorOptions
                 return expr;
             }
 
-            _errors.Add(new CompilingError(_stream.LookAhead().Location, ErrorCode.Invalid, "Unexpected token in factor"));
+            _errors.Add(new CompilingError(_stream.LookAhead().Location, ErrorCode.Invalid, "Unexpected token {tok.Value} in factor"));
             _stream.MoveNext();
             return new NoOpExpression(_stream.LookAhead().Location);
         }
@@ -368,4 +396,33 @@ public enum ColorOptions
             else
                 _stream.MoveNext();
         }
+        private List<Expression> ParseArgumentList()
+{
+    var args = new List<Expression>();
+    EatDelimiter(TokenValues.OpenParenthesis);
+
+    // if immediate ')', zero args:
+    if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Delimeter
+        && _stream.LookAhead().Value == TokenValues.ClosedParenthesis)
+    {
+        _stream.MoveNext();
+        return args;
+    }
+
+    // otherwise, first expr
+    args.Add(ParseExpression());
+
+    // any further ,expr
+    while (_stream.CanLookAhead()
+           && _stream.LookAhead().Type == TokenType.Delimeter
+           && _stream.LookAhead().Value == TokenValues.Comma)
+    {
+        _stream.MoveNext();
+        args.Add(ParseExpression());
+    }
+
+    EatDelimiter(TokenValues.ClosedParenthesis);
+    return args;
+}
+
     }

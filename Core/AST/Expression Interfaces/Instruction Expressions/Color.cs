@@ -1,39 +1,36 @@
-public class ColorCommand : ASTNode
+// ColorCommand.cs
+
+public class ColorCommand : CallNode
 {
-    public ColorLiteralExpression ColorLiteral { get; }
-
-    public ColorCommand(ColorLiteralExpression colorLiteral, CodeLocation loc)
-        : base(loc)
+    public ColorCommand(IReadOnlyList<Expression> args, CodeLocation loc)
+      : base(TokenValues.Color, args, loc)
     {
-        ColorLiteral = colorLiteral;
     }
 
-public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
-{
-    if (ColorLiteral.Value is not string text)
+    public override bool CheckSemantic(Context ctx, Scope scope, List<CompilingError> errors)
     {
-        errors.Add(new CompilingError(Location, ErrorCode.Invalid, "Color() expects a string literal"));
-        return false;
+        // 1) arity + basic type‐check (one TEXT comes from CallNode)
+        bool ok = base.CheckSemantic(ctx, scope, errors);
+
+        // 2) if it parsed as a literal, pull out its Value and test the enum
+        if (ok && Args.Count == 1 && Args[0] is ColorLiteralExpression atom)
+        {
+            // atom.Value is object but always set from our parser to a string
+            var text = atom.Value as string ?? "";
+            if (!Enum.TryParse<ColorOptions>(text, ignoreCase: true, out _))
+            {
+                errors.Add(new CompilingError(
+                    Location,
+                    ErrorCode.Invalid,
+                    $"Unknown color: '{text}'"
+                ));
+                ok = false;
+            }
+        }
+
+        return ok;
     }
-
-    // Directly check against enum names (case-insensitive)
-    bool isValidColor = Enum.GetNames(typeof(ColorOptions))
-        .Any(name => name.Equals(text, StringComparison.OrdinalIgnoreCase));
-
-    if (!isValidColor)
-    {
-        errors.Add(new CompilingError(
-            Location, 
-            ErrorCode.Invalid, 
-            $"Unknown color: '{text}'"
-        ));
-        return false;
-    }
-
-    return true;
-}
-
 
     public override string ToString() =>
-        $"Color({ColorLiteral.Value}) at {Location.Line}:{Location.Column}";
+        $"Color({Args[0]}) at {Location.Line}:{Location.Column}";
 }
