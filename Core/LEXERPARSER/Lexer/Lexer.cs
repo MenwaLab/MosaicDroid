@@ -116,19 +116,44 @@ public class LexicalAnalyzer
         return false;
     }
 
-    private bool MatchText(TokenReader stream, List<Token> tokens, List<CompilingError> errors)
+private bool MatchText(TokenReader stream, List<Token> tokens, List<CompilingError> errors)
+{
+    if (stream.Peek() == '"')
     {
-        foreach (var start in texts.Keys.OrderByDescending(k => k.Length))
+        var startLoc = stream.Location;
+        stream.ReadAny(); // consume opening "
+        if (!stream.ReadUntil("\"", out string text))
         {
-            if (!stream.Match(start)) continue;
-            if (!stream.ReadUntil(texts[start], out string text))
-                errors.Add(new CompilingError(stream.Location, ErrorCode.Expected, texts[start]));
-            TokenType type = IsColor(text) ? TokenType.Color : TokenType.String;
-            tokens.Add(new Token(type, text, stream.Location));
-            return true; 
+            errors.Add(new CompilingError(
+                stream.Location,
+                ErrorCode.Expected,
+                "Closing quote for string literal"));
+            return false;
         }
-        return false;
+        // exact, single‐member match (case‐insensitive)
+        var names = Enum.GetNames(typeof(ColorOptions));
+        bool isExactColor = names
+            .Any(n => string.Equals(n, text, StringComparison.OrdinalIgnoreCase));
+
+        var type = isExactColor
+            ? TokenType.Color
+            : TokenType.String;
+
+        tokens.Add(new Token(type, text, startLoc));
+        return true;
     }
+
+    foreach (var start in texts.Keys.OrderByDescending(k => k.Length))
+    {
+        if (!stream.Match(start)) continue;
+        if (!stream.ReadUntil(texts[start], out string text))
+            errors.Add(new CompilingError(stream.Location, ErrorCode.Expected, texts[start]));
+        TokenType type = IsColor(text) ? TokenType.Color : TokenType.String;
+        tokens.Add(new Token(type, text, stream.Location));
+        return true;
+    }
+    return false;
+}
     private static bool IsColor(string text) =>
     Enum.TryParse<ColorOptions>(text, true, out _);
 

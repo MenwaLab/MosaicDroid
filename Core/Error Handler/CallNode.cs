@@ -16,6 +16,7 @@ public abstract class CallNode : ASTNode
         var spec = ArgumentRegistry.Get(Name);
         if (spec == null)
         {
+            
             errors.Add(new CompilingError(Location, ErrorCode.Invalid,
                 $"Unknown command or function '{Name}'."));
             return false;

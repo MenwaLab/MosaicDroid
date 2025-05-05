@@ -3,7 +3,7 @@
     static void Main()
     {
         string code = @" 
-Spawn(0,0)
+Spawn(0,0,4)
 n <- 5 % 2
 k <- 3 - 3 / 10
 n <- k * 2 ** 3
@@ -19,7 +19,7 @@ is-brush-color-blue <- IsBrushColor(""Blue"")
 GoTo [loop-ends-here] (is-brush-color-blue == 1)
 GoTo [loop-1] (i < 10)
 
-Color(""Red,Blue"")
+Color(""blue"","""")
 GoTo [loop-1] (1 == 1)
 loop-ends-here
 ";
@@ -28,10 +28,10 @@ loop-ends-here
         IEnumerable<Token> tokens = lexer.GetTokens(code, errors);
 
         Console.WriteLine("Tokens:");
-        foreach (var token in tokens)
-        {
-            Console.WriteLine(token);
-        }
+foreach (var token in tokens)
+{
+    Console.WriteLine($"Token: {token.Type} [{token.Value}] at {token.Location.Line}:{token.Location.Column}");
+}
 
         // 2) Build token stream and parse
         var stream = new TokenStream(tokens);

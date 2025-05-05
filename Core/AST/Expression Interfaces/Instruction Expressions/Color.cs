@@ -7,29 +7,50 @@ public class ColorCommand : CallNode
     {
     }
 
-    public override bool CheckSemantic(Context ctx, Scope scope, List<CompilingError> errors)
+public override bool CheckSemantic(Context ctx, Scope scope, List<CompilingError> errors)
+{
+    // 1) Arity
+    if (Args.Count != 1)
     {
-        // 1) arity + basic type‐check (one TEXT comes from CallNode)
-        bool ok = base.CheckSemantic(ctx, scope, errors);
-
-        // 2) if it parsed as a literal, pull out its Value and test the enum
-        if (ok && Args.Count == 1 && Args[0] is ColorLiteralExpression atom)
-        {
-            // atom.Value is object but always set from our parser to a string
-            var text = atom.Value as string ?? "";
-            if (!Enum.TryParse<ColorOptions>(text, ignoreCase: true, out _))
-            {
-                errors.Add(new CompilingError(
-                    Location,
-                    ErrorCode.Invalid,
-                    $"Unknown color: '{text}'"
-                ));
-                ok = false;
-            }
-        }
-
-        return ok;
+        errors.Add(new CompilingError(
+            Location,
+            ErrorCode.InvalidArgCount,
+            $"Color() expects exactly 1 argument, but got {Args.Count}."
+        ));
+        return false;
     }
+
+    // 2) Must be a literal (we wrapped everything in ColorLiteralExpression)
+    if (Args[0] is not ColorLiteralExpression atom)
+    {
+        errors.Add(new CompilingError(
+            Location,
+            ErrorCode.Invalid,
+            "Color() expects a string literal."
+        ));
+        return false;
+    }
+
+    // 3) Pull out the raw text and do an *exact* enum‐name lookup
+    var text = atom.Value as string ?? "";
+    var enumNames = Enum.GetNames(typeof(ColorOptions));
+
+    bool isExact = enumNames
+        .Any(n => string.Equals(n, text, StringComparison.OrdinalIgnoreCase));
+
+    if (!isExact)
+    {
+        errors.Add(new CompilingError(
+            Location,
+            ErrorCode.Invalid,
+            $"Unknown color: '{text}'"
+        ));
+        return false;
+    }
+
+    return true;
+}
+
 
     public override string ToString() =>
         $"Color({Args[0]}) at {Location.Line}:{Location.Column}";

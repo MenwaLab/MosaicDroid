@@ -18,6 +18,7 @@ public class ArgumentSpec
                 $"Expected ArgsCount args, got {args.Count}"));
             return false;
         }
+        
 
         // Type checking
         for (int i = 0; i < args.Count; i++)

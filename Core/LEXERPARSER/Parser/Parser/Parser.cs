@@ -128,46 +128,20 @@ public enum ColorOptions
                 case TokenValues.Spawn:
     var args = ParseArgumentList();
     return new SpawnCommand(args, instr.Location);
-
-                case TokenValues.Color:
+case TokenValues.Color:
     EatDelimiter(TokenValues.OpenParenthesis);
-
-    // Grab the next token, which may be either a string literal or a bare color token
     var tokCol = _stream.Advance();
-    string raw;
-
-    if (tokCol.Type == TokenType.String)
-    {
-        // strip the surrounding quotes
-        raw = tokCol.Value.Trim('"');
-    }
-    else if (tokCol.Type == TokenType.Color)
-    {
-        // lexer already gave us the bare text (no quotes)
-        raw = tokCol.Value;
-    }
-    else
-    {
-        // syntax‐level error: neither "foo" nor a color literal
-        _errors.Add(new CompilingError(
-            tokCol.Location,
-            ErrorCode.Invalid,
-            "Color() expects a string or color literal"
-        ));
-        raw = ""; // recover
-    }
-
     EatDelimiter(TokenValues.ClosedParenthesis);
 
-    // build a single‐literal ColorLiteralExpression
+    // Always build the literal so AST shape is consistent:
+    var raw = tokCol.Value;
     var lit = new ColorLiteralExpression(raw, tokCol.Location);
+
     return new ColorCommand(new[] { lit }, instr.Location);
-
-
 
                 case TokenValues.Size:
                     var sizeArgs = ParseArgumentList();
-           return new SizeCommand(sizeArgs, instr.Location);
+           return new ColorCommand(sizeArgs, instr.Location);
 
                 case TokenValues.DrawLine:
                     EatDelimiter(TokenValues.OpenParenthesis);

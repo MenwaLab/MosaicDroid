@@ -17,6 +17,7 @@ public class CompilingError
 
     public enum ErrorCode
     {
+        
         None,
         Expected,
         Invalid,
