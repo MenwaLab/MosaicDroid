@@ -164,34 +164,20 @@ case TokenValues.Color:
         return new SizeCommand(sizeArgs, instr.Location);
 
             case TokenValues.DrawLine:
-                EatDelimiter(TokenValues.OpenParenthesis);
-                var dx = ParseExpression(); EatDelimiter(TokenValues.Comma);
-                var dy = ParseExpression(); EatDelimiter(TokenValues.Comma);
-                var dist = ParseExpression();
-                EatDelimiter(TokenValues.ClosedParenthesis);
-                return new DrawLineCommand(dx, dy, dist, instr.Location);
+    var lineArgs = ParseArgumentList();
+    return new DrawLineCommand(lineArgs, instr.Location);
 
             case TokenValues.DrawCircle:
-                EatDelimiter(TokenValues.OpenParenthesis);
-                var cx = ParseExpression(); EatDelimiter(TokenValues.Comma);
-                var cy = ParseExpression(); EatDelimiter(TokenValues.Comma);
-                var rad = ParseExpression();
-                EatDelimiter(TokenValues.ClosedParenthesis);
-                return new DrawCircleCommand(cx, cy, rad, instr.Location);
+                var circleArgs = ParseArgumentList();
+    return new DrawCircleCommand(circleArgs, instr.Location);
 
             case TokenValues.DrawRectangle:
-                EatDelimiter(TokenValues.OpenParenthesis);
-                var rx = ParseExpression(); EatDelimiter(TokenValues.Comma);
-                var ry = ParseExpression(); EatDelimiter(TokenValues.Comma);
-                var rd = ParseExpression(); EatDelimiter(TokenValues.Comma);
-                var rw = ParseExpression(); EatDelimiter(TokenValues.Comma);
-                var rh = ParseExpression();
-                EatDelimiter(TokenValues.ClosedParenthesis);
-                return new DrawRectangleCommand(rx, ry, rd, rw, rh, instr.Location);
+                var rectangleArgs = ParseArgumentList();
+    return new DrawRectangleCommand(rectangleArgs, instr.Location);
 
             case TokenValues.Fill:
-                EatDelimiter(TokenValues.OpenParenthesis); EatDelimiter(TokenValues.ClosedParenthesis);
-                return new FillCommand(instr.Location);
+                var fillArgs = ParseArgumentList();
+        return new FillCommand(fillArgs, instr.Location);
 
             default:
                 _errors.Add(new CompilingError(instr.Location, ErrorCode.Invalid, $"Unknown instruction: {instr.Value}"));

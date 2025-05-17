@@ -5,10 +5,10 @@
         string code = 
 @" 
 Spawn(0,0)
-Color(""Blue"")
-Size(3)
-DrawLine(“1”,0,5)
-DrawLine (1,0,5)
+DrawLine(1,1 ,30)
+DrawRectangle(1,0, 3,2,2)
+Fill()
+
 
 
 n <- 5 % 2

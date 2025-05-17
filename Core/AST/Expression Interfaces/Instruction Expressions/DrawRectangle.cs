@@ -1,39 +1,104 @@
-public class DrawRectangleCommand : ASTNode
+public class DrawRectangleCommand : CallNode
     {
-        public Expression DirX { get; }
-        public Expression DirY { get; }
-        public Expression Distance { get; }
-        public Expression Width { get; }
-        public Expression Height { get; }
-
-        public DrawRectangleCommand(
-            Expression dirX,
-            Expression dirY,
-            Expression distance,
-            Expression width,
-            Expression height,
-            CodeLocation loc) : base(loc)
+        public DrawRectangleCommand(IReadOnlyList<Expression> args, CodeLocation loc)
+      : base(TokenValues.DrawRectangle, args, loc)
         {
-            DirX = dirX; DirY = dirY;
-            Distance = distance; Width = width; Height = height;
+           
         }
 
         public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
         {
-            bool okX = DirX.CheckSemantic(context, scope, errors);
-            bool okY = DirY.CheckSemantic(context, scope, errors);
-            bool okD = Distance.CheckSemantic(context, scope, errors);
-            bool okW = Width.CheckSemantic(context, scope, errors);
-            bool okH = Height.CheckSemantic(context, scope, errors);
-            if (new[]{DirX,DirY,Distance,Width,Height} .Any(e => e.Type != ExpressionType.Number))
+            bool ok = base.CheckSemantic(context, scope, errors);
+            if (!ok) return false;
+
+            for (int i = 0; i < 5; i++)
+        {
+            if (Args[i] is not Number num || !num.IsInt)
             {
-                errors.Add(new CompilingError(Location, ErrorCode.Invalid,
-                    "DrawRectangle requires numeric dirX, dirY, distance, width, height."));
-                return false;
+                errors.Add(new CompilingError(
+                    Args[i].Location,
+                    ErrorCode.Invalid,
+                    $"DrawRectangle argument #{i+1} must be an integer literal."
+                ));
+                ok = false;
             }
-            return okX && okY && okD && okW && okH;
+        }
+        if (!ok) return false;
+        
+        Number dxNum   = (Number)Args[0];
+        Number dyNum   = (Number)Args[1];
+        Number distNum = (Number)Args[2];
+        Number widthNum   = (Number)Args[3];
+        Number heightNum   = (Number)Args[4];
+
+        double dxD   = (double)dxNum.Value;
+        double dyD   = (double)dyNum.Value;
+        double distD = (double)distNum.Value;
+        double widthD   = (double)widthNum.Value;
+        double heightD   = (double)heightNum.Value;
+
+        int dx   = (int)dxD;
+        int dy   = (int)dyD;
+        int dist = (int)distD;
+        int width   = (int)widthD;
+        int height   = (int)heightD;
+
+        if (dx < -1 || dx > 1)
+        {
+            errors.Add(new CompilingError(
+                dxNum.Location,
+                ErrorCode.Invalid,
+                $"DrawRectangle: dirX must be –1, 0, or 1; got {dx}."
+            ));
+            ok = false;
+        }
+        if (dy < -1 || dy > 1)
+        {
+            errors.Add(new CompilingError(
+                dyNum.Location,
+                ErrorCode.Invalid,
+                $"DrawRectangle: dirY must be –1, 0, or 1; got {dy}."
+            ));
+            ok = false;
+        }
+
+        // 5) distance must be non‑negative
+        if (dist < 0)
+        {
+            errors.Add(new CompilingError(
+                distNum.Location,
+                ErrorCode.Invalid,
+                $"DrawRectangle: distance must be > 0; got {dist}."
+            ));
+            ok = false;
+        }
+
+        if (height < 0)
+        {
+            errors.Add(new CompilingError(
+                distNum.Location,
+                ErrorCode.Invalid,
+                $"DrawRectangle: height must be > 0; got {height}."
+            ));
+            ok = false;
+        }
+
+        if (width < 0)
+        {
+            errors.Add(new CompilingError(
+                distNum.Location,
+                ErrorCode.Invalid,
+                $"DrawRectangle: width must be > 0; got {width}."
+            ));
+            ok = false;
+        }
+        return ok;
+
+
+        
+        
         }
 
         public override string ToString() =>
-            $"DrawRectangle({DirX}, {DirY}, {Distance}, {Width}, {Height}) at {Location.Line}:{Location.Column}";
+        $"DrawRectangle({Args[0]}, {Args[1]}, {Args[2]}, {Args[3]}, {Args[4]}) at {Location.Line}:{Location.Column}";
     }
