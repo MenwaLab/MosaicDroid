@@ -6,6 +6,7 @@ public class DrawLineCommand : ASTNode
 
         public DrawLineCommand(Expression dirX, Expression dirY, Expression distance, CodeLocation loc) : base(loc)
         {
+            
             DirX = dirX; DirY = dirY; Distance = distance;
         }
 

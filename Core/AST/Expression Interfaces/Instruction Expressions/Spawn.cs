@@ -5,7 +5,7 @@ public class SpawnCommand : CallNode
       : base(TokenValues.Spawn, args, loc)
     {
     }
-
+        
     public override bool CheckSemantic(Context ctx, Scope scope, List<CompilingError> errors)
     {
         // 1) base does arity (2?) and type‐check (both Number)

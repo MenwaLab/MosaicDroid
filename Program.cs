@@ -2,8 +2,15 @@
 {
     static void Main()
     {
-        string code = @" 
-Spawn(0,0,4)
+        string code = 
+@" 
+Spawn(0,0)
+Color(""Blue"")
+Size(3)
+DrawLine(“1”,0,5)
+DrawLine (1,0,5)
+
+
 n <- 5 % 2
 k <- 3 - 3 / 10
 n <- k * 2 ** 3
@@ -19,7 +26,6 @@ is-brush-color-blue <- IsBrushColor(""Blue"")
 GoTo [loop-ends-here] (is-brush-color-blue == 1)
 GoTo [loop-1] (i < 10)
 
-Color(""blue"","""")
 GoTo [loop-1] (1 == 1)
 loop-ends-here
 ";
@@ -30,7 +36,7 @@ loop-ends-here
         Console.WriteLine("Tokens:");
 foreach (var token in tokens)
 {
-    Console.WriteLine($"Token: {token.Type} [{token.Value}] at {token.Location.Line}:{token.Location.Column}");
+    Console.WriteLine($" {token.Type}: [{token.Value}] at {token.Location.Line}:{token.Location.Column}");
 }
 
         // 2) Build token stream and parse

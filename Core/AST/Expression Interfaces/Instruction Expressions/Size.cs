@@ -9,29 +9,57 @@ public class SizeCommand : CallNode
 
     public override bool CheckSemantic(Context ctx, Scope scope, List<CompilingError> errors)
     {
-        // 1) base does arity‐check (1) + type‐check (Number)
-        bool ok = base.CheckSemantic(ctx, scope, errors);
-
-        if (ok && Args[0] is Number n)
+        // 1) Arity check
+        if (Args.Count != 1)
         {
-            // only literal Number nodes carry an IsInt flag
-            if (n.IsInt)
+            errors.Add(new CompilingError(
+                Location,
+                ErrorCode.InvalidArgCount,
+                $"Size() expects exactly 1 argument, but got {Args.Count}."
+            ));
+            return false;
+        }
+
+        // 2) Type check: must be numeric
+        var expr = Args[0];
+        if (expr.Type != ExpressionType.Number)
+        {
+            errors.Add(new CompilingError(
+                Location,
+                ErrorCode.Invalid,
+                "Size() expects a numeric argument."
+            ));
+            return false;
+        }
+
+        // 3) If it's a literal Number, adjust even values
+        if (expr is Number literal)
+        {
+            // Determine integer part without direct cast
+            double raw = (double)literal.Value;
+            int iv = (int)Math.Floor(raw);
+
+            // If it's not already an integer literal, skip rounding here
+            if (literal.IsInt)
             {
-                var iv = (int)n.Value;
                 if (iv % 2 == 0)
                 {
-                    // round down to nearest odd
-                    n.Value = iv - 1;
-                    // leave n.IsInt = true, since it's still an integer
+                    // Round down to nearest odd
+                    int rounded = iv - 1;
+                    if (rounded < 1) rounded = 1;  // enforce minimum brush size = 1
+                    literal.Value = rounded;
+                    // still an integer
+                    //literal.IsInt = true;
                 }
             }
             else
             {
-                // non‐literal: nothing to do here, runtime may truncate/round
+                // Non‐literal number: we can't know integerness at compile‐time.
+                // Optionally warn or defer to runtime.
             }
         }
 
-        return ok;
+        return true;
     }
 
     public override string ToString() =>

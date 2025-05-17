@@ -42,7 +42,7 @@ public class LexicalAnalyzer
                     // Determine TokenType based on TokenValue
                     TokenType type = tokenValue switch
                     {
-                        TokenValues.Spawn or TokenValues.Color or TokenValues.DrawLine
+                        TokenValues.Spawn or TokenValues.Color or TokenValues.Size or TokenValues.DrawLine
                             or TokenValues.DrawCircle or TokenValues.DrawRectangle or TokenValues.Fill
                             or TokenValues.GoTo => TokenType.Instruction,
                         TokenValues.GetActualX or TokenValues.GetActualY or TokenValues.GetCanvasSize
