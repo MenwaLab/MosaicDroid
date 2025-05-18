@@ -10,6 +10,7 @@ public class Context
         /// <summary>
         /// Declare a new variable. Reports an error if already exists.
         /// </summary>
+       
         public void DeclareVariable(string name, ExpressionType type, CodeLocation loc, List<CompilingError> errors)
         {
             if (Variables.ContainsKey(name))

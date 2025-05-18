@@ -25,7 +25,7 @@ public override bool CheckSemantic(Context ctx, Scope scope, List<CompilingError
     {
         errors.Add(new CompilingError(
             Location,
-            ErrorCode.Invalid,
+            ErrorCode.TypeArgMismatch,
             "Color() expects a string literal."
         ));
         return false;

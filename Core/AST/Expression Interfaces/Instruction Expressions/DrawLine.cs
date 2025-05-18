@@ -17,66 +17,17 @@ public class DrawLineCommand : CallNode
 
         // 2) Now ensure *literal* integers (not e.g. variables or doubles).
         //    We check Number.IsInt, which your Number nodes carry.
-        for (int i = 0; i < 3; i++)
-        {
-            if (Args[i] is not Number num || !num.IsInt)
-            {
-                errors.Add(new CompilingError(
-                    Args[i].Location,
-                    ErrorCode.Invalid,
-                    $"DrawLine argument #{i+1} must be an integer literal."
-                ));
-                ok = false;
-            }
-        }
-        if (!ok) return false;
+        if (!ArgumentSpec.EnsureAllIntegerLiterals(Args, 3, "DrawLine", errors))
+            return false;
 
-        // 3) Safely unbox the double → int
-        Number dxNum   = (Number)Args[0];
-        Number dyNum   = (Number)Args[1];
-        Number distNum = (Number)Args[2];
+            var values = Args.Cast<Number>().Select(n => (int)(double)n.Value).ToArray();
 
-        double dxD   = (double)dxNum.Value;
-        double dyD   = (double)dyNum.Value;
-        double distD = (double)distNum.Value;
-
-        int dx   = (int)dxD;
-        int dy   = (int)dyD;
-        int dist = (int)distD;
-
-        // 4) dirX/dirY must be –1, 0, or 1
-        if (dx < -1 || dx > 1)
-        {
-            errors.Add(new CompilingError(
-                dxNum.Location,
-                ErrorCode.Invalid,
-                $"DrawLine: dirX must be –1, 0, or 1; got {dx}."
-            ));
-            ok = false;
-        }
-        if (dy < -1 || dy > 1)
-        {
-            errors.Add(new CompilingError(
-                dyNum.Location,
-                ErrorCode.Invalid,
-                $"DrawLine: dirY must be –1, 0, or 1; got {dy}."
-            ));
-            ok = false;
-        }
-
-        // 5) distance must be non‑negative
-        if (dist < 0)
-        {
-            errors.Add(new CompilingError(
-                distNum.Location,
-                ErrorCode.Invalid,
-                $"DrawLine: distance must be > 0; got {dist}."
-            ));
-            ok = false;
-        }
+        ok &= ArgumentSpec.EnsureDirectionInRange(values[0], Args[0].Location, "DrawLine: dirX", errors);
+        ok &= ArgumentSpec.EnsureDirectionInRange(values[1], Args[1].Location, "DrawLine: dirY", errors);
+        ok &= ArgumentSpec.EnsurePositive(values[2], Args[2].Location, "DrawLine: distance", errors);
 
         return ok;
-    }
+        }
 
     public override string ToString() =>
         $"DrawLine({Args[0]}, {Args[1]}, {Args[2]}) at {Location.Line}:{Location.Column}";

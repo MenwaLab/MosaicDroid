@@ -310,8 +310,23 @@ case TokenValues.Color:
 
     private Expression ParseFactor()
     {
-        if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Integer)
+       // if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Integer)
+             // If we see a minus *followed by* a number, treat it as a signed literal:
+        if (_stream.CanLookAhead() 
+            && _stream.LookAhead().Type == TokenType.Operator 
+            && _stream.LookAhead().Value == TokenValues.Sub
+            && _stream.CanLookAhead(1)
+            && _stream.LookAhead(1).Type == TokenType.Integer)
         {
+            // consume the '-' and the number, then wrap into a Number with negative value
+            var minusTok = _stream.Advance();      // '-'
+            var numTok   = _stream.Advance();      // the digits
+            double v = double.Parse(numTok.Value);
+            return new Number(-v, minusTok.Location);
+        }
+
+        if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Integer)
+       {
             var tok = _stream.Advance();
             return new Number(double.Parse(tok.Value), tok.Location);
         }

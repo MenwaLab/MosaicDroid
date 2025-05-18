@@ -14,13 +14,14 @@ public class SpawnCommand : CallNode
         // 2) exactly one Spawn
         if (ctx.SpawnSeen)
         {
-            errors.Add(new CompilingError(Location, ErrorCode.Invalid,
+            errors.Add(new CompilingError(Location, ErrorCode.DuplicateSpawn,
                 "Only one Spawn(x,y) allowed."));
             ok = false;
         }
         ctx.SpawnSeen = true;
         return ok;
     }
+
 
     public override string ToString() =>
         $"Spawn({Args[0]}, {Args[1]}) at {Location.Line}:{Location.Column}";

@@ -32,4 +32,42 @@ public class ArgumentSpec
         }
         return true;
     }
+
+    public static bool EnsureAllIntegerLiterals(IReadOnlyList<Expression> args, int count, string commandName, List<CompilingError> errors)
+    {
+        bool ok = true;
+        for (int i = 0; i < count; i++)
+        {
+            if (args[i] is not Number num || !num.IsInt)
+            {
+                errors.Add(new CompilingError(args[i].Location, ErrorCode.TypeArgMismatch,
+                    $"{commandName} argument #{i + 1} must be an integer literal."));
+                ok = false;
+            }
+        }
+        return ok;
+    }
+
+    public static bool EnsureDirectionInRange(int value, CodeLocation loc, string label, List<CompilingError> errors)
+    {
+        if (value < -1 || value > 1)
+        {
+            errors.Add(new CompilingError(loc, ErrorCode.Invalid,
+                $"{label} must be –1, 0, or 1; got {value}."));
+            return false;
+        }
+        return true;
+    }
+
+    public static bool EnsurePositive(int value, CodeLocation loc, string label, List<CompilingError> errors)
+    {
+        if (value <= 0)
+        {
+            errors.Add(new CompilingError(loc, ErrorCode.Invalid,
+                $"{label} must be > 0; got {value}."));
+            return false;
+        }
+        return true;
+    }
 }
+

@@ -5,8 +5,9 @@
         string code = 
 @" 
 Spawn(0,0)
-DrawLine(1,1 ,30)
-DrawRectangle(1,0, 3,2,2)
+DrawLine(21)
+DrawRectangle(1,0, 1,3,5)
+
 Fill()
 
 

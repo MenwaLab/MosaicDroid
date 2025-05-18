@@ -23,5 +23,6 @@ public class CompilingError
         Invalid,
         InvalidArgCount,
         TypeArgMismatch,
+        DuplicateSpawn,
         Unknown,
     }

@@ -26,7 +26,7 @@ public class SizeCommand : CallNode
         {
             errors.Add(new CompilingError(
                 Location,
-                ErrorCode.Invalid,
+                ErrorCode.TypeArgMismatch,
                 "Size() expects a numeric argument."
             ));
             return false;
