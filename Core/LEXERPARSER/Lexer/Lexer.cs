@@ -130,6 +130,7 @@ private bool MatchText(TokenReader stream, List<Token> tokens, List<CompilingErr
                 "Closing quote for string literal"));
             return false;
         }
+        
         // exact, single‐member match (case‐insensitive)
         var names = Enum.GetNames(typeof(ColorOptions));
         bool isExactColor = names

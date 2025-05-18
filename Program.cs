@@ -5,8 +5,10 @@
         string code = 
 @" 
 Spawn(0,0)
-DrawLine(21)
+Color(""Red"")
+
 DrawRectangle(1,0, 1,3,5)
+Size(2)
 
 Fill()
 
@@ -16,14 +18,17 @@ n <- 5 % 2
 k <- 3 - 3 / 10
 n <- k * 2 ** 3
 
-actual-x <- GetActualX()
+actual-x <- GetCanvasSize()
+actual-y <- GetColorCount(""Blue"",3,7,6,9)
+actual-z <- IsBrushSize(IsBrushSize())
+actual-m <- IsCanvasColor(""Transparent"",1,1)
 i <- 0
 
 
 loop-1
 DrawLine(1, 0, 1)
 i <- i + 1
-is-brush-color-blue <- IsBrushColor(""Blue"")
+is-brush-color-blue <- IsBrushColor(""yellow"")
 GoTo [loop-ends-here] (is-brush-color-blue == 1)
 GoTo [loop-1] (i < 10)
 

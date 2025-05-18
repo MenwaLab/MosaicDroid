@@ -8,16 +8,7 @@ public class FillCommand : CallNode
 
         public override bool CheckSemantic(Context ctx, Scope scope, List<CompilingError> errors)
         {
-            if(Args.Count!=0)
-            {
-                errors.Add(new CompilingError(
-                Location,
-                ErrorCode.InvalidArgCount,
-                $"Fill() expects exactly 0 arguments, but got {Args.Count}."
-            ));
-            return false;
-            }
-            return true;
+            return base.CheckSemantic(ctx, scope, errors);
         } 
         public override string ToString() => $"Fill() at {Location.Line}:{Location.Column}";
     }

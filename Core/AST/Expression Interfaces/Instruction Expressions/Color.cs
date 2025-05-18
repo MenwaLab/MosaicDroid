@@ -10,18 +10,13 @@ public class ColorCommand : CallNode
 public override bool CheckSemantic(Context ctx, Scope scope, List<CompilingError> errors)
 {
     // 1) Arity
-    if (Args.Count != 1)
-    {
-        errors.Add(new CompilingError(
-            Location,
-            ErrorCode.InvalidArgCount,
-            $"Color() expects exactly 1 argument, but got {Args.Count}."
-        ));
-        return false;
-    }
+    bool ok = base.CheckSemantic(ctx, scope, errors);
+        if (!ok) return false;
+
+        return ColorValidationHelper.ValidateColorArgument(Args, 0, Location, errors);
 
     // 2) Must be a literal (we wrapped everything in ColorLiteralExpression)
-    if (Args[0] is not ColorLiteralExpression atom)
+    /* if (Args[0] is not ColorLiteralExpression atom)
     {
         errors.Add(new CompilingError(
             Location,
@@ -29,13 +24,16 @@ public override bool CheckSemantic(Context ctx, Scope scope, List<CompilingError
             "Color() expects a string literal."
         ));
         return false;
-    }
+    } */
 
     // 3) Pull out the raw text and do an *exact* enum‐name lookup
-    var text = atom.Value as string ?? "";
-    var enumNames = Enum.GetNames(typeof(ColorOptions));
+    //var text = atom.Value as string ?? "";
+    //var enumNames = Enum.GetNames(typeof(ColorOptions));
 
-    bool isExact = enumNames
+    //var atom = (ColorLiteralExpression)Args[0];
+    //var text = atom.Value as string ?? "";
+
+    /* bool isExact = enumNames
         .Any(n => string.Equals(n, text, StringComparison.OrdinalIgnoreCase));
 
     if (!isExact)
@@ -48,8 +46,16 @@ public override bool CheckSemantic(Context ctx, Scope scope, List<CompilingError
         return false;
     }
 
-    return true;
-}
+    return true; */
+    /* if (!Enum.GetNames(typeof(ColorOptions))
+                .Any(n => string.Equals(n, text, StringComparison.OrdinalIgnoreCase)))
+        {
+            errors.Add(new CompilingError(Location, ErrorCode.Invalid, $"Unknown color: '{text}'"));
+            return false;
+        }
+        return true; */
+    }
+
 
 
     public override string ToString() =>

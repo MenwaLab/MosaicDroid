@@ -3,7 +3,7 @@ public abstract class CallNode : ASTNode
     public string Name { get; }
     public IReadOnlyList<Expression> Args { get; }
 
-    protected CallNode(string name, IReadOnlyList<Expression> args, CodeLocation loc)
+    public CallNode(string name, IReadOnlyList<Expression> args, CodeLocation loc)
       : base(loc)
     {
         Name = name;

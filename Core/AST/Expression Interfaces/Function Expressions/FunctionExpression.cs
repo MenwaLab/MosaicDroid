@@ -18,8 +18,23 @@ public abstract class FunctionCallExpression : Expression
 
     public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
     {
+          foreach (var arg in Args)
+    {
+        if (arg is FunctionCallExpression)
+        {
+            errors.Add(new CompilingError(arg.Location, ErrorCode.Invalid, 
+                "Function calls cannot be nested as arguments."));
+            return false;
+        }
+    }
         // Use concrete CommandNode for validation
         var tempNode = new CommandNode(Name, Args, Location);
+        
         return tempNode.CheckSemantic(context, scope, errors);
+
+      
+    
+
+        
     }
 }
