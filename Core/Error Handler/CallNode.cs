@@ -71,3 +71,8 @@ public abstract class CallNode : ASTNode
         return ok;
     }
 }
+public class CommandNode : CallNode
+{
+    public CommandNode(string name, IReadOnlyList<Expression> args, CodeLocation loc)
+      : base(name, args, loc) { }
+}

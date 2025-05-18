@@ -1,16 +1,25 @@
+// Non-abstract base for commands
+
+
+// Function expressions remain abstract
 public abstract class FunctionCallExpression : Expression
 {
-    protected readonly CallNode _callNode;
+    public string Name { get; }
+    public IReadOnlyList<Expression> Args { get; }
 
-    protected FunctionCallExpression(CallNode callNode)
-      : base(callNode.Location)
+    protected FunctionCallExpression(string name, 
+                                   IReadOnlyList<Expression> args, 
+                                   CodeLocation loc)
+      : base(loc)
     {
-        _callNode = callNode;
+        Name = name;
+        Args = args;
     }
 
     public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
     {
-        // Reuse CallNode's semantic checking
-        return _callNode.CheckSemantic(context, scope, errors);
+        // Use concrete CommandNode for validation
+        var tempNode = new CommandNode(Name, Args, Location);
+        return tempNode.CheckSemantic(context, scope, errors);
     }
 }
