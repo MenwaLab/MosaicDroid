@@ -24,11 +24,16 @@ public class LogicalEqualExpression : BinaryExpression
 
         bool isNumberComparison = Left.Type == ExpressionType.Number && Right.Type == ExpressionType.Number;
         bool isTextComparison = Left.Type == ExpressionType.Text && Right.Type == ExpressionType.Text;
+        
+bool isBoolNumComparison =
+    (Left.Type == ExpressionType.Boolean && Right.Type == ExpressionType.Number) ||
+    (Left.Type == ExpressionType.Number  && Right.Type == ExpressionType.Boolean);
 
-        if (!isNumberComparison && !isTextComparison)
+
+        if (!isNumberComparison && !isTextComparison && !isBoolNumComparison)
         {
             errs.Add(new CompilingError(Location, ErrorCode.Invalid,
-                "Operands for == must both be numeric or both be text."));
+                "Operands for == must both be numeric, both be text or both be boolean."));
             Type = ExpressionType.ErrorType;
             return false;
         }

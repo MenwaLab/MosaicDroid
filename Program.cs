@@ -8,7 +8,7 @@ Spawn(0,0)
 Color(""Red"")
 
 DrawRectangle(1,0, 1,3,5)
-Size(2)
+Size(1)
 
 Fill()
 
@@ -20,15 +20,15 @@ n <- k * 2 ** 3
 
 actual-x <- GetCanvasSize()
 actual-y <- GetColorCount(""Blue"",3,7,6,9)
-actual-z <- IsBrushSize(IsBrushSize())
+actual-z <- IsBrushSize(1)
 actual-m <- IsCanvasColor(""Transparent"",1,1)
 i <- 0
 
 
 loop-1
-DrawLine(1, 0, 1)
+DrawLine(-1, -1, 1)
 i <- i + 1
-is-brush-color-blue <- IsBrushColor(""yellow"")
+is-brush-color-blue <- IsBrushColor(""Blue"")
 GoTo [loop-ends-here] (is-brush-color-blue == 1)
 GoTo [loop-1] (i < 10)
 

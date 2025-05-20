@@ -15,6 +15,9 @@ public class AssignExpression : ASTNode
     public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
     {
         bool ok = ValueExpr.CheckSemantic(context, scope, errors);
+
+        var exprType=ValueExpr.Type;
+        context.SetVariableType(VariableName,exprType);
         if (ValueExpr.Type == ExpressionType.ErrorType)
         {
             errors.Add(new CompilingError(Location, ErrorCode.Invalid, $"Cannot assign invalid expression to '{VariableName}'"));
