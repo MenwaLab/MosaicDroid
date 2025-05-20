@@ -73,12 +73,12 @@ public class Parser
                         ExpectNewLine();
                         continue;                      // <<–– THIS CONTINUE is critical
                     }
-                    else if (_stream.CanLookAhead(1) && _stream.LookAhead(1).Type == TokenType.Jumpline)
+                    /* else if (_stream.CanLookAhead(1) && _stream.LookAhead(1).Type == TokenType.Jumpline)
                     {
                         node = new LabelExpression(_stream.Advance().Value, la.Location);
                         _stream.Advance();  // comerse el jumpline
                         continue;
-                    }
+                    } */
                     /* else
                     {
                         _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Variable inesperada: {la.Value}"));

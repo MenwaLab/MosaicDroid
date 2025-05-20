@@ -47,11 +47,13 @@ foreach (var token in tokens)
 
         // 2) Build token stream and parse
         var stream = new TokenStream(tokens);
+        var ctx = new Context();
 
         var parserErrors = new List<CompilingError>();
         var parser = new Parser(stream, parserErrors);
         var program = parser.ParseProgram();
-
+        Scope globalScope = new Scope();
+     
         // 3) Report semantic/parse errors
         if (parserErrors.Count > 0)
         {
@@ -60,11 +62,14 @@ foreach (var token in tokens)
                 Console.WriteLine(err.Argument + " at " + err.Location.Line + ":" + err.Location.Column);
         }
         var semanticErrors = new List<CompilingError>();
-var ctx = new Context();
+        program.CheckSemantic(ctx, globalScope, semanticErrors);
+
+
 // you’ll need to fill in or stub a global Scope if your CheckSemantic needs it
-Scope globalScope = new Scope();
-foreach (var stmt in program.Statements)
+
+/* foreach (var stmt in program.Statements)
     stmt.CheckSemantic(ctx, globalScope, semanticErrors);
+     */
 
 // 4) report semantic errors
 if (semanticErrors.Count > 0)
