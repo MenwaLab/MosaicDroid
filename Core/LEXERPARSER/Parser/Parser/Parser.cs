@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 public enum ColorOptions
 {
 Red, Blue, Green, Yellow, Orange, Purple, Black, White, Transparent
@@ -29,9 +30,20 @@ public class Parser
         var first = _stream.LookAhead();
         if (first.Type != TokenType.Instruction || first.Value != TokenValues.Spawn)
         {
-            _errors.Add(new CompilingError(first.Location, ErrorCode.Expected, "Se esperaba Spawn(x, y) al inicio"));
-            return program;  // no seguimos parseando
+            if ((first.Type == TokenType.Instruction || first.Type == TokenType.Variable) && first.Value.StartsWith("Spawn"))
+    {
+        _errors.Add(new CompilingError(first.Location, ErrorCode.Expected, "'OpenParenthesis' expected"));
+    }
+    else
+    {
+        _errors.Add(new CompilingError(first.Location, ErrorCode.Expected, "Se esperaba Spawn(x, y) al inicio"));
+    }
+    return program;
+            /* _errors.Add(new CompilingError(first.Location, ErrorCode.Expected, "Se esperaba Spawn(x, y) al inicio"));
+            return program;  
+        } */
         }
+
         // Parseamos el Spawn inicial
         statements.Add(ParseInstruction());
         ExpectNewLine();
@@ -49,7 +61,23 @@ public class Parser
                     continue;
 
                 case TokenType.Label:
-                    node = ParseLabel();
+                    //node = ParseLabel();
+                    var lblTok = _stream.Advance();
+    // variable‐style check for valid label syntax:
+    if (!Regex.IsMatch(lblTok.Value, @"^[A-Za-z][A-Za-z0-9_]*$"))
+    {
+        _errors.Add(new CompilingError(
+            lblTok.Location, ErrorCode.Invalid,
+            $"Invalid label name '{lblTok.Value}'"));
+    }
+    // *then* require a newline:
+    if (!_stream.CanLookAhead() || _stream.LookAhead().Type != TokenType.Jumpline)
+    {
+        _errors.Add(new CompilingError(
+            lblTok.Location, ErrorCode.Expected,
+            "Expected a newline after label declaration."));
+    }
+    node = new LabelExpression(lblTok.Value, lblTok.Location);
                     statements.Add(node);
                     ExpectNewLine();
                     continue;
@@ -127,6 +155,7 @@ return program;
         switch (instr.Value)
         {
             case TokenValues.Spawn:
+                
                 var args = ParseArgumentList();
                 return new SpawnCommand(args, instr.Location);
                 
@@ -164,10 +193,12 @@ case TokenValues.Color:
         return new SizeCommand(sizeArgs, instr.Location);
 
             case TokenValues.DrawLine:
+            
     var lineArgs = ParseArgumentList();
-    return new DrawLineCommand(lineArgs, instr.Location);
+    return new DrawLineCommand(lineArgs, instr.Location);//instr.Location);
 
             case TokenValues.DrawCircle:
+            
                 var circleArgs = ParseArgumentList();
     return new DrawCircleCommand(circleArgs, instr.Location);
 
@@ -188,14 +219,36 @@ case TokenValues.Color:
     private LabelExpression ParseLabel()
     {
         var tok = _stream.Advance();
-        return new LabelExpression(tok.Value, tok.Location);
+        //return new LabelExpression(tok.Value, tok.Location);
+        var label = new LabelExpression(tok.Value, tok.Location);
+
+        if (_stream.CanLookAhead() && _stream.LookAhead().Type != TokenType.Jumpline)
+    {
+        _errors.Add(new CompilingError(tok.Location, ErrorCode.Expected,
+            "Expected newline after label declaration"));
+    }
+    
+    return label;
     }
 
     private ASTNode ParseAssignment()
     {
         var varTok = _stream.Advance();      // variable
+
+        if (!Regex.IsMatch(varTok.Value, @"^[a-zA-Z][a-zA-Z0-9_]*$"))
+    {
+        _errors.Add(new CompilingError(varTok.Location, ErrorCode.Invalid, $"Invalid variable name '{varTok.Value}'"));
+    }
+
         _stream.Advance();                   // '<-'
         var expr = ParseExpression();
+
+        if (!_stream.CanLookAhead() || _stream.LookAhead().Type != TokenType.Jumpline)
+    {
+        _errors.Add(new CompilingError(expr.Location, ErrorCode.Expected, "Expected a newline after variable assignment."));
+    }
+
+
         return new AssignExpression(varTok.Value, expr, varTok.Location);
     }
 

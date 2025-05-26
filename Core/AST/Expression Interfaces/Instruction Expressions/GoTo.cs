@@ -13,6 +13,19 @@ public class GotoCommand : ASTNode
 
         public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
         {
+            if (!LabelExpression.IsValidLabel(Label))
+    {
+        errors.Add(new CompilingError(Location, ErrorCode.Invalid,
+            $"Invalid label format '{Label}'"));
+        return false;
+    }
+    if (!context.IsLabelDeclared(Label))
+            {
+                errors.Add(new CompilingError(Location, ErrorCode.Invalid,
+                    $"Label '{Label}' not declared."));
+                //okCond = false;
+                return false;
+            }
             // 1) Ensure the condition is boolean
             bool okCond = Condition.CheckSemantic(context, scope, errors);
             if (Condition.Type != ExpressionType.Boolean)
@@ -23,12 +36,7 @@ public class GotoCommand : ASTNode
             }
 
             // 2) Ensure the label has been declared somewhere
-            if (!context.IsLabelDeclared(Label))
-            {
-                errors.Add(new CompilingError(Location, ErrorCode.Invalid,
-                    $"Label '{Label}' not declared."));
-                okCond = false;
-            }
+            
 
             return okCond;
         }

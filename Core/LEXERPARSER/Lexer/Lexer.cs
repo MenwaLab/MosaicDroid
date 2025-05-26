@@ -75,6 +75,7 @@ public class LexicalAnalyzer
                 tokens.Add(new Token(TokenType.Integer, number, stream.Location));
                 continue;
             }
+            
 
             // Match Strings/Colors
             if (MatchText(stream, tokens, errors)) continue;
@@ -159,8 +160,10 @@ private bool MatchText(TokenReader stream, List<Token> tokens, List<CompilingErr
     Enum.TryParse<ColorOptions>(text, true, out _);
 
 
-    private static bool IsValidIdentifier(string id) =>
-        !char.IsDigit(id[0]) && id[0] != '-' && !id.Contains(" ");
+    private static bool IsValidIdentifier(string id) => !string.IsNullOrEmpty(id) && 
+    (char.IsLetter(id[0]) || id[0] == '_') && 
+    id.All(c => char.IsLetterOrDigit(c) || c == '_' || c == '-');
+        //!char.IsDigit(id[0]) && id[0] != '-' && !id.Contains(" ");
 }
 class TokenReader
         {
@@ -232,6 +235,10 @@ class TokenReader
 
             public bool ValidIdCharacter(char c, bool beginning)
 {
+    if (beginning)
+        return char.IsLetter(c);
+
+    return char.IsLetterOrDigit(c) || c == '-' || c == '_';
     return c == '_' 
         || (!beginning && c == '-')  // allow hyphens after the first character
         || (beginning ? char.IsLetter(c) : char.IsLetterOrDigit(c));

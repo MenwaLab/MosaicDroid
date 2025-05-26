@@ -15,6 +15,14 @@ public class LabelExpression : ASTNode
             return true;
         }
 
+        public static bool IsValidLabel(string label)
+{
+    if (string.IsNullOrEmpty(label)) return false;
+    if (char.IsDigit(label[0])) return false;
+    return label.All(c => char.IsLetterOrDigit(c) || c == '_' || c == '-') && 
+           !label.Contains(" ");
+}
+
         public override string ToString() => $"Label: {Name}";
     }
     

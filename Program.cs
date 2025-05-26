@@ -3,37 +3,31 @@
     static void Main()
     {
         string code = 
-@" 
-Spawn(0,0)
-Color(""Red"")
-
-DrawRectangle(1,0, 1,3,5)
+@" Spawn0,0)
+Color(""Black"")
+DrawLine(-1,0,9)
+DrawCircle(1,0,10)
 Size(1)
-
+DrawRectangle(1,0, 2,3,4)
 Fill()
-
-
-
+actual_x <- GetActualX()
+actual_y <- GetActualY()
 n <- 5 % 2
 k <- 3 - 3 / 10
 n <- k * 2 ** 3
-
-actual-x <- GetCanvasSize()
-actual-y <- GetColorCount(""Blue"",3,7,6,9)
-actual-z <- IsBrushSize(1)
-actual-m <- IsCanvasColor(""Transparent"",1,1)
+canvas_size <- GetCanvasSize()
+color <- GetColorCount(""Blue"",3,7,6,5)
+actual_z <- IsBrushSize(1)
+actual_m <- IsCanvasColor(""Transparent"",1,1)
 i <- 0
 
-
-loop-1
-DrawLine(-1, -1, 1)
+loop1
 i <- i + 1
-is-brush-color-blue <- IsBrushColor(""Blue"")
-GoTo [loop-ends-here] (is-brush-color-blue == 1)
-GoTo [loop-1] (i < 10)
-
-GoTo [loop-1] (1 == 1)
-loop-ends-here
+is_brush_color_blue <- IsBrushColor(""Blue"")
+GoTo [loop_ends_here] (is_brush_color_blue == 1)
+GoTo [loop1] (i < 10)
+GoTo [loop1] (1 == 1)
+loop_ends_here
 ";
         var errors = new List<CompilingError>();
         var lexer = Compiling.Lexical;
