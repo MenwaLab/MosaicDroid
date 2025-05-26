@@ -22,7 +22,6 @@ public abstract class CallNode : ASTNode
             return false;
         }
 
-        // 1) Arity‐check
         if (Args.Count != spec.ArgsCount)
         {
             errors.Add(new CompilingError(Location, ErrorCode.Invalid,
@@ -30,29 +29,24 @@ public abstract class CallNode : ASTNode
             ok = false;
         }
 
-        // 2) Per‐argument type‐check
         for (int i = 0; i < Args.Count && i < spec.ExpectedTypes.Length; i++)
         {
             var expr = Args[i];
             ExpressionType actualType;
 
-            // a) Literal numbers/strings/colors:
-            if (expr is Number)            actualType = ExpressionType.Number;
-            else if (expr is StringExpression ||
-                     expr is ColorLiteralExpression)
-                                           actualType = ExpressionType.Text;
-            // b) A variable:
+            if (expr is Number)            
+                actualType = ExpressionType.Number;
+            else if (expr is StringExpression ||expr is ColorLiteralExpression)
+                actualType = ExpressionType.Text;
             else if (expr is VariableExpression v)
                 actualType = context.GetVariableType(v.Name);
-            // c) A function call or compound expr:
+            // function call o expresión compuesta
             else
             {
-                // we *haven’t* recursed yet, so probe:
                 expr.CheckSemantic(context, scope, errors);
                 actualType = expr.Type;
             }
 
-            // d) If it doesn’t match, report exactly one “type mismatch”:
             if (actualType != spec.ExpectedTypes[i])
             {
                 errors.Add(new CompilingError(expr.Location, ErrorCode.Invalid,
@@ -61,8 +55,7 @@ public abstract class CallNode : ASTNode
             }
             else
             {
-                // only if the type was correct do we recurse fully to pick up
-                // e.g. nested errors inside a sub‐expression
+                // solo si el tipo de arg es correcto entonces sigue la recursión
                 if (!(expr is Number || expr is StringExpression || expr is ColorLiteralExpression))
                     ok &= expr.CheckSemantic(context, scope, errors);
             }

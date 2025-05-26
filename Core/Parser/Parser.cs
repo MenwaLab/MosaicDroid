@@ -1,8 +1,5 @@
 using System.Text.RegularExpressions;
-public enum ColorOptions
-{
-Red, Blue, Green, Yellow, Orange, Purple, Black, White, Transparent
-}
+
 public class Parser
 {
     private readonly TokenStream _stream;
@@ -19,32 +16,30 @@ public class Parser
         var program = new ProgramExpression(new CodeLocation());
         var statements = new List<ASTNode>();
 
-        // 1) Saltar líneas en blanco (Jumpline) al inicio
+        // Saltar líneas en blanco del inicio
         while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
             _stream.MoveNext();
 
-        // 2) Debe comenzar con Spawn(...)
+        // Debe comenzar con Spawn(...)
         if (!_stream.CanLookAhead())
             return program;
 
         var first = _stream.LookAhead();
+
         if (first.Type != TokenType.Instruction || first.Value != TokenValues.Spawn)
         {
             if ((first.Type == TokenType.Instruction || first.Type == TokenType.Variable) && first.Value.StartsWith("Spawn"))
-    {
-        _errors.Add(new CompilingError(first.Location, ErrorCode.Expected, "'OpenParenthesis' expected"));
-    }
-    else
-    {
-        _errors.Add(new CompilingError(first.Location, ErrorCode.Expected, "Se esperaba Spawn(x, y) al inicio"));
-    }
-    return program;
-            /* _errors.Add(new CompilingError(first.Location, ErrorCode.Expected, "Se esperaba Spawn(x, y) al inicio"));
-            return program;  
-        } */
+            {
+                _errors.Add(new CompilingError(first.Location, ErrorCode.Expected, "'OpenParenthesis' expected"));
+            }
+            else
+            {
+                _errors.Add(new CompilingError(first.Location, ErrorCode.Expected, "Se esperaba Spawn(x, y) al inicio"));
+            }
+            
+            return program;
         }
 
-        // Parseamos el Spawn inicial
         statements.Add(ParseInstruction());
         ExpectNewLine();
 
@@ -56,31 +51,28 @@ public class Parser
             switch (la.Type)
             {
                 case TokenType.Jumpline:
-                    // líneas en blanco dentro del código las saltamos
-                    _stream.MoveNext();
+                    _stream.MoveNext(); // saltar las líneas en blanco dentro del código
                     continue;
 
                 case TokenType.Label:
-                    //node = ParseLabel();
+                if (_stream.CanLookAhead(1) && _stream.LookAhead(1).Type == TokenType.Jumpline)
+                {
                     var lblTok = _stream.Advance();
-    // variable‐style check for valid label syntax:
-    if (!Regex.IsMatch(lblTok.Value, @"^[A-Za-z][A-Za-z0-9_]*$"))
-    {
-        _errors.Add(new CompilingError(
-            lblTok.Location, ErrorCode.Invalid,
-            $"Invalid label name '{lblTok.Value}'"));
-    }
-    // *then* require a newline:
-    if (!_stream.CanLookAhead() || _stream.LookAhead().Type != TokenType.Jumpline)
-    {
-        _errors.Add(new CompilingError(
-            lblTok.Location, ErrorCode.Expected,
-            "Expected a newline after label declaration."));
-    }
-    node = new LabelExpression(lblTok.Value, lblTok.Location);
-                    statements.Add(node);
+                    if (!Regex.IsMatch(lblTok.Value, @"^[A-Za-z][A-Za-z0-9_]*$")) // variable‐style check para valid label syntax
+                    {
+                        _errors.Add(new CompilingError(lblTok.Location, ErrorCode.Invalid,$"Invalid label name '{lblTok.Value}'"));
+                    }
+
+                    if (!_stream.CanLookAhead() || _stream.LookAhead().Type != TokenType.Jumpline)
+                    {
+                        _errors.Add(new CompilingError(lblTok.Location, ErrorCode.Expected,"Expected a newline after label declaration."));
+                    }
+                    node = new LabelExpression(lblTok.Value, lblTok.Location);
+                    statements.Add(node); //y
                     ExpectNewLine();
                     continue;
+                }
+                break;
 
                 case TokenType.Instruction:
                     if (la.Value == TokenValues.GoTo)
@@ -93,61 +85,47 @@ public class Parser
                     continue;
 
                 case TokenType.Variable:
-            // asignaciones vs etiquetas-islas
+                    // Instrucción malformada como DrawLine1,0)
+                    if (Regex.IsMatch(la.Value, @"^(Spawn|Color|Size|DrawLine|DrawCircle|DrawRectangle|Fill)(?=[^(\s])"))
+                    {
+                        _errors.Add(new CompilingError(la.Location, ErrorCode.Expected,"'(' expected after instruction name"));
+                        
+                        while (_stream.CanLookAhead() && _stream.LookAhead().Type != TokenType.Jumpline)
+                            _stream.MoveNext();
+
+                        if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
+                            _stream.MoveNext();
+                        continue;
+                    }
+
                     if (_stream.CanLookAhead(1) && _stream.LookAhead(1).Type == TokenType.Assign)
                     {
                         node = ParseAssignment();
                         statements.Add(node);
                         ExpectNewLine();
-                        continue;                      // <<–– THIS CONTINUE is critical
+                        continue;
                     }
-                    /* else if (_stream.CanLookAhead(1) && _stream.LookAhead(1).Type == TokenType.Jumpline)
-                    {
-                        node = new LabelExpression(_stream.Advance().Value, la.Location);
-                        _stream.Advance();  // comerse el jumpline
-                        continue;
-                    } */
-                    /* else
-                    {
-                        _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Variable inesperada: {la.Value}"));
-                        _stream.MoveNext();
-                        continue;
-                    } */
+
                     break;
+
                 default:
                     break;
             }
 
-            _errors.Add(new CompilingError(
-                la.Location,
-                ErrorCode.Invalid,
-                $"Token inesperado: {la.Value}"
-            ));
-        _stream.MoveNext();
+            //_errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Token inesperado: {la.Value}"));
+            _stream.MoveNext();
+        }
+
+        program.Statements.AddRange(statements);
+        program.Errors.AddRange(_errors);
+        return program;
+
     }
-
-// Montar el programa
-program.Statements.AddRange(statements);
-    program.Errors.AddRange(_errors);
-return program;
-
-}
-
-
     private void ExpectNewLine()
     {
-            while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
-    _stream.MoveNext();
+        while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
+            _stream.MoveNext();
     }
-
-    /* private ASTNode ParseSpawnCommand()
-    {
-        var tok = _stream.Advance();  // Spawn
-        EatDelimiter(TokenValues.OpenParenthesis);
-        var x = ParseExpression(); EatDelimiter(TokenValues.Comma);
-        var y = ParseExpression(); EatDelimiter(TokenValues.ClosedParenthesis);
-        return new SpawnCommand(x, y, tok.Location);
-    } */
 
     private ASTNode ParseInstruction()
     {
@@ -159,56 +137,38 @@ return program;
                 var args = ParseArgumentList();
                 return new SpawnCommand(args, instr.Location);
                 
-           /*  case TokenValues.Color:
+            case TokenValues.Color:
                 EatDelimiter(TokenValues.OpenParenthesis);
+            
                 var tokCol = _stream.Advance();
+                if (tokCol.Type != TokenType.String && tokCol.Type != TokenType.Color)
+                {
+                    _errors.Add(new CompilingError(tokCol.Location, ErrorCode.Expected, "Color argument must be a quoted string (e.g., \"Red\")"));
+                }
+                
                 EatDelimiter(TokenValues.ClosedParenthesis);
-
-// Always build the literal so AST shape is consistent:
-                var raw = tokCol.Value;
-                var lit = new ColorLiteralExpression(raw, tokCol.Location);
-
-return new ColorCommand(new[] { lit }, instr.Location); */
-// In ParseInstruction() for Color case:
-case TokenValues.Color:
-    EatDelimiter(TokenValues.OpenParenthesis);
-    
-    // New: Check if the next token is a string literal
-    var tokCol = _stream.Advance();
-    if (tokCol.Type != TokenType.String && tokCol.Type != TokenType.Color)
-{
-    _errors.Add(new CompilingError(
-      tokCol.Location, ErrorCode.Expected,
-      "Color argument must be a quoted string (e.g., \"Red\")"
-    ));
-
-    }
-    
-    EatDelimiter(TokenValues.ClosedParenthesis);
-    var lit = new ColorLiteralExpression(tokCol.Value, tokCol.Location);
-    return new ColorCommand(new[] { lit }, instr.Location);
+                var lit = new ColorLiteralExpression(tokCol.Value, tokCol.Location);
+                return new ColorCommand([lit], instr.Location);
 
             case TokenValues.Size:
                 var sizeArgs = ParseArgumentList();
-        return new SizeCommand(sizeArgs, instr.Location);
+                return new SizeCommand(sizeArgs, instr.Location);
 
             case TokenValues.DrawLine:
-            
-    var lineArgs = ParseArgumentList();
-    return new DrawLineCommand(lineArgs, instr.Location);//instr.Location);
+                var lineArgs = ParseArgumentList();
+                return new DrawLineCommand(lineArgs, instr.Location);
 
             case TokenValues.DrawCircle:
-            
                 var circleArgs = ParseArgumentList();
-    return new DrawCircleCommand(circleArgs, instr.Location);
+                return new DrawCircleCommand(circleArgs, instr.Location);
 
             case TokenValues.DrawRectangle:
                 var rectangleArgs = ParseArgumentList();
-    return new DrawRectangleCommand(rectangleArgs, instr.Location);
+                return new DrawRectangleCommand(rectangleArgs, instr.Location);
 
             case TokenValues.Fill:
                 var fillArgs = ParseArgumentList();
-        return new FillCommand(fillArgs, instr.Location);
+                return new FillCommand(fillArgs, instr.Location);
 
             default:
                 _errors.Add(new CompilingError(instr.Location, ErrorCode.Invalid, $"Unknown instruction: {instr.Value}"));
@@ -216,51 +176,51 @@ case TokenValues.Color:
         }
     }
 
-    private LabelExpression ParseLabel()
+    private LabelExpression ParseLabel() //no ref?
     {
         var tok = _stream.Advance();
-        //return new LabelExpression(tok.Value, tok.Location);
         var label = new LabelExpression(tok.Value, tok.Location);
 
         if (_stream.CanLookAhead() && _stream.LookAhead().Type != TokenType.Jumpline)
-    {
-        _errors.Add(new CompilingError(tok.Location, ErrorCode.Expected,
-            "Expected newline after label declaration"));
-    }
+        {
+        _errors.Add(new CompilingError(tok.Location, ErrorCode.Expected, "Expected newline after label declaration"));
+        }
     
-    return label;
+        return label;
     }
 
     private ASTNode ParseAssignment()
     {
-        var varTok = _stream.Advance();      // variable
+        var varTok = _stream.Advance();  
 
         if (!Regex.IsMatch(varTok.Value, @"^[a-zA-Z][a-zA-Z0-9_]*$"))
-    {
-        _errors.Add(new CompilingError(varTok.Location, ErrorCode.Invalid, $"Invalid variable name '{varTok.Value}'"));
-    }
+        {
+            _errors.Add(new CompilingError(varTok.Location, ErrorCode.Invalid, $"Invalid variable name '{varTok.Value}'"));
+        }
 
         _stream.Advance();                   // '<-'
         var expr = ParseExpression();
 
         if (!_stream.CanLookAhead() || _stream.LookAhead().Type != TokenType.Jumpline)
-    {
-        _errors.Add(new CompilingError(expr.Location, ErrorCode.Expected, "Expected a newline after variable assignment."));
-    }
-
+        {
+            _errors.Add(new CompilingError(expr.Location, ErrorCode.Expected, "Expected a newline after variable assignment."));
+        }
 
         return new AssignExpression(varTok.Value, expr, varTok.Location);
     }
 
     private GotoCommand ParseGoTo()
     {
-        var tok = _stream.Advance();        // GoTo
+        var tok = _stream.Advance();      
         EatDelimiter(TokenValues.OpenBrackets);
+
         var lbl = _stream.Advance().Value;
         EatDelimiter(TokenValues.ClosedBrackets);
         EatDelimiter(TokenValues.OpenParenthesis);
+
         var cond = ParseExpression();
         EatDelimiter(TokenValues.ClosedParenthesis);
+
         return new GotoCommand(lbl, cond, tok.Location);
     }
 
@@ -273,6 +233,7 @@ case TokenValues.Color:
         {
             _stream.MoveNext();
             _stream.Advance();
+            
             var right = ParseLogicalAnd();
             var node = new LogicalOrExpression(left, right, left.Location);
             left = node;
@@ -346,7 +307,9 @@ case TokenValues.Color:
     private Expression ParseTerm()
     {
         var left = ParseFactor();
-        while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Operator && ( _stream.LookAhead().Value == TokenValues.Mul || _stream.LookAhead().Value == TokenValues.Div || _stream.LookAhead().Value == TokenValues.Mod || _stream.LookAhead().Value == TokenValues.Pow ))
+        while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Operator && ( _stream.LookAhead().Value == TokenValues.Mul 
+        || _stream.LookAhead().Value == TokenValues.Div || _stream.LookAhead().Value == TokenValues.Mod 
+        || _stream.LookAhead().Value == TokenValues.Pow ))
         {
             var op = _stream.Advance().Value;
             var right = ParseFactor();
@@ -363,17 +326,16 @@ case TokenValues.Color:
 
     private Expression ParseFactor()
     {
-       // if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Integer)
-             // If we see a minus *followed by* a number, treat it as a signed literal:
+             // Signo menos seguido de un #: # negativo
         if (_stream.CanLookAhead() 
             && _stream.LookAhead().Type == TokenType.Operator 
             && _stream.LookAhead().Value == TokenValues.Sub
             && _stream.CanLookAhead(1)
             && _stream.LookAhead(1).Type == TokenType.Integer)
         {
-            // consume the '-' and the number, then wrap into a Number with negative value
+            // consume el '-' y el #, then wrap into a # negativo
             var minusTok = _stream.Advance();      // '-'
-            var numTok   = _stream.Advance();      // the digits
+            var numTok   = _stream.Advance();      // #
             double v = double.Parse(numTok.Value);
             return new Number(-v, minusTok.Location);
         }
@@ -413,7 +375,7 @@ case TokenValues.Color:
             return expr;
         }
 
-        _errors.Add(new CompilingError(_stream.LookAhead().Location, ErrorCode.Invalid, $"Unexpected token {_stream.LookAhead().Value} in factor"));
+        _errors.Add(new CompilingError(_stream.LookAhead().Location, ErrorCode.Expected, $"Unexpected token {_stream.LookAhead().Value} in factor"));
         _stream.MoveNext();
         return new NoOpExpression(_stream.LookAhead().Location);
     }
@@ -433,7 +395,7 @@ case TokenValues.Color:
             }
         }
         EatDelimiter(TokenValues.ClosedParenthesis);
-        // TODO: provide or import a FunctionFactory
+
         return FunctionFactory.Create(fnTok.Value, args, fnTok.Location, _errors);
     }
 
@@ -445,32 +407,28 @@ case TokenValues.Color:
             _stream.MoveNext();
     }
     private List<Expression> ParseArgumentList()
-{
-var args = new List<Expression>();
-EatDelimiter(TokenValues.OpenParenthesis);
+    {
+        var args = new List<Expression>();
+        EatDelimiter(TokenValues.OpenParenthesis);
 
-// if immediate ')', zero args:
-if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Delimeter
-    && _stream.LookAhead().Value == TokenValues.ClosedParenthesis)
-{
-    _stream.MoveNext();
-    return args;
-}
+        // si inmediatamente ) => 0 argumentos
+        if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Delimeter
+            && _stream.LookAhead().Value == TokenValues.ClosedParenthesis)
+        {
+            _stream.MoveNext();
+            return args;
+        }
 
-// otherwise, first expr
-args.Add(ParseExpression());
+        args.Add(ParseExpression());
 
-// any further ,expr
-while (_stream.CanLookAhead()
-        && _stream.LookAhead().Type == TokenType.Delimeter
-        && _stream.LookAhead().Value == TokenValues.Comma)
-{
-    _stream.MoveNext();
-    args.Add(ParseExpression());
-}
+        while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Delimeter && _stream.LookAhead().Value == TokenValues.Comma)
+        {
+            _stream.MoveNext();
+            args.Add(ParseExpression());
+        }
 
-EatDelimiter(TokenValues.ClosedParenthesis);
-return args;
-}
-
+        EatDelimiter(TokenValues.ClosedParenthesis);
+        
+        return args;
+    }
 }

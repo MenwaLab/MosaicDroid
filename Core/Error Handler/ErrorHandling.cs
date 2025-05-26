@@ -17,12 +17,12 @@ public class CompilingError
 
     public enum ErrorCode
     {
-        
-        None,
+        None, //y
         Expected,
         Invalid,
         InvalidArgCount,
-        TypeArgMismatch,
+        ArgMismatch,
         DuplicateSpawn,
+        MissingJumpline,
         Unknown,
     }

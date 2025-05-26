@@ -7,7 +7,7 @@ public class Compiling
     {
         var analyzer = new LexicalAnalyzer();
 
-        // Arithmetic Operators
+        // Operadores Arithméticos
         analyzer.RegisterOperator("+", TokenValues.Add);
         analyzer.RegisterOperator("-", TokenValues.Sub);
         analyzer.RegisterOperator("*", TokenValues.Mul);
@@ -15,7 +15,7 @@ public class Compiling
         analyzer.RegisterOperator("%", TokenValues.Mod);
         analyzer.RegisterOperator("**", TokenValues.Pow);
 
-        // Boolean Operators (Register as operators but map to Bool_OP later)
+        // Operadores Booleanos (Registran como operadores pero se  mapean como Bool_OP después)
         analyzer.RegisterOperator("&&", TokenValues.And);
         analyzer.RegisterOperator("||", TokenValues.Or);
         analyzer.RegisterOperator("==", TokenValues.Equal);
@@ -24,17 +24,15 @@ public class Compiling
         analyzer.RegisterOperator(">", TokenValues.Greater);
         analyzer.RegisterOperator("<", TokenValues.Less);
 
-        // Assignment and Delimiters
+        // Assignación y Delimiters
         analyzer.RegisterOperator("<-", TokenValues.Assign); // Assignment
         analyzer.RegisterOperator("(", TokenValues.OpenParenthesis);
         analyzer.RegisterOperator(")", TokenValues.ClosedParenthesis);
         analyzer.RegisterOperator(",", TokenValues.Comma);
-        //analyzer.RegisterOperator(",",",");
-        analyzer.RegisterOperator("[", TokenValues.OpenBrackets); // Label delimiters
+        analyzer.RegisterOperator("[", TokenValues.OpenBrackets); 
         analyzer.RegisterOperator("]",  TokenValues.ClosedBrackets);
-        //analyzer.RegisterText(" ", TokenValues.Jumpline);
 
-        // Instructions (e.g., Spawn, Color)
+        // Instruciones (Spawn, Color)
         analyzer.RegisterKeyword("Spawn", TokenValues.Spawn);
         analyzer.RegisterKeyword("Color", TokenValues.Color);
         analyzer.RegisterKeyword("DrawLine", TokenValues.DrawLine);
@@ -44,7 +42,7 @@ public class Compiling
         analyzer.RegisterKeyword("GoTo", TokenValues.GoTo);
         analyzer.RegisterKeyword("Size", TokenValues.Size);
 
-        // Functions (e.g., GetActualX, IsBrushColor)
+        // Funciones (GetActualX, IsBrushColor)
         analyzer.RegisterKeyword("GetActualX", TokenValues.GetActualX);
         analyzer.RegisterKeyword("GetActualY", TokenValues.GetActualY);
         analyzer.RegisterKeyword("GetCanvasSize", TokenValues.GetCanvasSize);

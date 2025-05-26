@@ -23,24 +23,24 @@ public struct CodeLocation
 public enum TokenType
 {
     Instruction, // Commandos: Spawn, Color, etc
-    GoTo,
-    Operator, // Arithmetic operators: +, -, *, /, **, %
-    Bool_OP, // Boolean operators: ==, >=, <=, >, <, &&, ||
-    Assign, // Assignment: <-
+    GoTo, //y
+    Operator, // Operadores aritméticos: +, -, *, /, **, %
+    Bool_OP, // Operadores booleanos: ==, >=, <=, >, <, &&, ||
+    Assign, // Assignación <-
     Integer,
     Variable,
-    Function, // Functions: GetActualX, GetColorCount, etc
+    Function, // Funciones: GetActualX, GetColorCount, etc
     String,
     Color,
-    Delimeter,
-    Label, // Delimiters: (, ), ,
+    Delimeter, // (,)
+    Label, 
     Jumpline
 }
 public class TokenValues
 {
     protected TokenValues() { }
 
-    // Instructions
+    // Instrucionses
     public const string Spawn = "Spawn";
     public const string Color = "Color";
     public const string DrawLine = "DrawLine";
@@ -55,7 +55,7 @@ public class TokenValues
     public const string Size = "Size";
 
 
-    // Functions
+    // Funciones
 
     public const string GetActualX = "GetActualX";
     public const string GetActualY = "GetActualY";
@@ -66,7 +66,7 @@ public class TokenValues
     public const string IsBrushSize = "IsBrushSize";
     public const string IsCanvasColor = "IsCanvasColor";
 
-    // Operators
+    // Operadores aritméticos
     public const string Add = "+";
     public const string Sub = "-";
     public const string Mul = "*";
@@ -75,7 +75,7 @@ public class TokenValues
     public const string Pow = "**";
     public const string Assign = "<-";
 
-    // Boolean Operators
+    // Operadores booleanos
     public const string And = "And";           
     public const string Or = "Or";             
     public const string Equal = "Equal";       

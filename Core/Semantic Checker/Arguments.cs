@@ -9,7 +9,7 @@ public class ArgumentSpec
         ExpectedTypes = types;
     }
 
-    public bool Validate(List<Expression> args, CodeLocation loc, List<CompilingError> errors)
+   /*  public bool Validate(List<Expression> args, CodeLocation loc, List<CompilingError> errors)
     {
         // Argument count check
         if (args.Count !=ArgsCount)
@@ -25,13 +25,13 @@ public class ArgumentSpec
         {
             if (i < ExpectedTypes.Length && args[i].Type != ExpectedTypes[i])
             {
-                errors.Add(new CompilingError(args[i].Location, ErrorCode.TypeArgMismatch,
+                errors.Add(new CompilingError(args[i].Location, ErrorCode.ArgMismatch,
                     $"Arg {i+1}: Expected {ExpectedTypes[i]}, got {args[i].Type}"));
                 return false;
             }
         }
         return true;
-    }
+    } */
 
     public static bool EnsureAllIntegerLiterals(IReadOnlyList<Expression> args, int count, string commandName, List<CompilingError> errors)
     {
@@ -40,7 +40,7 @@ public class ArgumentSpec
         {
             if (args[i] is not Number num || !num.IsInt)
             {
-                errors.Add(new CompilingError(args[i].Location, ErrorCode.TypeArgMismatch,
+                errors.Add(new CompilingError(args[i].Location, ErrorCode.ArgMismatch,
                     $"{commandName} argument #{i + 1} must be an integer literal."));
                 ok = false;
             }
