@@ -55,7 +55,13 @@ public class Parser
                     continue;
 
                 case TokenType.Label:
-                if (_stream.CanLookAhead(1) && _stream.LookAhead(1).Type == TokenType.Jumpline)
+                    if (Regex.IsMatch(la.Value, @"^(Spawn|Color|Size|DrawLine|DrawCircle|DrawRectangle|Fill)(?=[^(\s])"))
+                    {
+                        _errors.Add(new CompilingError(la.Location, ErrorCode.Expected, "'(' expected after instruction name"));
+                        _stream.MoveNext();
+                        continue;
+                    }
+                /* if (_stream.CanLookAhead(1) && _stream.LookAhead(1).Type == TokenType.Jumpline)
                 {
                     var lblTok = _stream.Advance();
                     if (!Regex.IsMatch(lblTok.Value, @"^[A-Za-z][A-Za-z0-9_]*$")) // variable‐style check para valid label syntax
@@ -66,35 +72,45 @@ public class Parser
                     if (!_stream.CanLookAhead() || _stream.LookAhead().Type != TokenType.Jumpline)
                     {
                         _errors.Add(new CompilingError(lblTok.Location, ErrorCode.Expected,"Expected a newline after label declaration."));
-                    }
-                    node = new LabelExpression(lblTok.Value, lblTok.Location);
+                    } */
+                    //node = new LabelExpression(lblTok.Value, lblTok.Location);
+                    node = ParseLabel();
                     statements.Add(node); //y
                     ExpectNewLine();
                     continue;
-                }
-                break;
+                /* }
+                break; */
 
                 case TokenType.Instruction:
-                    if (la.Value == TokenValues.GoTo)
-                    node = ParseGoTo();
-                    else
+                    //if (la.Value == TokenValues.GoTo)
+                    //node = ParseGoTo();
+                    //else
                         node = ParseInstruction();
+                        statements.Add(node);
+                        ExpectNewLine();
+                        continue;
 
+                case TokenType.GoTo:
+                    node = ParseGoTo();
                     statements.Add(node);
                     ExpectNewLine();
                     continue;
 
                 case TokenType.Variable:
+
+                    if (la.Value.StartsWith("-") && Regex.IsMatch(la.Value.Substring(1), @"^[A-Za-z][A-Za-z0-9_]*$"))
+                    {
+                        _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid,
+                        $"Invalid variable name '{la.Value}'"));
+                        Synchronize();
+                        continue;
+                    }
+
                     // Instrucción malformada como DrawLine1,0)
                     if (Regex.IsMatch(la.Value, @"^(Spawn|Color|Size|DrawLine|DrawCircle|DrawRectangle|Fill)(?=[^(\s])"))
                     {
                         _errors.Add(new CompilingError(la.Location, ErrorCode.Expected,"'(' expected after instruction name"));
-                        
-                        while (_stream.CanLookAhead() && _stream.LookAhead().Type != TokenType.Jumpline)
-                            _stream.MoveNext();
-
-                        if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
-                            _stream.MoveNext();
+                        _stream.MoveNext();
                         continue;
                     }
 
@@ -105,15 +121,19 @@ public class Parser
                         ExpectNewLine();
                         continue;
                     }
-
-                    break;
-
+                    _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Unexpected variable usage: {la.Value}"));
+                    _stream.MoveNext();
+                    continue;
                 default:
+                    _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Token inesperado: {la.Value}"));
+                    Synchronize();
+                    //_stream.MoveNext();
                     break;
             }
 
             //_errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Token inesperado: {la.Value}"));
-            _stream.MoveNext();
+            //_stream.MoveNext();
+           // Synchronize();
         }
 
         program.Statements.AddRange(statements);
@@ -124,6 +144,13 @@ public class Parser
     private void ExpectNewLine()
     {
         while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
+            _stream.MoveNext();
+    }
+    private void Synchronize()
+    {
+        while (_stream.CanLookAhead() && _stream.LookAhead().Type != TokenType.Jumpline)
+            _stream.MoveNext();
+        if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
             _stream.MoveNext();
     }
 

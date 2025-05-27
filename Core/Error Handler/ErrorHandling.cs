@@ -25,4 +25,5 @@ public class CompilingError
         DuplicateSpawn,
         MissingJumpline,
         Unknown,
+        UnrecognizedToken
     }

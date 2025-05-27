@@ -38,6 +38,7 @@ public class TokenStream : IEnumerable<Token>
         }
         return false;
     }
+    
     public Token Advance()
     {
         var tok = tokens[position];

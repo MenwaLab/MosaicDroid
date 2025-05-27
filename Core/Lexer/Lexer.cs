@@ -119,6 +119,7 @@ public class LexicalAnalyzer
             tokens.Add(new Token(type, val, stream.Location));
             return true;
         }
+        
         return false;
     }
 

@@ -51,6 +51,7 @@ public class Compiling
         analyzer.RegisterKeyword("IsBrushSize", TokenValues.IsBrushSize);
         analyzer.RegisterKeyword("IsCanvasColor", TokenValues.IsCanvasColor);
 
+
         analyzer.RegisterText("\"", "\""); // Strings/Colors
 
         return analyzer;
