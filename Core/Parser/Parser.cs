@@ -39,9 +39,10 @@ public class Parser
             
             return program;
         }
-
-        statements.Add(ParseInstruction());
-        ExpectNewLine();
+        var firstStmt = ParseInstruction();
+        statements.Add(firstStmt);
+        //ExpectNewLine();
+        EnsureNewlineAfter(firstStmt);
 
         while (_stream.CanLookAhead())
         {
@@ -76,7 +77,8 @@ public class Parser
                     //node = new LabelExpression(lblTok.Value, lblTok.Location);
                     node = ParseLabel();
                     statements.Add(node); //y
-                    ExpectNewLine();
+                    //ExpectNewLine();
+                    EnsureNewlineAfter(node);
                     continue;
                 /* }
                 break; */
@@ -87,13 +89,15 @@ public class Parser
                     //else
                         node = ParseInstruction();
                         statements.Add(node);
-                        ExpectNewLine();
+                        //ExpectNewLine();
+                        EnsureNewlineAfter(node);
                         continue;
 
                 case TokenType.GoTo:
                     node = ParseGoTo();
                     statements.Add(node);
-                    ExpectNewLine();
+                    //ExpectNewLine();
+                    EnsureNewlineAfter(node);
                     continue;
 
                 case TokenType.Variable:
@@ -118,7 +122,8 @@ public class Parser
                     {
                         node = ParseAssignment();
                         statements.Add(node);
-                        ExpectNewLine();
+                        //ExpectNewLine();
+                        EnsureNewlineAfter(node);
                         continue;
                     }
                     _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Unexpected variable usage: {la.Value}"));
@@ -145,6 +150,21 @@ public class Parser
     {
         while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
             _stream.MoveNext();
+    }
+    private void EnsureNewlineAfter(ASTNode stmt) 
+    //Immediately after consuming a statement, require at least one  (or end‐of‐file). 
+    // If missing, emit a MissingJumpline error, then swallow any jumplines.
+    {
+        if (!(_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline))
+        {
+            _errors.Add(new CompilingError(
+                stmt.Location,
+                ErrorCode.Expected,      // or define a new ErrorCode.MissingJumpline
+                "Missing newline after statement"
+            ));
+        }
+        // swallow all actual newlines to stay in sync
+        ExpectNewLine();
     }
     private void Synchronize()
     {
@@ -208,10 +228,10 @@ public class Parser
         var tok = _stream.Advance();
         var label = new LabelExpression(tok.Value, tok.Location);
 
-        if (_stream.CanLookAhead() && _stream.LookAhead().Type != TokenType.Jumpline)
+        /* if (_stream.CanLookAhead() && _stream.LookAhead().Type != TokenType.Jumpline)
         {
         _errors.Add(new CompilingError(tok.Location, ErrorCode.Expected, "Expected newline after label declaration"));
-        }
+        } */
     
         return label;
     }
