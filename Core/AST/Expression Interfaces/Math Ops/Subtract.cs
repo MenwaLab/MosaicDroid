@@ -1,5 +1,7 @@
 public class Sub : BinaryExpression
 {
+    public override string DebugPrint()
+    => null;
     public override ExpressionType Type {get; set;}
     public override object? Value {get; set;}
 

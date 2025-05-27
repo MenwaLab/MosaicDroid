@@ -1,5 +1,9 @@
 public class LogicalLessExpression : BinaryExpression
 {
+    public override string DebugPrint() {
+  return $"(< {Left.DebugPrint()} {Right.DebugPrint()})";
+}
+
      public LogicalLessExpression(Expression left, Expression right, CodeLocation loc)
             : base(loc)
         {

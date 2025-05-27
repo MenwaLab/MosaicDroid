@@ -16,4 +16,6 @@ public class GetActualYExpression : FunctionCallExpression
     }
 
     public override string ToString() => $"{Name}()";
+    public override string DebugPrint()
+    => null;
 }

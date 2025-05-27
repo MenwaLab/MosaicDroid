@@ -251,19 +251,19 @@ public class Parser
         return new GotoCommand(lbl, cond, tok.Location);
     }
 
-    private Expression ParseExpression() => ParseLogicalOr();
-
+    public Expression ParseExpression() => ParseLogicalOr();
+//change back to priv
     private Expression ParseLogicalOr()
     {
         var left = ParseLogicalAnd();
         while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Bool_OP && _stream.LookAhead().Value == TokenValues.Or)
         {
-            _stream.MoveNext();
+            //_stream.MoveNext();
             _stream.Advance();
             
-            var right = ParseLogicalAnd();
-            var node = new LogicalOrExpression(left, right, left.Location);
-            left = node;
+            var right =  ParseLogicalAnd();
+             left= new LogicalOrExpression(left, right, left.Location); //var node=
+            //left = node;
         }
         return left;
     }
@@ -273,7 +273,8 @@ public class Parser
         var left = ParseEquality();
         while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Bool_OP && _stream.LookAhead().Value == TokenValues.And)
         {
-            _stream.MoveNext();
+            _stream.Advance();//wasnt here
+            //_stream.MoveNext();
             var right = ParseEquality();
             left = new LogicalAndExpression(left, right, left.Location);
         }
@@ -285,7 +286,7 @@ public class Parser
         var left = ParseRelational();
         while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Bool_OP && _stream.LookAhead().Value == TokenValues.Equal)
         {
-            _stream.MoveNext();
+            _stream.Advance();
             var right = ParseRelational();
             left = new LogicalEqualExpression(left, right, left.Location);
         }
@@ -300,7 +301,7 @@ public class Parser
             var op = _stream.LookAhead().Value;
             if (op == TokenValues.Less || op == TokenValues.Greater || op == TokenValues.LessEqual || op == TokenValues.GreaterEqual)
             {
-                _stream.MoveNext();
+                _stream.Advance();
                 var right = ParseAdditive();
                 switch (op)
                 {
@@ -323,29 +324,41 @@ public class Parser
         {
             var op = _stream.Advance().Value;
             var right = ParseTerm();
-            var sum = new Add(left.Location);
-            sum.Left  = left;
-            sum.Right = right;
-            left = sum;
+            
+            if (op == TokenValues.Add)
+            {
+                var sum = new Add(left.Location);
+                sum.Left  = left;
+                sum.Right = right;
+                left = sum;
+            }
+            else
+            {
+                var sub = new Sub(left.Location);
+                sub.Left = left;
+                sub.Right = right;
+                left = sub;
+            }
         }
         return left;
     }
 
     private Expression ParseTerm()
     {
-        var left = ParseFactor();
-        while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Operator && ( _stream.LookAhead().Value == TokenValues.Mul 
-        || _stream.LookAhead().Value == TokenValues.Div || _stream.LookAhead().Value == TokenValues.Mod 
-        || _stream.LookAhead().Value == TokenValues.Pow ))
+        var left = ParsePower();
+        while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Operator && 
+        ( _stream.LookAhead().Value == TokenValues.Mul 
+        || _stream.LookAhead().Value == TokenValues.Div || _stream.LookAhead().Value == TokenValues.Mod))
+        // || _stream.LookAhead().Value == TokenValues.Pow ))
         {
             var op = _stream.Advance().Value;
-            var right = ParseFactor();
+            var right = ParsePower();
             switch (op)
             {
                 case TokenValues.Mul:  var m = new Mul(left.Location); m.Left = left; m.Right = right; left = m; break;
                 case TokenValues.Div:  var d = new Div(left.Location); d.Left = left; d.Right = right; left = d; break;
                 case TokenValues.Mod:  var mod = new ModulusExpression(left.Location); mod.Left = left; mod.Right = right; left = mod; break;
-                case TokenValues.Pow: var p = new PowerExpression(left.Location); p.Left = left; p.Right = right; left = p; break;
+                //case TokenValues.Pow: var p = new PowerExpression(left.Location); p.Left = left; p.Right = right; left = p; break;
             }
         }
         return left;
@@ -353,6 +366,7 @@ public class Parser
 
     private Expression ParseFactor()
     {
+        //var left = ParsePower();
              // Signo menos seguido de un #: # negativo
         if (_stream.CanLookAhead() 
             && _stream.LookAhead().Type == TokenType.Operator 
@@ -406,7 +420,70 @@ public class Parser
         _stream.MoveNext();
         return new NoOpExpression(_stream.LookAhead().Location);
     }
+private Expression ParsePrimary()
+{
+    // Handle integer literals
+    if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Integer)
+    {
+        var tok = _stream.Advance();
+        return new Number(double.Parse(tok.Value), tok.Location);
+    }
 
+    // Handle string literals
+    if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.String)
+    {
+        var tok = _stream.Advance();
+        return new StringExpression(tok.Value, tok.Location);
+    }
+
+    // Handle color literals
+    if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Color)
+    {
+        var tok = _stream.Advance();
+        return new ColorLiteralExpression(tok.Value, tok.Location);
+    }
+
+    // Handle function calls
+    if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Function)
+    {
+        return ParseFunctionCall();
+    }
+
+    // Handle variables
+    if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Variable)
+    {
+        var tok = _stream.Advance();
+        return new VariableExpression(tok.Value, tok.Location);
+    }
+
+    // Handle parenthesized expressions
+    if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Delimeter && _stream.LookAhead().Value == TokenValues.OpenParenthesis)
+    {
+        _stream.MoveNext();
+        var expr = ParseExpression();
+        EatDelimiter(TokenValues.ClosedParenthesis);
+        return expr;
+    }
+
+    // Error handling for unexpected tokens
+    _errors.Add(new CompilingError(_stream.LookAhead().Location, ErrorCode.Expected, $"Unexpected token {_stream.LookAhead().Value} in primary expression"));
+    _stream.MoveNext();
+    return new NoOpExpression(_stream.LookAhead().Location);
+}
+private Expression ParsePower()
+{
+    var left = ParseFactor();
+    if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Operator && _stream.LookAhead().Value == TokenValues.Pow)
+    {
+        _stream.Advance();
+        var right = ParsePower();
+        var p = new PowerExpression(left.Location);
+        p.Left = left;
+        p.Right = right;
+        left = p;
+    }
+    return left;
+}
     private Expression ParseFunctionCall()
     {
         var fnTok = _stream.Advance();

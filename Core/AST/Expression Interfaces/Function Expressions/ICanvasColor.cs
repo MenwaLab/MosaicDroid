@@ -1,5 +1,7 @@
 public class IsCanvasColorExpression : FunctionCallExpression
 {
+    public override string DebugPrint()
+    => null;
     public IsCanvasColorExpression(IReadOnlyList<Expression> args, CodeLocation loc)
         : base(TokenValues.IsCanvasColor, args, loc)
     {

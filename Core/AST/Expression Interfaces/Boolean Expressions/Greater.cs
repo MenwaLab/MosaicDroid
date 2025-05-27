@@ -58,4 +58,6 @@ public class LogicalGreaterExpression : BinaryExpression
             Value == null
             ? $"({Left} > {Right})"
             : Value.ToString()!;
+public override string DebugPrint()
+    => $"(+ {Left.DebugPrint()} {Right.DebugPrint()})";
     }

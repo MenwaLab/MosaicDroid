@@ -36,4 +36,6 @@ public class Mul : BinaryExpression
         }
         return Value.ToString();
     }
+    public override string DebugPrint()
+    => $"(* {Left.DebugPrint()} {Right.DebugPrint()})";
 }

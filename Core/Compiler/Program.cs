@@ -2,6 +2,21 @@
 {
     static void Main()
     {
+        var code1 = "1 + 2 * 3 ** 4 && 5 == 6 || 7 < 8";
+       
+        var errors1 = new List<CompilingError>();
+        var lexer1 = Compiling.Lexical;
+       IEnumerable<Token> tokens1 = lexer1.GetTokens(code1, errors1);
+        //var tokens1 = lexer1.GetTokens(code1, errors1);
+        var parser1 = new Parser(new TokenStream(tokens1), errors1);
+        var expr    = new Parser(new TokenStream(tokens1), errors1).ParseExpression();
+        Console.WriteLine(expr.DebugPrint());
+    }
+}
+/* class Program
+{
+    static void Main()
+    {
         string code = 
 @" Spawn(0,0) Fill()
 Color(""Black"")
@@ -30,9 +45,12 @@ GoTo [loop1] (i < 10)
 GoTo [loop1] (1 == 1)
 loop_ends_here
 ";
+
+
+--
         var errors = new List<CompilingError>();
-        var lexer = Compiling.Lexical;
-        IEnumerable<Token> tokens = lexer.GetTokens(code, errors);
+      --  var lexer = Compiling.Lexical;
+       -- IEnumerable<Token> tokens = lexer.GetTokens(code, errors);
 
         Console.WriteLine("Tokens:");
         foreach (var token in tokens)
@@ -78,3 +96,4 @@ loop_ends_here
         }
     }
 }
+ */

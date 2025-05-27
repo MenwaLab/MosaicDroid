@@ -1,5 +1,7 @@
 public class IsBrushSizeExpression : FunctionCallExpression
 {
+    public override string DebugPrint()
+    => null;
     public IsBrushSizeExpression(IReadOnlyList<Expression> args, CodeLocation loc)
         : base(TokenValues.IsBrushSize, args, loc)
     {

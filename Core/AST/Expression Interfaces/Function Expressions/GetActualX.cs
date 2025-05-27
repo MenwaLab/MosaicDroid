@@ -1,5 +1,7 @@
 public class GetActualXExpression : FunctionCallExpression
 {
+    public override string DebugPrint()
+    => null;
     public GetActualXExpression(IReadOnlyList<Expression> args, CodeLocation loc)
       : base(TokenValues.GetActualX, args, loc)
     {

@@ -1,6 +1,7 @@
 public class ColorLiteralExpression : AtomExpression
 {
-    
+    public override string DebugPrint()
+    => null;
     
     private ExpressionType _type;
     public override ExpressionType Type

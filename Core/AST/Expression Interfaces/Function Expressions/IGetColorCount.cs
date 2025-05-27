@@ -1,5 +1,7 @@
 public class GetColorCountExpression : FunctionCallExpression
 {
+    public override string DebugPrint()
+    => null;
     public GetColorCountExpression(IReadOnlyList<Expression> args, CodeLocation loc)
         : base(TokenValues.GetColorCount, args, loc)
     {

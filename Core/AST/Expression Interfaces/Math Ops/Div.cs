@@ -36,4 +36,6 @@ public class Div : BinaryExpression
         }
         return Value.ToString();
     }
+    public override string DebugPrint()
+    => null;
 }

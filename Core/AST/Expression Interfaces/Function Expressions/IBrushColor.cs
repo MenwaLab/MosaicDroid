@@ -1,5 +1,7 @@
 public class IsBrushColorExpression : FunctionCallExpression
 {
+    public override string DebugPrint()
+    => null;
     public IsBrushColorExpression(IReadOnlyList<Expression> args, CodeLocation loc)
         : base(TokenValues.IsBrushColor, args, loc)
     {

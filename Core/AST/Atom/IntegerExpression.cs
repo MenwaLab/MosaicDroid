@@ -39,4 +39,5 @@ public class Number : AtomExpression
     {
         return String.Format("{0}",Value);
     }
+    public override string DebugPrint() => Value.ToString();
 }

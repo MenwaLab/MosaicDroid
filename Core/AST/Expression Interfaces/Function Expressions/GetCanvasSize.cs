@@ -1,5 +1,7 @@
 public class GetCanvasSize : FunctionCallExpression
 {
+    public override string DebugPrint()
+    => null;
     public GetCanvasSize(IReadOnlyList<Expression> args, CodeLocation loc)
       : base(TokenValues.GetCanvasSize, args, loc)
     {

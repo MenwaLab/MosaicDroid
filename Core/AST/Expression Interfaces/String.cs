@@ -1,5 +1,7 @@
 public class StringExpression : AtomExpression
 {
+    public override string DebugPrint()
+    => null;
     public override ExpressionType Type
     {
         get => ExpressionType.Text;
