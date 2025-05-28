@@ -10,5 +10,10 @@ public class FillCommand : CallNode
         {
             return base.CheckSemantic(ctx, scope, errors);
         } 
+
+        public override void Accept(IStmtVisitor visitor)
+    {
+        visitor.VisitFill(this);
+    }
         public override string ToString() => $"Fill() at {Location.Line}:{Location.Column}";
     }

@@ -53,6 +53,9 @@ public class LogicalGreaterEqualExpression : BinaryExpression
             Value == null
             ? $"({Left} >= {Right})"
             : Value.ToString()!;
-            public override string DebugPrint()
-    => null;
+            
+        public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+        {
+            return visitor.VisitGreaterEqual(this);
+        }  
     }

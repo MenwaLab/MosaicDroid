@@ -1,7 +1,5 @@
 public class IsBrushColorExpression : FunctionCallExpression
 {
-    public override string DebugPrint()
-    => null;
     public IsBrushColorExpression(IReadOnlyList<Expression> args, CodeLocation loc)
         : base(TokenValues.IsBrushColor, args, loc)
     {
@@ -21,5 +19,9 @@ public class IsBrushColorExpression : FunctionCallExpression
         return ColorValidationHelper.ValidateColorArgument(Args, 0, Args[0].Location, errors);
     }
 
+        public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+    {
+        return visitor.VisitBrushColor(this);
+    }
     public override string ToString() => $"{TokenValues.IsBrushColor}({Args[0]})";
 }

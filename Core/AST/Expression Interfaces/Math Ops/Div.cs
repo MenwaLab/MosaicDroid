@@ -36,6 +36,8 @@ public class Div : BinaryExpression
         }
         return Value.ToString();
     }
-    public override string DebugPrint()
-    => null;
+    public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+    {
+        return visitor.VisitDiv(this);
+    }
 }

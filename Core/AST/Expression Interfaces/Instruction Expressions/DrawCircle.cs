@@ -22,6 +22,11 @@ public class DrawCircleCommand : CallNode
         return ok;
         }
 
+        public override void Accept(IStmtVisitor visitor)
+    {
+        visitor.VisitDrawCircle(this);
+    }
+
         public override string ToString() =>
         $"DrawCircle({Args[0]}, {Args[1]}, {Args[2]}) at {Location.Line}:{Location.Column}";
     }

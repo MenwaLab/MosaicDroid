@@ -76,6 +76,14 @@ loop_ends_here
         {
             Console.WriteLine("\nParsed & semantically valid AST:");
             Console.WriteLine(program);
+
+             var canvSize = 20;
+        var interpreter = new MatrixInterpreterVisitor(canvSize);
+
+       interpreter.VisitProgram(program);
+
+        // 4) finally print out the matrix
+        interpreter.PrintCanvas();
         }
     }
 }

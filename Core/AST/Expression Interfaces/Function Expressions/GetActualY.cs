@@ -16,6 +16,8 @@ public class GetActualYExpression : FunctionCallExpression
     }
 
     public override string ToString() => $"{Name}()";
-    public override string DebugPrint()
-    => null;
+        public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+    {
+        return visitor.VisitActualY(this);
+    }
 }

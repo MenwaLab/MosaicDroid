@@ -1,7 +1,5 @@
 public class GetActualXExpression : FunctionCallExpression
 {
-    public override string DebugPrint()
-    => null;
     public GetActualXExpression(IReadOnlyList<Expression> args, CodeLocation loc)
       : base(TokenValues.GetActualX, args, loc)
     {
@@ -15,6 +13,11 @@ public class GetActualXExpression : FunctionCallExpression
     {
         // Stub implementation
         Value = 0;  // Will be replaced with actual evaluation later
+    }
+
+        public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+    {
+        return visitor.VisitActualX(this);
     }
 
     public override string ToString() => $"{Name}()";

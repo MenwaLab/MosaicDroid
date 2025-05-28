@@ -29,6 +29,10 @@ public class DrawLineCommand : CallNode
         return ok;
         }
 
+public override void Accept(IStmtVisitor visitor)
+    {
+        visitor.VisitDrawLine(this);
+    }
     public override string ToString() =>
         $"DrawLine({Args[0]}, {Args[1]}, {Args[2]}) at {Location.Line}:{Location.Column}";
 }

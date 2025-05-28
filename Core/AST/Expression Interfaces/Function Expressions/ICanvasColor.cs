@@ -1,7 +1,5 @@
 public class IsCanvasColorExpression : FunctionCallExpression
 {
-    public override string DebugPrint()
-    => null;
     public IsCanvasColorExpression(IReadOnlyList<Expression> args, CodeLocation loc)
         : base(TokenValues.IsCanvasColor, args, loc)
     {
@@ -19,6 +17,10 @@ public class IsCanvasColorExpression : FunctionCallExpression
         if (!ok) return false;
 
         return ColorValidationHelper.ValidateColorArgument(Args, 0, Args[0].Location, errors);
+    }
+            public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+    {
+        return visitor.VisitCanvasColor(this);
     }
     public override string ToString() =>
         $"{TokenValues.IsCanvasColor}({string.Join(", ", Args)})";

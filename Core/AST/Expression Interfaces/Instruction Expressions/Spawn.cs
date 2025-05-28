@@ -25,4 +25,10 @@ public class SpawnCommand : CallNode
 
     public override string ToString() =>
         $"Spawn({Args[0]}, {Args[1]}) at {Location.Line}:{Location.Column}";
+
+    public override void Accept(IStmtVisitor visitor)
+    {
+        visitor.VisitSpawn(this);
+    }
+    
 }

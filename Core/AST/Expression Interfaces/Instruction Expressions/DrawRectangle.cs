@@ -25,6 +25,10 @@ public class DrawRectangleCommand : CallNode
         return ok;
     }
 
+public override void Accept(IStmtVisitor visitor)
+    {
+        visitor.VisitDrawRectangle(this);
+    }
     public override string ToString() =>
         $"DrawRectangle({Args[0]}, {Args[1]}, {Args[2]}, {Args[3]}, {Args[4]}) at {Location.Line}:{Location.Column}";
 }

@@ -1,8 +1,6 @@
 public class LogicalLessExpression : BinaryExpression
 {
-    public override string DebugPrint() {
-  return $"(< {Left.DebugPrint()} {Right.DebugPrint()})";
-}
+    
 
      public LogicalLessExpression(Expression left, Expression right, CodeLocation loc)
             : base(loc)
@@ -59,4 +57,9 @@ else // both must be text
             Value == null
             ? $"({Left} < {Right})"
             : Value.ToString()!;
+
+        public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+        {
+            return visitor.VisitLess(this);
+        }  
     }

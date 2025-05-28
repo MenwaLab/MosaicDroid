@@ -1,7 +1,6 @@
 public class GetCanvasSize : FunctionCallExpression
 {
-    public override string DebugPrint()
-    => null;
+
     public GetCanvasSize(IReadOnlyList<Expression> args, CodeLocation loc)
       : base(TokenValues.GetCanvasSize, args, loc)
     {
@@ -17,5 +16,9 @@ public class GetCanvasSize : FunctionCallExpression
         Value = 0;  // Will be replaced with actual evaluation later
     }
 
+        public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+    {
+        return visitor.VisitCanvasSize(this);
+    }
     public override string ToString() => $"{Name}()";
 }

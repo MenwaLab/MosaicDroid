@@ -1,6 +1,4 @@
 // Non-abstract base for commands
-
-
 // Function expressions remain abstract
 public abstract class FunctionCallExpression : Expression
 {

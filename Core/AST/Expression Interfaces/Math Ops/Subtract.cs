@@ -1,7 +1,5 @@
 public class Sub : BinaryExpression
 {
-    public override string DebugPrint()
-    => null;
     public override ExpressionType Type {get; set;}
     public override object? Value {get; set;}
 
@@ -37,5 +35,9 @@ public class Sub : BinaryExpression
             return String.Format("({0} - {1})", Left, Right);
         }
         return Value.ToString();
+    }
+    public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+    {
+        return visitor.VisitSub(this);
     }
 }

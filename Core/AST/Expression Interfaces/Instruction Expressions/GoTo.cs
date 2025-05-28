@@ -41,6 +41,10 @@ public class GotoCommand : ASTNode
             return okCond;
         }
 
+public override void  Accept(IStmtVisitor)
+{
+    visitor.VisitGoto(this);
+}
         public override string ToString() =>
             $"GoTo [{Label}] ({Condition}) at {Location.Line}:{Location.Column}";
     }

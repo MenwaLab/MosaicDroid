@@ -1,7 +1,5 @@
 public class GetColorCountExpression : FunctionCallExpression
 {
-    public override string DebugPrint()
-    => null;
     public GetColorCountExpression(IReadOnlyList<Expression> args, CodeLocation loc)
         : base(TokenValues.GetColorCount, args, loc)
     {
@@ -19,6 +17,11 @@ public class GetColorCountExpression : FunctionCallExpression
         if (!ok) return false;
 
         return ColorValidationHelper.ValidateColorArgument(Args, 0, Args[0].Location, errors);
+    }
+
+            public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+    {
+        return visitor.VisitColorCount(this);
     }
 
     public override string ToString() =>

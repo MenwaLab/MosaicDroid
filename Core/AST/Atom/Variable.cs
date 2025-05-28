@@ -30,8 +30,11 @@ public class VariableExpression : AtomExpression
         Value = 0; // Later during execution you will get the real value.
     }
 
+ public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+    {
+        return visitor.VisitVariable(this);
+    }
     public override string ToString() => Name;
-    public override string DebugPrint()
-    => null;
+    
 }
 

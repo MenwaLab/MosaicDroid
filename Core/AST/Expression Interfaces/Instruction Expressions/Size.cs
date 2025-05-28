@@ -26,7 +26,10 @@ public class SizeCommand : CallNode
         }
 
         
-    
+    public override void Accept(IStmtVisitor visitor)
+    {
+        visitor.VisitSize(this);
+    }
 
     public override string ToString() =>
         $"Size({Args[0]}) at {Location.Line}:{Location.Column}";

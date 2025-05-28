@@ -56,7 +56,10 @@ public override bool CheckSemantic(Context ctx, Scope scope, List<CompilingError
         return true; */
     }
 
-
+public override void Accept(IStmtVisitor visitor)
+    {
+        visitor.VisitColor(this);
+    }
 
     public override string ToString() =>
         $"Color({Args[0]}) at {Location.Line}:{Location.Column}";

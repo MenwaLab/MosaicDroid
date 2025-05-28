@@ -1,7 +1,6 @@
 public class StringExpression : AtomExpression
 {
-    public override string DebugPrint()
-    => null;
+
     public override ExpressionType Type
     {
         get => ExpressionType.Text;
@@ -26,6 +25,10 @@ public class StringExpression : AtomExpression
 
     public override void Evaluate()
     {
+    }
+    public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+    {
+        return visitor.VisitString(this);
     }
 
     public override string ToString() => $"\"{Value}\"";

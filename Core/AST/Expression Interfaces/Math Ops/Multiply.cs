@@ -36,6 +36,8 @@ public class Mul : BinaryExpression
         }
         return Value.ToString();
     }
-    public override string DebugPrint()
-    => $"(* {Left.DebugPrint()} {Right.DebugPrint()})";
+   public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+    {
+        return visitor.VisitMult(this);
+    }
 }

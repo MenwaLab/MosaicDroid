@@ -1,7 +1,6 @@
 public class NoOpExpression : Expression
 {
-    public override string DebugPrint()
-    => null;
+
     public NoOpExpression(CodeLocation location) : base(location) { }
 
     public override ExpressionType Type { get; set; } = ExpressionType.ErrorType;

@@ -1,5 +1,9 @@
 public class Number : AtomExpression
 {
+    public Number(double value, CodeLocation location) : base(location)
+    {
+        Value = value;
+    }
     public bool IsInt
     {
         get
@@ -9,21 +13,11 @@ public class Number : AtomExpression
         }
     }
 
-    public override ExpressionType Type
-    {
-        get
-        {
-            return ExpressionType.Number;
-        }
-        set { }
-    }
+    public override ExpressionType Type { get; set; } = ExpressionType.Number;
 
     public override object? Value { get; set; }
     
-    public Number(double value, CodeLocation location) : base(location)
-    {
-        Value = value;
-    }
+    
     
     public override bool CheckSemantic(Context context, Scope table, List<CompilingError> errors)
     {
@@ -39,5 +33,9 @@ public class Number : AtomExpression
     {
         return String.Format("{0}",Value);
     }
-    public override string DebugPrint() => Value.ToString();
+    public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+    {
+        return visitor.VisitNumber(this);
+    }
+    
 }

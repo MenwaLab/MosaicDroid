@@ -44,6 +44,9 @@ bool isBoolNumComparison =
 
     public override string ToString() =>
         Value == null ? $"({Left} == {Right})" : Value.ToString()!;
-public override string DebugPrint()
-    => $"(== {Left.DebugPrint()} {Right.DebugPrint()})";
+
+    public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+    {
+        return visitor.VisitEqual(this);
+    }
 }

@@ -36,6 +36,8 @@ public class PowerExpression : BinaryExpression
             return $"({Left} ** {Right})";
         return Value.ToString()!;
     }
-    public override string DebugPrint()
-    => $"(** {Left.DebugPrint()} {Right.DebugPrint()})";
+    public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+    {
+        return visitor.VisitPow(this);
+    }
 }

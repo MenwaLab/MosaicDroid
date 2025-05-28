@@ -63,9 +63,15 @@ public abstract class CallNode : ASTNode
 
         return ok;
     }
+    public abstract void Accept(IStmtVisitor visitor);
 }
 public class CommandNode : CallNode
 {
     public CommandNode(string name, IReadOnlyList<Expression> args, CodeLocation loc)
       : base(name, args, loc) { }
+
+    public override void Accept(IStmtVisitor visitor)
+    {
+        // no-op
+    }
 }
