@@ -225,7 +225,7 @@ public class Parser
         }
     }
 
-    private LabelExpression ParseLabel() //no ref?
+    /* private LabelExpression ParseLabel() //no ref?
     {
         var tok = _stream.Advance();
         var label = new LabelExpression(tok.Value, tok.Location);
@@ -233,10 +233,10 @@ public class Parser
         /* if (_stream.CanLookAhead() && _stream.LookAhead().Type != TokenType.Jumpline)
         {
         _errors.Add(new CompilingError(tok.Location, ErrorCode.Expected, "Expected newline after label declaration"));
-        } */
+        } 
     
         return label;
-    }
+    } */
 
     private ASTNode ParseAssignment()
     {

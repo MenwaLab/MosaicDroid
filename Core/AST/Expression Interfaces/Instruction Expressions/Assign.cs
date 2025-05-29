@@ -1,5 +1,3 @@
-// ASTNodes/AssignExpression.cs
-
 public class AssignExpression : StatementNode
 {
     public string VariableName { get; }

@@ -10,7 +10,7 @@ public class ExpressionEvaluatorVisitor : IExprVisitor<double>
         _canvasContext = canvasContext;
     }
 
-    public double VisitNumber(Number num) => (int) num.Value!;
+    public double VisitNumber(Number num) => (double) num.Value!;
 
     public double VisitVariable(VariableExpression v)
     {
@@ -70,9 +70,17 @@ public class ExpressionEvaluatorVisitor : IExprVisitor<double>
                (int)fn.Y2.Accept(this)
            );
     public double VisitBrushColor(IsBrushColorExpression fn)
-        => _canvasContext.BrushChar == char.ToLower(fn.Color[0]) ? 1 : 0;
+{
+    string colorArg = fn.Color;
+    string wantedBrushCode = _canvasContext.GetBrushCodeForColor(colorArg);
+    return _canvasContext.BrushCode == wantedBrushCode ? 1 : 0;
+}
     public double VisitBrushSize(IsBrushSizeExpression fn)
-        => _canvasContext.BrushSize == fn.Size ? 1 : 0;
+{
+    double size = fn.Args[0].Accept(this); // let evaluator handle ANY expression
+    return _canvasContext.BrushSize == (int)size ? 1.0 : 0.0;
+}
+
     public double VisitCanvasColor(IsCanvasColorExpression fn)
     => _canvasContext.CanvasColor(
            fn.Color,

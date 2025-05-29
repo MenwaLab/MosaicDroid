@@ -1,37 +1,23 @@
 ﻿class Program
 {
-    static void Main()
+    static void Main(string[] args)
     {
-        string code = 
-@" Spawn(0,0) 
-Color(""Black"")
-DrawLine(1,0,9)
-DrawCircle(1,0,9) 
-Size(1)
-DrawRectangle(1,0, 2,3,8)
-Fill()
-actual_x <- GetActualX() 
-actual_y <- GetActualY()
-n <- 5 % 2 
-k <- 3 - 3 / 10
-n <- k * 2 ** 3
-canvas_size <- GetCanvasSize()
-color <- GetColorCount(""Blue"",3,7,6,8)
-actual_z <- IsBrushSize(1)
+        string filePath = "Code.pw";
 
-actual_m <- IsCanvasColor(""Transparent"",1,9)
-i <- 0
+        Console.WriteLine($"Current directory: {Directory.GetCurrentDirectory()}");
+Console.WriteLine($"Looking for file: {Path.Combine(Directory.GetCurrentDirectory(), filePath)}");
 
-loop1 
-i <- i + 1
-is_brush_color_blue <- IsBrushColor(""Blue"")
-GoTo [loop_ends_here] (is_brush_color_blue == 1)
-GoTo [loop1] (i < 10) 
-GoTo [loop1] (1 == 1)
-loop_ends_here
-";
+        if (args.Length > 0) filePath = args[0];
+        
+        if (!File.Exists(filePath))
+        {
+            Console.WriteLine($"Error: File not found - {filePath}");
+            return;
+        }
+        string code = File.ReadAllText(filePath);
 
         var errors = new List<CompilingError>();
+
         var lexer = Compiling.Lexical;
         IEnumerable<Token> tokens = lexer.GetTokens(code, errors);
 
@@ -41,8 +27,10 @@ loop_ends_here
             Console.WriteLine($" {token.Type}: [{token.Value}] at {token.Location.Line}:{token.Location.Column}");
         }
 
+        // PARSER
+
         var stream = new TokenStream(tokens);
-        var ctx = new Context();
+
 
         var parserErrors = new List<CompilingError>();
         var parser = new Parser(stream, parserErrors);
@@ -52,12 +40,14 @@ loop_ends_here
 foreach (var kv in program.LabelIndices)
     Console.WriteLine($"  {kv.Key}  at  {kv.Value.Line}:{kv.Value.Column}");
 
+// SEMANTIC ANALYSIS
+ var ctx = new Context();
         Scope globalScope = new Scope();
 
         var semanticErrors = new List<CompilingError>();
         program.CheckSemantic(ctx, globalScope, semanticErrors);
      
-        // After printing tokens
+        // ERROR REPORTING
         if (errors.Count > 0)
         {
             Console.WriteLine("\nLexer errors:");
@@ -82,13 +72,19 @@ foreach (var kv in program.LabelIndices)
             Console.WriteLine("\nParsed & semantically valid AST:");
             Console.WriteLine(program);
 
-             var canvSize = 20;
+             var canvSize = 40;
         var interpreter = new MatrixInterpreterVisitor(canvSize);
 
-       //interpreter.VisitProgram(program);
+       try
+{
+    interpreter.VisitProgram(program);
+    interpreter.PrintCanvas();
+}
+catch (PixelArtRuntimeException e)
+{
+    Console.WriteLine(e.Message);
+}
 
-        // 4) finally print out the matrix
-        interpreter.PrintCanvas();
         }
     }
 }
