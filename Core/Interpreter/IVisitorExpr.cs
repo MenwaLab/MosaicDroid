@@ -30,4 +30,6 @@ public interface IExprVisitor<TResult>
     TResult VisitBrushColor(IsBrushColorExpression fn);
     TResult VisitBrushSize(IsBrushSizeExpression fn);
     TResult VisitCanvasColor(IsCanvasColorExpression fn);
+
+    TResult VisitNoOp(NoOpExpression fn);
 }

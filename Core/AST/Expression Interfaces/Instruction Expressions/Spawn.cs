@@ -1,6 +1,5 @@
 public class SpawnCommand : CallNode
 {
-    // now takes *all* args
     public SpawnCommand(IReadOnlyList<Expression> args, CodeLocation loc)
       : base(TokenValues.Spawn, args, loc)
     {

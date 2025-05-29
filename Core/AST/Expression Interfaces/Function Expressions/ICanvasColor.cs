@@ -18,6 +18,10 @@ public class IsCanvasColorExpression : FunctionCallExpression
 
         return ColorValidationHelper.ValidateColorArgument(Args, 0, Args[0].Location, errors);
     }
+
+    public string Color     => ((ColorLiteralExpression)Args[0]).Value!.ToString()!;
+    public Expression OffsetX => Args[1];
+    public Expression OffsetY => Args[2];
             public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
     {
         return visitor.VisitCanvasColor(this);

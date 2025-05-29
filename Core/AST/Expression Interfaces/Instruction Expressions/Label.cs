@@ -1,4 +1,4 @@
-public class LabelExpression : ASTNode
+public class LabelExpression : StatementNode
     {
         public string Name { get; }
 
@@ -23,6 +23,8 @@ public class LabelExpression : ASTNode
            !label.Contains(" ");
 }
 
+public override void Accept(IStmtVisitor visitor)
+      => visitor.VisitLabel(this);
         public override string ToString() => $"Label: {Name}";
     }
     

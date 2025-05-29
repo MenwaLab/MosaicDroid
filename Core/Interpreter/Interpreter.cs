@@ -40,8 +40,9 @@ public class MatrixInterpreterVisitor : IStmtVisitor
 
     public void VisitColor(ColorCommand cmd)
     {
-        var c = cmd.ColorLiteral.Value;
-        BrushChar = char.ToLower(c[0]);
+        var lit = (ColorLiteralExpression)cmd.Args[0];
+    var colorName = (string)lit.Value!;
+    BrushChar = char.ToLower(colorName[0]);
     }
 
     public void VisitSize(SizeCommand cmd)
@@ -109,9 +110,29 @@ public class MatrixInterpreterVisitor : IStmtVisitor
         // state machine on top of what we have here.
     }
 
-    public void VisitAssign(AssignStatement assign)
+    public void VisitAssign(AssignExpression assign)
     {
-        var val = assign.Expression.Accept(_exprEval);
+        var val = assign.ValueExpr.Accept(_exprEval);
         _variables[assign.VariableName] = val;
     }
+    public int GetColorCount(string colorName, int x1, int y1, int x2, int y2)
+    {
+        char want = char.ToLower(colorName[0]);
+        int cnt = 0;
+        for (int y = Math.Min(y1,y2); y <= Math.Max(y1,y2); y++)
+        for (int x = Math.Min(x1,x2); x <= Math.Max(x1,x2); x++)
+        {
+            if (x<0||y<0||x>=Size||y>=Size) continue;
+            if (_canvas[x,y] == want) cnt++;
+        }
+        return cnt;
+    }
+    public bool CanvasColor(string colorName, int dx, int dy)
+    {
+        char want = char.ToLower(colorName[0]);
+        int x = CurrentX + dx, y = CurrentY + dy;
+        if (x < 0 || y < 0 || x >= Size || y >= Size) return false;
+        return _canvas[x, y] == want;
+    }
+
 }

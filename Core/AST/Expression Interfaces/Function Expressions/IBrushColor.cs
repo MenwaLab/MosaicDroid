@@ -19,6 +19,8 @@ public class IsBrushColorExpression : FunctionCallExpression
         return ColorValidationHelper.ValidateColorArgument(Args, 0, Args[0].Location, errors);
     }
 
+ public string Color => ((ColorLiteralExpression)Args[0]).Value!.ToString()!;
+
         public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
     {
         return visitor.VisitBrushColor(this);

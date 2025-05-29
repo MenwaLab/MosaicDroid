@@ -1,6 +1,6 @@
 // ASTNodes/AssignExpression.cs
 
-public class AssignExpression : ASTNode
+public class AssignExpression : StatementNode
 {
     public string VariableName { get; }
     public Expression ValueExpr { get; }
@@ -28,6 +28,7 @@ public class AssignExpression : ASTNode
     context.SetVariableType(VariableName, ValueExpr.Type);
         return ok;
     }
-
+public override void Accept(IStmtVisitor visitor)
+      => visitor.VisitAssign(this);
     public override string ToString() => $"{VariableName} <- {ValueExpr}";
 }

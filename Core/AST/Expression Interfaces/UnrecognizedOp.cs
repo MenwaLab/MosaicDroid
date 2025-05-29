@@ -13,6 +13,8 @@ public class NoOpExpression : Expression
         // Always valid, but carries no value
         return true;
     }
+public override TResult Accept<TResult>(IExprVisitor<TResult> v)
+  => v.VisitNoOp(this);
 
     public override string ToString() => "<no-op>";
 }

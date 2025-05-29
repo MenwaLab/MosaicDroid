@@ -1,4 +1,4 @@
-public abstract class CallNode : ASTNode
+public abstract class CallNode : StatementNode
 {
     public string Name { get; }
     public IReadOnlyList<Expression> Args { get; }
@@ -63,7 +63,7 @@ public abstract class CallNode : ASTNode
 
         return ok;
     }
-    public abstract void Accept(IStmtVisitor visitor);
+    public override abstract void Accept(IStmtVisitor visitor);
 }
 public class CommandNode : CallNode
 {

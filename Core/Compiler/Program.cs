@@ -47,6 +47,11 @@ loop_ends_here
         var parserErrors = new List<CompilingError>();
         var parser = new Parser(stream, parserErrors);
         var program = parser.ParseProgram();
+
+        Console.WriteLine("Declared labels:");
+foreach (var kv in program.LabelIndices)
+    Console.WriteLine($"  {kv.Key}  at  {kv.Value.Line}:{kv.Value.Column}");
+
         Scope globalScope = new Scope();
 
         var semanticErrors = new List<CompilingError>();
@@ -80,7 +85,7 @@ loop_ends_here
              var canvSize = 20;
         var interpreter = new MatrixInterpreterVisitor(canvSize);
 
-       interpreter.VisitProgram(program);
+       //interpreter.VisitProgram(program);
 
         // 4) finally print out the matrix
         interpreter.PrintCanvas();

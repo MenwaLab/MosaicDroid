@@ -19,6 +19,11 @@ public class GetColorCountExpression : FunctionCallExpression
         return ColorValidationHelper.ValidateColorArgument(Args, 0, Args[0].Location, errors);
     }
 
+public string Color    => ((ColorLiteralExpression)Args[0]).Value!.ToString()!;
+    public Expression X1   => Args[1];
+    public Expression Y1   => Args[2];
+    public Expression X2   => Args[3];
+    public Expression Y2   => Args[4];
             public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
     {
         return visitor.VisitColorCount(this);

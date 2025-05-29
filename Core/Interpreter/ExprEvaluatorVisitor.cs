@@ -10,7 +10,7 @@ public class ExpressionEvaluatorVisitor : IExprVisitor<double>
         _canvasContext = canvasContext;
     }
 
-    public double VisitNumber(Number num) => (double) num.Value!;
+    public double VisitNumber(Number num) => (int) num.Value!;
 
     public double VisitVariable(VariableExpression v)
     {
@@ -19,18 +19,22 @@ public class ExpressionEvaluatorVisitor : IExprVisitor<double>
         return val;
     }
 
+    public double VisitString(StringExpression s)
+        => 0.0;
+    public double VisitColorLiteral(ColorLiteralExpression c)
+        => 0.0;
     public double VisitAdd(Add a)
         => a.Left.Accept(this) + a.Right.Accept(this);
     public double VisitSub(Sub s)
         => s.Left.Accept(this) - s.Right.Accept(this);
-    public double VisitMul(Mul m)
+    public double VisitMult(Mul m)
         => m.Left.Accept(this) * m.Right.Accept(this);
     public double VisitDiv(Div d)
-        => m.Left.Accept(this) / d.Right.Accept(this);
-    public double VisitModulus(ModulusExpression m)
+        => d.Left.Accept(this) / d.Right.Accept(this);
+    public double VisitMod(ModulusExpression m)
         => m.Left.Accept(this) % m.Right.Accept(this);
 
-    public double VisitPower(PowerExpression p)
+    public double VisitPow(PowerExpression p)
         => Math.Pow(p.Left.Accept(this), p.Right.Accept(this));
 
     // Comparisons: return 1.0 for true, 0.0 for false
@@ -70,10 +74,16 @@ public class ExpressionEvaluatorVisitor : IExprVisitor<double>
     public double VisitBrushSize(IsBrushSizeExpression fn)
         => _canvasContext.BrushSize == fn.Size ? 1 : 0;
     public double VisitCanvasColor(IsCanvasColorExpression fn)
-        => _canvasContext.CanvasColor(
-               fn.Color,
-               (int)fn.OffsetX.Accept(this),
-               (int)fn.OffsetY.Accept(this)
-           )
-          ? 1 : 0;
+    => _canvasContext.CanvasColor(
+           fn.Color,
+           (int)fn.OffsetX.Accept(this),
+           (int)fn.OffsetY.Accept(this)
+       )
+       ? 1 : 0;
+    public double VisitNoOp(NoOpExpression noOp)
+    {
+        // any unrecognized expression just evaluates to 0.0
+        return 0.0;
+    }
+    
 }

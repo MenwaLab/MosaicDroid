@@ -62,26 +62,20 @@ public class Parser
                         _stream.MoveNext();
                         continue;
                     }
-                /* if (_stream.CanLookAhead(1) && _stream.LookAhead(1).Type == TokenType.Jumpline)
-                {
-                    var lblTok = _stream.Advance();
-                    if (!Regex.IsMatch(lblTok.Value, @"^[A-Za-z][A-Za-z0-9_]*$")) // variable‐style check para valid label syntax
-                    {
-                        _errors.Add(new CompilingError(lblTok.Location, ErrorCode.Invalid,$"Invalid label name '{lblTok.Value}'"));
-                    }
-
-                    if (!_stream.CanLookAhead() || _stream.LookAhead().Type != TokenType.Jumpline)
-                    {
-                        _errors.Add(new CompilingError(lblTok.Location, ErrorCode.Expected,"Expected a newline after label declaration."));
-                    } */
-                    //node = new LabelExpression(lblTok.Value, lblTok.Location);
-                    node = ParseLabel();
+             
+                    /* node = ParseLabel();
                     statements.Add(node); //y
                     //ExpectNewLine();
                     EnsureNewlineAfter(node);
+                    continue; */
+
+                    var lblTok = _stream.Advance();
+                    program.LabelIndices[lblTok.Value] = lblTok.Location;
+                    EnsureNewlineAfter(lblTok.Location); 
                     continue;
-                /* }
-                break; */
+        
+
+
 
                 case TokenType.Instruction:
                     //if (la.Value == TokenValues.GoTo)
@@ -166,6 +160,14 @@ public class Parser
         // swallow all actual newlines to stay in sync
         ExpectNewLine();
     }
+    private void EnsureNewlineAfter(CodeLocation loc)
+   {
+     if (!(_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline))
+       _errors.Add(new CompilingError(loc, ErrorCode.Expected, "Missing newline after label"));
+     // now swallow any blank lines
+     while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
+       _stream.MoveNext();
+   }
     private void Synchronize()
     {
         while (_stream.CanLookAhead() && _stream.LookAhead().Type != TokenType.Jumpline)

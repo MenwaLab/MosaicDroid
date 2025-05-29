@@ -1,4 +1,4 @@
-public class GotoCommand : ASTNode
+public class GotoCommand : StatementNode
     {
         public string Label { get; }
         public Expression Condition { get; }
@@ -41,10 +41,8 @@ public class GotoCommand : ASTNode
             return okCond;
         }
 
-public override void  Accept(IStmtVisitor)
-{
-    visitor.VisitGoto(this);
-}
+public override void Accept(IStmtVisitor visitor)
+      => visitor.VisitGoto(this);
         public override string ToString() =>
             $"GoTo [{Label}] ({Condition}) at {Location.Line}:{Location.Column}";
     }
