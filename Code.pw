@@ -1,8 +1,8 @@
-Spawn(5,5)
-Color("Black")
-DrawLine(1,0,30)  
-DrawLine(0,1,30)  
-Color("Red")
-DrawCircle(1,0,8)  
-Color("Blue")
-DrawRectangle(1,1,10,15,10)  
+Spawn(0,0)
+Color("Orange")
+i <- 0/0
+
+loop-diag
+DrawLine(1,1,1)       
+i <- i + 1
+GoTo [loop-diag] (i < 30)

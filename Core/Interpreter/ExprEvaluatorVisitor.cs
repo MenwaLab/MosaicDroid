@@ -15,7 +15,7 @@ public class ExpressionEvaluatorVisitor : IExprVisitor<double>
     public double VisitVariable(VariableExpression v)
     {
         if (!_variables.TryGetValue(v.Name, out var val))
-            throw new InvalidOperationException($"Undefined variable {v.Name}");
+            throw new InvalidOperationException($"Undefined variable {v.Name}"); //try catch it
         return val;
     }
 
@@ -30,12 +30,27 @@ public class ExpressionEvaluatorVisitor : IExprVisitor<double>
     public double VisitMult(Mul m)
         => m.Left.Accept(this) * m.Right.Accept(this);
     public double VisitDiv(Div d)
-        => d.Left.Accept(this) / d.Right.Accept(this);
+    {
+        double left = d.Left.Accept(this);
+        double right = d.Right.Accept(this);
+        CheckDivisionByZero(right, d.Location);
+        return left / right;
+    }
     public double VisitMod(ModulusExpression m)
-        => m.Left.Accept(this) % m.Right.Accept(this);
+    {
+        double left = m.Left.Accept(this);
+        double right = m.Right.Accept(this);
+        CheckDivisionByZero(right, m.Location);
+        return left % right;
+    }
 
     public double VisitPow(PowerExpression p)
-        => Math.Pow(p.Left.Accept(this), p.Right.Accept(this));
+    {
+        double left = p.Left.Accept(this);
+        double right = p.Right.Accept(this);
+        CheckZeroPowerZero(left, right, p.Location);
+        return Math.Pow(left, right);
+    }
 
     // Comparisons: return 1.0 for true, 0.0 for false
     public double VisitLess(LogicalLessExpression l)
@@ -92,6 +107,17 @@ public class ExpressionEvaluatorVisitor : IExprVisitor<double>
     {
         // any unrecognized expression just evaluates to 0.0
         return 0.0;
+    }
+    private void CheckDivisionByZero(double divisor, CodeLocation loc)
+    {
+        if (Math.Abs(divisor) < 1e-9)
+            throw new PixelArtRuntimeException($"Runtime error: division by zero at {loc.Line}:{loc.Column}");
+    }
+
+    private void CheckZeroPowerZero(double baseVal, double exponent, CodeLocation loc)
+    {
+        if (Math.Abs(baseVal) < 1e-9 && Math.Abs(exponent) < 1e-9)
+            throw new PixelArtRuntimeException($"Runtime error: 0^0 is undefined at {loc.Line}:{loc.Column}");
     }
     
 }
