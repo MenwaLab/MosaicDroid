@@ -1,4 +1,7 @@
-Spawn(5,5)
+Spawn(0,0)
+label
+Color("Red")
 DrawLine(1,0,10)
-DrawCircle(0,1,5)
-n <- 1 / 0
+Color("Green")
+GoTo[label](1==1)
+

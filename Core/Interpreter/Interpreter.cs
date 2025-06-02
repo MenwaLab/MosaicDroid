@@ -12,6 +12,9 @@ public class MatrixInterpreterVisitor : IStmtVisitor
     public string BrushCode { get; private set; } = "  ";
     public int  BrushSize { get; private set; } = 1;
 
+     private int _executionSteps;
+    private const int MaxExecutionSteps = 100_000; 
+
     public MatrixInterpreterVisitor(int size, List<CompilingError> runtimeErrors)
     {
         Size = size;
@@ -22,6 +25,7 @@ public class MatrixInterpreterVisitor : IStmtVisitor
             for (int x = 0; x < size; x++)
                 _canvas[x,y] = "w ";
 
+        _runtimeErrors = runtimeErrors ?? throw new ArgumentNullException(nameof(runtimeErrors));
         _exprEval = new ExpressionEvaluatorVisitor(_variables, this,_runtimeErrors);
     }
 
@@ -259,9 +263,20 @@ public string GetBrushCodeForColor(string colorName)
 
     var stmts = prog.Statements;
     int ip = 0;
+    _executionSteps = 0;
 
     while (ip < stmts.Count)
     {
+        _executionSteps++;
+
+         if (_executionSteps > MaxExecutionSteps)
+            {
+                // We decide this is an infinite‐loop situation
+                // Record it as a runtime error, then throw
+                var loc = stmts[ip].Location;
+                ErrorHelpers.InfiniteLoopDetected(_runtimeErrors, loc);
+                throw new PixelArtRuntimeException($"Runtime error: Potential infinite loop at {loc.Line}:{loc.Column}");
+            }
         // 1) conditional jump:
         if (stmts[ip] is GotoCommand gt
          && gt.Condition.Accept(_exprEval) != 0)
