@@ -27,8 +27,7 @@ public class LogicalAndExpression : BinaryExpression
 
         if (!isNumberComparison && !isTextComparison)
     {
-        errs.Add(new CompilingError(Location, ErrorCode.Invalid,
-            "Operands for && must both be numeric or both be text."));
+        ErrorHelpers.InvalidOperands(errs, Location, "bolean and");
         Type = ExpressionType.ErrorType;
         return false;
     }

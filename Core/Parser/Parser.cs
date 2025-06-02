@@ -30,18 +30,19 @@ public class Parser
         {
             if ((first.Type == TokenType.Instruction || first.Type == TokenType.Variable) && first.Value.StartsWith("Spawn"))
             {
-                _errors.Add(new CompilingError(first.Location, ErrorCode.Expected, "'OpenParenthesis' expected"));
+                //_errors.Add(new CompilingError(first.Location, ErrorCode.Expected, "'OpenParenthesis' expected"));
+                ErrorHelpers.MissingOpenParen(_errors,first.Location, "Spawn");
             }
             else
             {
-                _errors.Add(new CompilingError(first.Location, ErrorCode.Expected, "Se esperaba Spawn(x, y) al inicio"));
+                //_errors.Add(new CompilingError(first.Location, ErrorCode.Expected, "Se esperaba Spawn(x, y) al inicio"));
+                ErrorHelpers.ExpectedSpawn(_errors,first.Location);
             }
             
             return program;
         }
         var firstStmt = ParseInstruction();
         statements.Add(firstStmt);
-        //ExpectNewLine();
         EnsureNewlineAfter(firstStmt);
 
         while (_stream.CanLookAhead())
@@ -58,16 +59,11 @@ public class Parser
                 case TokenType.Label:
                     if (Regex.IsMatch(la.Value, @"^(Spawn|Color|Size|DrawLine|DrawCircle|DrawRectangle|Fill)(?=[^(\s])"))
                     {
-                        _errors.Add(new CompilingError(la.Location, ErrorCode.Expected, "'(' expected after instruction name"));
+                        //_errors.Add(new CompilingError(la.Location, ErrorCode.Expected, "'(' expected after instruction name"));
+                        ErrorHelpers.MissingOpenParen(_errors,la.Location,la.Value);
                         _stream.MoveNext();
                         continue;
                     }
-             
-                    /* node = ParseLabel();
-                    statements.Add(node); //y
-                    //ExpectNewLine();
-                    EnsureNewlineAfter(node);
-                    continue; */
 
                     var lblTok = _stream.Advance();
                     program.LabelIndices[lblTok.Value] = lblTok.Location;
@@ -78,19 +74,14 @@ public class Parser
 
 
                 case TokenType.Instruction:
-                    //if (la.Value == TokenValues.GoTo)
-                    //node = ParseGoTo();
-                    //else
                         node = ParseInstruction();
                         statements.Add(node);
-                        //ExpectNewLine();
                         EnsureNewlineAfter(node);
                         continue;
 
                 case TokenType.GoTo:
                     node = ParseGoTo();
                     statements.Add(node);
-                    //ExpectNewLine();
                     EnsureNewlineAfter(node);
                     continue;
 
@@ -98,8 +89,9 @@ public class Parser
 
                     if (la.Value.StartsWith("-") && Regex.IsMatch(la.Value.Substring(1), @"^[A-Za-z][A-Za-z0-9_]*$"))
                     {
-                        _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid,
-                        $"Invalid variable name '{la.Value}'"));
+                        //“-x” (invalid start), or typed “-x123” as a variable name
+                        //_errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Invalid variable name '{la.Value}'"));
+                        ErrorHelpers.InvalidVariableName(_errors,la.Location,la.Value);
                         Synchronize();
                         continue;
                     }
@@ -107,7 +99,8 @@ public class Parser
                     // Instrucción malformada como DrawLine1,0)
                     if (Regex.IsMatch(la.Value, @"^(Spawn|Color|Size|DrawLine|DrawCircle|DrawRectangle|Fill)(?=[^(\s])"))
                     {
-                        _errors.Add(new CompilingError(la.Location, ErrorCode.Expected,"'(' expected after instruction name"));
+                        //_errors.Add(new CompilingError(la.Location, ErrorCode.Expected,"'(' expected after instruction name"));
+                        ErrorHelpers.MissingOpenParen(_errors,la.Location,la.Value);
                         _stream.MoveNext();
                         continue;
                     }
@@ -116,23 +109,18 @@ public class Parser
                     {
                         node = ParseAssignment();
                         statements.Add(node);
-                        //ExpectNewLine();
                         EnsureNewlineAfter(node);
                         continue;
                     }
-                    _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Unexpected variable usage: {la.Value}"));
+                    ErrorHelpers.UnexpectedToken(_errors, la.Location, la.Value);
                     _stream.MoveNext();
                     continue;
                 default:
-                    _errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Token inesperado: {la.Value}"));
+                    //_errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Token inesperado: {la.Value}"));
+                    ErrorHelpers.UnexpectedToken(_errors,la.Location,la.Value);
                     Synchronize();
-                    //_stream.MoveNext();
                     break;
             }
-
-            //_errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Token inesperado: {la.Value}"));
-            //_stream.MoveNext();
-           // Synchronize();
         }
 
         program.Statements.AddRange(statements);
@@ -146,16 +134,11 @@ public class Parser
             _stream.MoveNext();
     }
     private void EnsureNewlineAfter(ASTNode stmt) 
-    //Immediately after consuming a statement, require at least one  (or end‐of‐file). 
-    // If missing, emit a MissingJumpline error, then swallow any jumplines.
     {
         if (!(_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline))
         {
-            _errors.Add(new CompilingError(
-                stmt.Location,
-                ErrorCode.Expected,      // or define a new ErrorCode.MissingJumpline
-                "Missing newline after statement"
-            ));
+           // _errors.Add(new CompilingError(stmt.Location,ErrorCode.Expected,        "Missing newline after statement" ));
+            ErrorHelpers.MissingNewLine(_errors,stmt.Location,"statement");
         }
         // swallow all actual newlines to stay in sync
         ExpectNewLine();
@@ -163,7 +146,9 @@ public class Parser
     private void EnsureNewlineAfter(CodeLocation loc)
    {
      if (!(_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline))
-       _errors.Add(new CompilingError(loc, ErrorCode.Expected, "Missing newline after label"));
+     ErrorHelpers.MissingNewLine(_errors,loc,"label");
+       //errors.Add(new CompilingError(loc, ErrorCode.Expected, "Missing newline after label"));
+       
      // now swallow any blank lines
      while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
        _stream.MoveNext();
@@ -192,7 +177,8 @@ public class Parser
                 var tokCol = _stream.Advance();
                 if (tokCol.Type != TokenType.String && tokCol.Type != TokenType.Color)
                 {
-                    _errors.Add(new CompilingError(tokCol.Location, ErrorCode.Expected, "Color argument must be a quoted string (e.g., \"Red\")"));
+                    //_errors.Add(new CompilingError(tokCol.Location, ErrorCode.Expected, "Color argument must be a quoted string (e.g., \"Red\")"));
+                    ErrorHelpers.MissingQuotation(_errors,tokCol.Location);
                 }
                 
                 EatDelimiter(TokenValues.ClosedParenthesis);
@@ -220,7 +206,8 @@ public class Parser
                 return new FillCommand(fillArgs, instr.Location);
 
             default:
-                _errors.Add(new CompilingError(instr.Location, ErrorCode.Invalid, $"Unknown instruction: {instr.Value}"));
+                //_errors.Add(new CompilingError(instr.Location, ErrorCode.Invalid, $"Unknown instruction: {instr.Value}"));
+                ErrorHelpers.UnknownInstrFunc(_errors,instr.Location,instr.Value);
                 return new NoOpExpression(instr.Location);
         }
     }
@@ -244,7 +231,8 @@ public class Parser
 
         if (!Regex.IsMatch(varTok.Value, @"^[a-zA-Z][a-zA-Z0-9_]*$"))
         {
-            _errors.Add(new CompilingError(varTok.Location, ErrorCode.Invalid, $"Invalid variable name '{varTok.Value}'"));
+            //_errors.Add(new CompilingError(varTok.Location, ErrorCode.Invalid, $"Invalid variable name '{varTok.Value}'"));
+            ErrorHelpers.InvalidVariableName(_errors,varTok.Location,varTok.Value);
         }
 
         _stream.Advance();                   // '<-'
@@ -252,7 +240,8 @@ public class Parser
 
         if (!_stream.CanLookAhead() || _stream.LookAhead().Type != TokenType.Jumpline)
         {
-            _errors.Add(new CompilingError(expr.Location, ErrorCode.Expected, "Expected a newline after variable assignment."));
+            //_errors.Add(new CompilingError(expr.Location, ErrorCode.Expected, "Expected a newline after variable assignment."));
+            ErrorHelpers.MissingNewLine(_errors,expr.Location,"variable assignment");
         }
 
         return new AssignExpression(varTok.Value, expr, varTok.Location);
@@ -380,7 +369,6 @@ public class Parser
                 case TokenValues.Mul:  var m = new Mul(left.Location); m.Left = left; m.Right = right; left = m; break;
                 case TokenValues.Div:  var d = new Div(left.Location); d.Left = left; d.Right = right; left = d; break;
                 case TokenValues.Mod:  var mod = new ModulusExpression(left.Location); mod.Left = left; mod.Right = right; left = mod; break;
-                //case TokenValues.Pow: var p = new PowerExpression(left.Location); p.Left = left; p.Right = right; left = p; break;
             }
         }
         return left;
@@ -388,7 +376,6 @@ public class Parser
 
     private Expression ParseFactor()
     {
-        //var left = ParsePower();
              // Signo menos seguido de un #: # negativo
         if (_stream.CanLookAhead() 
             && _stream.LookAhead().Type == TokenType.Operator 
@@ -438,7 +425,8 @@ public class Parser
             return expr;
         }
 
-        _errors.Add(new CompilingError(_stream.LookAhead().Location, ErrorCode.Expected, $"Unexpected token {_stream.LookAhead().Value} in factor"));
+        //_errors.Add(new CompilingError(_stream.LookAhead().Location, ErrorCode.Expected, $"Unexpected token {_stream.LookAhead().Value} in factor"));
+        ErrorHelpers.UnexpectedToken(_errors,_stream.LookAhead().Location,_stream.LookAhead().Value);
         _stream.MoveNext();
         return new NoOpExpression(_stream.LookAhead().Location);
     }
@@ -488,7 +476,8 @@ private Expression ParsePrimary()
     }
 
     // Error handling for unexpected tokens
-    _errors.Add(new CompilingError(_stream.LookAhead().Location, ErrorCode.Expected, $"Unexpected token {_stream.LookAhead().Value} in primary expression"));
+   // _errors.Add(new CompilingError(_stream.LookAhead().Location, ErrorCode.Expected, $"Unexpected token {_stream.LookAhead().Value} in primary expression"));
+    ErrorHelpers.UnexpectedToken(_errors,_stream.LookAhead().Location,_stream.LookAhead().Value);
     _stream.MoveNext();
     return new NoOpExpression(_stream.LookAhead().Location);
 }
@@ -528,7 +517,8 @@ private Expression ParsePower()
     private void EatDelimiter(string d)
     {
         if (!(_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Delimeter && _stream.LookAhead().Value == d))
-            _errors.Add(new CompilingError(_stream.LookAhead().Location, ErrorCode.Expected, $"'{d}' expected"));
+           // _errors.Add(new CompilingError(_stream.LookAhead().Location, ErrorCode.Expected, $"'{d}' expected"));
+           ErrorHelpers.MissingCloseParen(_errors, _stream.LookAhead().Location,d);
         else
             _stream.MoveNext();
     }

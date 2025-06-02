@@ -21,8 +21,7 @@ public class ModulusExpression : BinaryExpression
 
         if (Left.Type != ExpressionType.Number || Right.Type != ExpressionType.Number)
         {
-            errors.Add(new CompilingError(Location, ErrorCode.Invalid,
-                "Operands must be numeric for modulus."));
+            ErrorHelpers.InvalidOperands(errors,Location, "modulus");
             Type = ExpressionType.ErrorType;
             return false;
         }

@@ -19,13 +19,14 @@ public class Div : BinaryExpression
         bool left = Left.CheckSemantic(context, scope, errors);
         if (Right.Type != ExpressionType.Number || Left.Type != ExpressionType.Number)
         {
-            errors.Add(new CompilingError(Location, ErrorCode.Invalid, "We don't do that here... "));
+            ErrorHelpers.InvalidOperands(errors,Location, "division");
             Type = ExpressionType.ErrorType;
             return false;
         }
 
         Type = ExpressionType.Number;
         return right && left;
+        
     }
 
     public override string ToString()

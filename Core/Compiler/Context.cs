@@ -4,13 +4,13 @@ public class Context
     public HashSet<string> Labels { get; } = new HashSet<string>(); //pros?
     public bool SpawnSeen { get; set; } = false; //y zheli
 
-    public void DeclareVariable(string name, ExpressionType type, CodeLocation loc, List<CompilingError> errors)
+    /* public void DeclareVariable(string name, ExpressionType type, CodeLocation loc, List<CompilingError> errors)
     {
         if (Variables.ContainsKey(name))
             errors.Add(new CompilingError(loc, ErrorCode.Invalid, $"Variable '{name}' is already declared."));
         else
             Variables[name] = type;
-    }//no references
+    } *///no references
 
     public ExpressionType GetVariableType(string name)
     {
@@ -24,7 +24,8 @@ public class Context
     public void DeclareLabel(string label, CodeLocation loc, List<CompilingError> errors)
     {
         if (IsLabelDeclared(label))
-            errors.Add(new CompilingError(loc, ErrorCode.Invalid, $"Label '{label}' is already defined."));
+            //errors.Add(new CompilingError(loc, ErrorCode.Invalid, $"Label '{label}' is already defined."));
+            ErrorHelpers.DuplicateLabel(errors,loc,label);
         else
             Labels.Add(label);
     }

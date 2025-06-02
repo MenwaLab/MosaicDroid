@@ -4,6 +4,7 @@ public class MatrixInterpreterVisitor : IStmtVisitor
     private readonly Dictionary<string,double> _variables
         = new Dictionary<string,double>();
     private readonly ExpressionEvaluatorVisitor _exprEval;
+    private readonly List<CompilingError>      _runtimeErrors;
 
     public int Size   { get; }
     public int CurrentX { get; private set; }
@@ -11,15 +12,17 @@ public class MatrixInterpreterVisitor : IStmtVisitor
     public string BrushCode { get; private set; } = "  ";
     public int  BrushSize { get; private set; } = 1;
 
-    public MatrixInterpreterVisitor(int size)
+    public MatrixInterpreterVisitor(int size, List<CompilingError> runtimeErrors)
     {
         Size = size;
+        _runtimeErrors = runtimeErrors;
+
         _canvas = new string[size,size];
         for (int y = 0; y < size; y++)
             for (int x = 0; x < size; x++)
                 _canvas[x,y] = "w ";
 
-        _exprEval = new ExpressionEvaluatorVisitor(_variables, this);
+        _exprEval = new ExpressionEvaluatorVisitor(_variables, this,_runtimeErrors);
     }
 
     public void PrintCanvas()
@@ -38,8 +41,12 @@ public class MatrixInterpreterVisitor : IStmtVisitor
         int y = (int)cmd.Args[1].Accept(_exprEval);
 
         if (x < 0 || x >= Size || y < 0 || y >= Size)
-        throw new PixelArtRuntimeException(
+        {
+            ErrorHelpers.OutOfBounds(_runtimeErrors, cmd.Location, x, y);
+            throw new PixelArtRuntimeException(
             $"Runtime error: Spawn at ({x},{y}) is outside canvas 0..{Size-1}");
+        }
+        
 
     CurrentX = x;
     CurrentY = y;
@@ -260,10 +267,13 @@ public string GetBrushCodeForColor(string colorName)
          && gt.Condition.Accept(_exprEval) != 0)
         {
             if (!labelToIndex.TryGetValue(gt.Label, out ip))
-                throw new PixelArtRuntimeException(
-                    $"Runtime error: Jump to undefined label '{gt.Label}'"
-                );
-            // now ip is the *next* statement index after the label
+                {
+                    // Record “undefined label” as a runtime error
+                    ErrorHelpers.UndefinedLabel(_runtimeErrors, gt.Location, gt.Label);
+                    throw new PixelArtRuntimeException(
+                        $"Runtime error: label '{gt.Label}' not declared"
+                    );
+                }
             continue;
         }
 

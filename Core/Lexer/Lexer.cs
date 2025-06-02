@@ -66,7 +66,8 @@ public class LexicalAnalyzer
                         tokens.Add(new Token(TokenType.Variable, id, stream.Location));
                     
                     else
-                        errors.Add(new CompilingError(stream.Location, ErrorCode.Invalid, $"Invalid identifier: {id}"));
+                        //errors.Add(new CompilingError(stream.Location, ErrorCode.Invalid, $"Invalid identifier: {id}"));
+                        ErrorHelpers.InvalidIdentifier(errors,stream.Location,id);
                 }
                 continue;
             }
@@ -75,7 +76,8 @@ public class LexicalAnalyzer
             if (stream.ReadNumber(out string number))
             {
                 if (!int.TryParse(number, out _))
-                    errors.Add(new CompilingError(stream.Location, ErrorCode.Invalid, "Invalid integer"));
+                    //errors.Add(new CompilingError(stream.Location, ErrorCode.Invalid, "Invalid integer"));
+                     ErrorHelpers.InvalidInteger(errors,stream.Location,number);
                 
                 tokens.Add(new Token(TokenType.Integer, number, stream.Location));
                 continue;
@@ -90,7 +92,8 @@ public class LexicalAnalyzer
 
             // Handle Unknown Characters
             var unknownChar = stream.ReadAny();
-            errors.Add(new CompilingError(stream.Location, ErrorCode.Unknown, unknownChar.ToString()));
+            //errors.Add(new CompilingError(stream.Location, ErrorCode.Unknown, unknownChar.ToString()));
+            ErrorHelpers.UnrecognizedChar(errors,stream.Location,unknownChar);
         }
 
         return tokens;
@@ -131,7 +134,8 @@ public class LexicalAnalyzer
             stream.ReadAny(); // consume  "
             if (!stream.ReadUntil("\"", out string text))
             {
-                errors.Add(new CompilingError(stream.Location, ErrorCode.Expected, "Closing quote for string literal"));
+                //errors.Add(new CompilingError(stream.Location, ErrorCode.Expected, "Closing quote for string literal"));
+                ErrorHelpers.UnterminatedString(errors,stream.Location);
                 return false;
             }
             
@@ -150,8 +154,13 @@ public class LexicalAnalyzer
         foreach (var start in texts.Keys.OrderByDescending(k => k.Length))
         {
             if (!stream.Match(start)) continue;
+
             if (!stream.ReadUntil(texts[start], out string text))
-                errors.Add(new CompilingError(stream.Location, ErrorCode.Expected, texts[start]));
+    {
+        ErrorHelpers.UnterminatedText(errors, stream.Location, texts[start]);
+        return false;
+    }
+
             TokenType type = IsColor(text) ? TokenType.Color : TokenType.String;
             tokens.Add(new Token(type, text, stream.Location));
             return true;

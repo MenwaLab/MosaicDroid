@@ -20,8 +20,7 @@ public class PowerExpression : BinaryExpression
 
         if (Left.Type != ExpressionType.Number || Right.Type != ExpressionType.Number)
         {
-            errors.Add(new CompilingError(Location, ErrorCode.Invalid,
-                "Operands must be numeric for exponentiation."));
+            ErrorHelpers.InvalidOperands(errors,Location, "exponentiation");
             Type = ExpressionType.ErrorType;
             return false;
         }

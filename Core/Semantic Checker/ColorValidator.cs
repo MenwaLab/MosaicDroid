@@ -1,3 +1,5 @@
+using System.Drawing;
+
 public enum ColorOptions
 {
 Red, Blue, Green, Yellow, Orange, Purple, Black, White, Transparent
@@ -9,8 +11,10 @@ public static class ColorValidationHelper
     {
         if (argIndex >= args.Count || args[argIndex] is not ColorLiteralExpression colorLit)
         {
-            errors.Add(new CompilingError(location, ErrorCode.ArgMismatch,
-                $"Argument {argIndex + 1} must be a valid color literal."));
+            
+
+            ErrorHelpers.ArgMismatch(errors, location, "Color", argIndex+1, ExpressionType.Text,  args[argIndex].Type);
+
             return false;
         }
 
@@ -18,8 +22,7 @@ public static class ColorValidationHelper
         if (!Enum.GetNames(typeof(ColorOptions))
                  .Any(n => n.Equals(colorName, StringComparison.Ordinal))) // Ordinal: case sensitive
         {
-            errors.Add(new CompilingError(location, ErrorCode.Invalid,
-                $"Unknown color: '{colorName}'"));
+            ErrorHelpers.InvalidColor(errors,location,colorName);
             return false;
         }
 

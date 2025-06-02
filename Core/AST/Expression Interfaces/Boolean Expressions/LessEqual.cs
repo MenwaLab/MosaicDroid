@@ -41,8 +41,7 @@ public class LogicalLessEqualExpression : BinaryExpression
 
             if (!isNum && !isText)
             {
-                errs.Add(new CompilingError(Location, ErrorCode.Invalid,
-                    "Operands for <= must both be numeric or both be text."));
+                ErrorHelpers.InvalidOperands(errs, Location, "less than or equal to");
                 Type = ExpressionType.ErrorType;
                 return false;
             }

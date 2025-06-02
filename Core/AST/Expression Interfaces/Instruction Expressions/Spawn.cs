@@ -13,8 +13,7 @@ public class SpawnCommand : CallNode
         // 2) exactly one Spawn
         if (ctx.SpawnSeen)
         {
-            errors.Add(new CompilingError(Location, ErrorCode.DuplicateSpawn,
-                "Only one Spawn(x,y) allowed."));
+            ErrorHelpers.DuplicateSpawn(errors,Location);
             ok = false;
         }
         ctx.SpawnSeen = true;

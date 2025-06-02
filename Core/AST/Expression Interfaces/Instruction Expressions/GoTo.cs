@@ -15,14 +15,12 @@ public class GotoCommand : StatementNode
         {
             if (!LabelExpression.IsValidLabel(Label))
     {
-        errors.Add(new CompilingError(Location, ErrorCode.Invalid,
-            $"Invalid label format '{Label}'"));
+        ErrorHelpers.InvalidLabelName(errors,Location,Label);
         return false;
     }
     if (!context.IsLabelDeclared(Label))
             {
-                errors.Add(new CompilingError(Location, ErrorCode.Invalid,
-                    $"Label '{Label}' not declared."));
+                ErrorHelpers.UndefinedLabel(errors,Location,Label);
                 //okCond = false;
                 return false;
             }
@@ -30,8 +28,7 @@ public class GotoCommand : StatementNode
             bool okCond = Condition.CheckSemantic(context, scope, errors);
             if (Condition.Type != ExpressionType.Boolean)
             {
-                errors.Add(new CompilingError(Location, ErrorCode.Invalid,
-                    "GoTo condition must be boolean."));
+                ErrorHelpers.InvalidGoTo(errors,Location);
                 okCond = false;
             }
 

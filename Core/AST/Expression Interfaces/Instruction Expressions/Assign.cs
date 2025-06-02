@@ -18,7 +18,7 @@ public class AssignExpression : StatementNode
         context.SetVariableType(VariableName,exprType);
         if (ValueExpr.Type == ExpressionType.ErrorType)
         {
-            errors.Add(new CompilingError(Location, ErrorCode.Invalid, $"Cannot assign invalid expression to '{VariableName}'"));
+            ErrorHelpers.InvalidAssign(errors, Location, VariableName);
             return false;
         }
 

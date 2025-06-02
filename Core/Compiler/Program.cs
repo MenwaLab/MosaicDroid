@@ -16,10 +16,11 @@ Console.WriteLine($"Looking for file: {Path.Combine(Directory.GetCurrentDirector
         }
         string code = File.ReadAllText(filePath);
 
-        var errors = new List<CompilingError>();
+        var lexerErrors = new List<CompilingError>();
 
         var lexer = Compiling.Lexical;
-        IEnumerable<Token> tokens = lexer.GetTokens(code, errors);
+
+        IEnumerable<Token> tokens = lexer.GetTokens(code, lexerErrors);
 
         Console.WriteLine("Tokens:");
         foreach (var token in tokens)
@@ -48,43 +49,54 @@ foreach (var kv in program.LabelIndices)
         program.CheckSemantic(ctx, globalScope, semanticErrors);
      
         // ERROR REPORTING
-        if (errors.Count > 0)
+        if (lexerErrors.Count > 0)
         {
             Console.WriteLine("\nLexer errors:");
-            foreach (var err in errors)
-                Console.WriteLine($"{err.Argument} at {err.Location.Line}:{err.Location.Column}");
+            foreach (var err in lexerErrors)
+                Console.WriteLine($"  {err.Message} at {err.Location.Line}:{err.Location.Column}");
         }
         if (parserErrors.Count > 0)
         {
             Console.WriteLine("\nParser errors:");
             foreach (var err in parserErrors)
-                Console.WriteLine(err.Argument + " at " + err.Location.Line + ":" + err.Location.Column);
+                Console.WriteLine($"  {err.Message} at {err.Location.Line}:{err.Location.Column}");
         }
 
         if (semanticErrors.Count > 0)
         {
             Console.WriteLine("\nSemantic errors:");
             foreach (var e in semanticErrors)
-                Console.WriteLine($"{e.Argument} at {e.Location.Line}:{e.Location.Column}");
+                Console.WriteLine($"  {e.Message} at {e.Location.Line}:{e.Location.Column}");
         }
-        if(errors.Count == 0 && parserErrors.Count == 0 && semanticErrors.Count == 0)
-        {
+        if (lexerErrors.Count > 0 || parserErrors.Count > 0 || semanticErrors.Count > 0)
+            return;//??
+
+        //if(lexerErrors.Count == 0 && parserErrors.Count == 0 && semanticErrors.Count == 0){
             Console.WriteLine("\nParsed & semantically valid AST:");
             Console.WriteLine(program);
 
-             var canvSize = 40;
-        var interpreter = new MatrixInterpreterVisitor(canvSize);
-
+        var runtimeErrors = new List<CompilingError>();
+        var canvSize = 40;
+        var interpreter = new MatrixInterpreterVisitor(canvSize,runtimeErrors);
+        
+        bool runTimeError=false;
        try
 {
     interpreter.VisitProgram(program);
-    interpreter.PrintCanvas();
 }
-catch (PixelArtRuntimeException e)
+catch (PixelArtRuntimeException ex)
 {
-    Console.WriteLine(e.Message);
+    Console.WriteLine(ex.Message);
+    runTimeError=true;
 }
+interpreter.PrintCanvas();
 
+if (runTimeError && runtimeErrors.Count > 0)
+        {
+            Console.WriteLine("\nRuntime errors:");
+            foreach (var e in runtimeErrors)
+                Console.WriteLine($"  {e.Message} at {e.Location.Line}:{e.Location.Column}");
+            Environment.Exit(1);
         }
     }
 }

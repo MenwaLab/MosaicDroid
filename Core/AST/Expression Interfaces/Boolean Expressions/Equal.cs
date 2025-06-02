@@ -32,8 +32,7 @@ bool isBoolNumComparison =
 
         if (!isNumberComparison && !isTextComparison && !isBoolNumComparison)
         {
-            errs.Add(new CompilingError(Location, ErrorCode.Invalid,
-                "Operands for == must both be numeric, both be text or both be boolean."));
+            ErrorHelpers.InvalidOperands(errs, Location, "equality");
             Type = ExpressionType.ErrorType;
             return false;
         }

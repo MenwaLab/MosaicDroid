@@ -20,8 +20,7 @@ public abstract class FunctionCallExpression : Expression
     {
         if (arg is FunctionCallExpression)
         {
-            errors.Add(new CompilingError(arg.Location, ErrorCode.Invalid, 
-                "Function calls cannot be nested as arguments."));
+            ErrorHelpers.InvalidFunctionCall(errors,arg.Location);
             return false;
         }
     }

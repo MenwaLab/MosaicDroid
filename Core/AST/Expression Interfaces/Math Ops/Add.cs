@@ -18,7 +18,8 @@ public class Add : BinaryExpression
         bool left = Left.CheckSemantic(context, scope, errors);
         if (Right.Type != ExpressionType.Number || Left.Type != ExpressionType.Number)
         {
-            errors.Add(new CompilingError(Location, ErrorCode.Invalid, "We don't do that here... "));
+           // errors.Add(new CompilingError(Location, ErrorCode.Invalid, "We don't do that here... "));
+            ErrorHelpers.InvalidOperands(errors,Location, "addition");
             Type = ExpressionType.ErrorType;
             return false;
         }

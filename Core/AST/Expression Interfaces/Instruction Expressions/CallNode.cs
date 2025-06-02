@@ -16,16 +16,14 @@ public abstract class CallNode : StatementNode
         var spec = ArgumentRegistry.Get(Name);
         if (spec == null)
         {
-            
-            errors.Add(new CompilingError(Location, ErrorCode.Invalid,
-                $"Unknown command or function '{Name}'."));
+            ErrorHelpers.UnknownInstrFunc(errors,Location,Name);
             return false;
         }
 
         if (Args.Count != spec.ArgsCount)
         {
-            errors.Add(new CompilingError(Location, ErrorCode.Invalid,
-                $"'{Name}' expects {spec.ArgsCount} arguments, got {Args.Count}."));
+
+            ErrorHelpers.WrongArity(errors, Location, Name, spec.ArgsCount,Args.Count);
             ok = false;
         }
 
@@ -49,8 +47,7 @@ public abstract class CallNode : StatementNode
 
             if (actualType != spec.ExpectedTypes[i])
             {
-                errors.Add(new CompilingError(expr.Location, ErrorCode.Invalid,
-                    $"Argument {i+1} of '{Name}' must be {spec.ExpectedTypes[i]}, but got {actualType}."));
+                ErrorHelpers.ArgMismatch(errors, expr.Location, Name, i+1, spec.ExpectedTypes[i], actualType );
                 ok = false;
             }
             else

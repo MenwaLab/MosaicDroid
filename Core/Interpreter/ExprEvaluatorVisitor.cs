@@ -2,12 +2,14 @@ public class ExpressionEvaluatorVisitor : IExprVisitor<double>
 {
     private readonly Dictionary<string,double> _variables;
     private readonly MatrixInterpreterVisitor _canvasContext;
+    private readonly List<CompilingError>        _runtimeErrors;
 
     public ExpressionEvaluatorVisitor(Dictionary<string,double> variables,
-                                      MatrixInterpreterVisitor canvasContext)
+                                      MatrixInterpreterVisitor canvasContext,List<CompilingError> runtimeErrors)
     {
         _variables = variables;
         _canvasContext = canvasContext;
+        _runtimeErrors = runtimeErrors;
     }
 
     public double VisitNumber(Number num) => (double) num.Value!;
@@ -111,13 +113,29 @@ public class ExpressionEvaluatorVisitor : IExprVisitor<double>
     private void CheckDivisionByZero(double divisor, CodeLocation loc)
     {
         if (Math.Abs(divisor) < 1e-9)
+        {
+            ErrorHelpers.DivisionByZero(_runtimeErrors, loc);
             throw new PixelArtRuntimeException($"Runtime error: division by zero at {loc.Line}:{loc.Column}");
+        }
+            
+    }
+
+    private void CheckModulusByZero(double divisor, CodeLocation loc)
+    {
+        if (Math.Abs(divisor) < 1e-9)
+        {
+            ErrorHelpers.ModulusByZero(_runtimeErrors, loc);
+            throw new PixelArtRuntimeException($"Runtime error: modulus by zero at {loc.Line}:{loc.Column}");
+        }
     }
 
     private void CheckZeroPowerZero(double baseVal, double exponent, CodeLocation loc)
     {
         if (Math.Abs(baseVal) < 1e-9 && Math.Abs(exponent) < 1e-9)
+        {
+            ErrorHelpers.ZeroToZeroPower(_runtimeErrors, loc);
             throw new PixelArtRuntimeException($"Runtime error: 0^0 is undefined at {loc.Line}:{loc.Column}");
+        }
     }
     
 }

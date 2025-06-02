@@ -40,8 +40,7 @@ public class ArgumentSpec
         {
             if (args[i] is not Number num || !num.IsInt)
             {
-                errors.Add(new CompilingError(args[i].Location, ErrorCode.ArgMismatch,
-                    $"{commandName} argument #{i + 1} must be an integer literal."));
+                ErrorHelpers.ArgMismatch(errors,args[i].Location,commandName, i + 1, args[i].Type,ExpressionType.Number);
                 ok = false;
             }
         }
@@ -52,8 +51,7 @@ public class ArgumentSpec
     {
         if (value < -1 || value > 1)
         {
-            errors.Add(new CompilingError(loc, ErrorCode.Invalid,
-                $"{label} must be –1, 0, or 1; got {value}."));
+            ErrorHelpers.InvalidDirection(errors,loc,value,0);
             return false;
         }
         return true;
@@ -63,8 +61,7 @@ public class ArgumentSpec
     {
         if (value <= 0)
         {
-            errors.Add(new CompilingError(loc, ErrorCode.Invalid,
-                $"{label} must be > 0; got {value}."));
+            ErrorHelpers.InvalidValue(errors,loc,$"{label} must be > 0; got {value}");
             return false;
         }
         return true;

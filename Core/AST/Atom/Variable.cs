@@ -16,7 +16,8 @@ public class VariableExpression : AtomExpression
         var varType = context.GetVariableType(Name);
         if (varType == ExpressionType.ErrorType)
         {
-            errors.Add(new CompilingError(Location, ErrorCode.Invalid, $"Undeclared variable: {Name}"));
+            //errors.Add(new CompilingError(Location, ErrorCode.Invalid, $"Undeclared variable: {Name}"));
+            ErrorHelpers.UndefinedVariable(errors,Location,Name);
             Type = ExpressionType.ErrorType;
             return false;
         }
