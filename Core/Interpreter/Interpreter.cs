@@ -44,12 +44,13 @@ public class MatrixInterpreterVisitor : IStmtVisitor
         int x = (int)cmd.Args[0].Accept(_exprEval);
         int y = (int)cmd.Args[1].Accept(_exprEval);
 
-        if (x < 0 || x >= Size || y < 0 || y >= Size)
+     /*    if (x < 0 || x >= Size || y < 0 || y >= Size)
         {
             ErrorHelpers.OutOfBounds(_runtimeErrors, cmd.Location, x, y);
             throw new PixelArtRuntimeException(
             $"Runtime error: Spawn at ({x},{y}) is outside canvas 0..{Size-1}");
-        }
+        } */
+        EnsureInBounds(x,y);
         
 
     CurrentX = x;
@@ -78,11 +79,23 @@ public class MatrixInterpreterVisitor : IStmtVisitor
             dy   = (int)cmd.Args[1].Accept(_exprEval),
             dist = (int)cmd.Args[2].Accept(_exprEval);
 
+    bool ok = true;
+        ok &= ArgumentSpec.EnsureDirectionInRange(dx, cmd.Location, "DrawLine: dirX", _runtimeErrors);
+        ok &= ArgumentSpec.EnsureDirectionInRange(dy, cmd.Location, "DrawLine: dirY", _runtimeErrors);
+        ok &= ArgumentSpec.EnsurePositive(dist, cmd.Location, "DrawLine: distance", _runtimeErrors);
+
+        if (!ok)
+        {
+            // Si alguna falla, detenemos:
+            throw new PixelArtRuntimeException($"Runtime error: invalid arguments to DrawLine at {cmd.Location.Line}:{cmd.Location.Column}");
+        }
+        
         for(int i = 0; i < dist; i++)
             Stamp(CurrentX + dx*i, CurrentY + dy*i);
 
         CurrentX += dx * dist;
         CurrentY += dy * dist;
+    EnsureInBounds(CurrentX, CurrentY);
     }
 
     public void VisitDrawCircle(DrawCircleCommand cmd)
@@ -90,6 +103,16 @@ public class MatrixInterpreterVisitor : IStmtVisitor
         int dx     = (int)cmd.Args[0].Accept(_exprEval),
             dy     = (int)cmd.Args[1].Accept(_exprEval),
             radius = (int)cmd.Args[2].Accept(_exprEval);
+
+                    bool ok = true;
+        ok &= ArgumentSpec.EnsureDirectionInRange(dx, cmd.Location, "DrawCircle: dirX", _runtimeErrors);
+        ok &= ArgumentSpec.EnsureDirectionInRange(dy, cmd.Location, "DrawCircle: dirY", _runtimeErrors);
+        ok &= ArgumentSpec.EnsurePositive(radius, cmd.Location, "DrawCircle: radius", _runtimeErrors);
+
+        if (!ok)
+        {
+            throw new PixelArtRuntimeException($"Runtime error: invalid arguments to DrawCircle at {cmd.Location.Line}:{cmd.Location.Column}");
+        }
 
         // center:
         int cx = CurrentX + dx * radius,
@@ -113,6 +136,7 @@ public class MatrixInterpreterVisitor : IStmtVisitor
         }
         CurrentX = cx;
         CurrentY = cy;
+        EnsureInBounds(CurrentX, CurrentY);
     }
 
     public void VisitDrawRectangle(DrawRectangleCommand cmd)
@@ -122,6 +146,18 @@ public class MatrixInterpreterVisitor : IStmtVisitor
             dist   = (int)cmd.Args[2].Accept(_exprEval),
             width  = (int)cmd.Args[3].Accept(_exprEval),
             height = (int)cmd.Args[4].Accept(_exprEval);
+
+   bool ok = true;
+        ok &= ArgumentSpec.EnsureDirectionInRange(dx, cmd.Location, "DrawRectangle: dirX", _runtimeErrors);
+        ok &= ArgumentSpec.EnsureDirectionInRange(dy, cmd.Location, "DrawRectangle: dirY", _runtimeErrors);
+        ok &= ArgumentSpec.EnsurePositive(dist, cmd.Location, "DrawRectangle: distance", _runtimeErrors);
+        ok &= ArgumentSpec.EnsurePositive(width, cmd.Location, "DrawRectangle: width", _runtimeErrors);
+        ok &= ArgumentSpec.EnsurePositive(height, cmd.Location, "DrawRectangle: height", _runtimeErrors);
+
+        if (!ok)
+        {
+            throw new PixelArtRuntimeException($"Runtime error: invalid arguments to DrawRectangle at {cmd.Location.Line}:{cmd.Location.Column}");
+        }
 
         int cx = CurrentX + dx * dist,
             cy = CurrentY + dy * dist;
@@ -303,7 +339,13 @@ public string GetBrushCodeForColor(string colorName)
     private void EnsureInBounds(int x, int y)
 {
     if (x < 0 || x >= Size || y < 0 || y >= Size)
-        throw new InvalidOperationException($"Runtime error: moved outside canvas at {x},{y}");
+    {
+            // Reutilizamos el método OutOfBounds ya definido:
+            //ErrorHelpers.OutOfBounds(_runtimeErrors, new CodeLocation(0,0), x, y);
+            throw new PixelArtRuntimeException($"Runtime error: moved outside canvas at {x},{y}");
+        }
+        
+        
 }
 
 

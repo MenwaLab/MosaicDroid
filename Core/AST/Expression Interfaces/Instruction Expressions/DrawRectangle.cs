@@ -5,7 +5,7 @@ public class DrawRectangleCommand : CallNode
     {
     }
 
-    public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
+    /* public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
     {
         bool ok = base.CheckSemantic(context, scope, errors);
         if (!ok) return false;
@@ -21,6 +21,60 @@ public class DrawRectangleCommand : CallNode
         ok &= ArgumentSpec.EnsurePositive(values[2], Args[2].Location, "DrawRectangle: distance", errors);
         ok &= ArgumentSpec.EnsurePositive(values[3], Args[3].Location, "DrawRectangle: width", errors);
         ok &= ArgumentSpec.EnsurePositive(values[4], Args[4].Location, "DrawRectangle: height", errors);
+
+        return ok;
+    } */
+    protected override bool ExtraArgumentChecks(Context ctx, Scope scope, List<CompilingError> errors)
+    {
+        bool ok = true;
+        int count = Math.Min(Args.Count, 5);
+
+        // Args[0] = dirX, Args[1] = dirY, Args[2] = distance,
+        // Args[3] = width, Args[4] = height
+        for (int i = 0; i < count; i++)
+        {
+            if (Args[i] is Number literalNum && literalNum.IsInt)
+            {
+                int value = (int)(double)literalNum.Value!;
+
+                if (i < 2)
+                {
+                    // primer y segundo argumento: dirección en {-1,0,1}
+                    string label = (i == 0 ? "DrawRectangle: dirX" : "DrawRectangle: dirY");
+                    ok &= ArgumentSpec.EnsureDirectionInRange(value, literalNum.Location, label, errors);
+                }
+                else
+                {
+                    // argumentos 2,3,4 (distance, width, height): deben ser > 0
+                    string label = i switch
+                    {
+                        2 => "DrawRectangle: distance",
+                        3 => "DrawRectangle: width",
+                        4 => "DrawRectangle: height",
+                        _ => "DrawRectangle: value"
+                    };
+                    ok &= ArgumentSpec.EnsurePositive(value, literalNum.Location, label, errors);
+                }
+            }
+            else if (Args[i] is Number numNode && !numNode.IsInt)
+            {
+                // Si es literal Number pero no entero
+                ErrorHelpers.ArgMismatch(
+                    errors,
+                    numNode.Location,
+                    "DrawRectangle",
+                    i + 1,
+                    ExpressionType.Number,  // esperado: literal entero
+                    ExpressionType.Number   // actual: literal no entero
+                );
+                ok = false;
+            }
+            else
+            {
+                // Si NO es literal Number, asumimos que es VariableExpression o expresión compuesta
+                // cuyo tipo ya se validó como Number en CheckSemantic. No chequear rangos ahora.
+            }
+        }
 
         return ok;
     }

@@ -127,9 +127,7 @@ public static class ErrorHelpers
       => errs.Add(new SemanticError(loc, SemanticErrorCode.ArgMismatch,
            $"Sorry, for {name} we expect argument {argIndex} to be of type {type} but got {actualType}"));
 
-    public static void InvalidDirection(List<CompilingError> errs, CodeLocation loc, int dx, int dy)
-      => errs.Add(new SemanticError(loc, SemanticErrorCode.InvalidDirection,
-           $"Invalid direction ({dx},{dy})"));
+
 
            
     public static void WrongArity(List<CompilingError> errs, CodeLocation loc, string name, int expecCount, int actCount)
@@ -182,4 +180,19 @@ public static class ErrorHelpers
         CodeLocation loc
     ) => errs.Add(new RuntimeError(loc, RuntimeErrorCode.InfiniteLoop,
                "Potential infinite loop"));
+
+    public static void InvalidDirection(List<CompilingError> errs, CodeLocation loc, string which, int value)
+        => errs.Add(new RuntimeError(loc,
+                                    RuntimeErrorCode.InvalidDirection,
+                                    $"Runtime error: {which} value = {value} is not in [-1..1]"));
+
+            public static void InvalidDirection(List<CompilingError> errs, CodeLocation loc, int dx, int dy)
+      => errs.Add(new RuntimeError(loc, RuntimeErrorCode.InvalidDirection,
+           $"Invalid direction ({dx},{dy})"));
+
+    // 2) “distance” debe ser > 0:
+    public static void InvalidDistance(List<CompilingError> errs, CodeLocation loc, int distance)
+        => errs.Add(new RuntimeError(loc,
+                                    RuntimeErrorCode.InvalidDistance,
+                                    $"Runtime error: distance = {distance} must be > 0"));
 }

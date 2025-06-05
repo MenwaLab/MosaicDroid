@@ -16,7 +16,8 @@ public enum RuntimeErrorCode
     ModulusByZero,
     ZeroToZeroPower,
     InfiniteLoop,
-    // … etc.
+    InvalidDirection,
+    InvalidDistance
 }
 public class PixelArtRuntimeException : Exception
 {

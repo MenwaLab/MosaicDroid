@@ -13,9 +13,11 @@ public class AssignExpression : StatementNode
     public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
     {
         bool ok = ValueExpr.CheckSemantic(context, scope, errors);
+        if (!ok) return false;
 
-        var exprType=ValueExpr.Type;
-        context.SetVariableType(VariableName,exprType);
+       
+       // var exprType=ValueExpr.Type;
+        //context.SetVariableType(VariableName,exprType);
         if (ValueExpr.Type == ExpressionType.ErrorType)
         {
             ErrorHelpers.InvalidAssign(errors, Location, VariableName);

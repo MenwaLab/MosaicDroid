@@ -15,19 +15,3 @@ public abstract class CompilingError
             Message  = message;
         }
     }
-
-
-    public enum ErrorCode
-    {
-        None, //y
-        Expected,
-        Invalid,
-        InvalidArgCount,
-        ArgMismatch,
-        DuplicateSpawn,
-        MissingJumpline,
-        Unknown,
-        UnrecognizedToken
-    }
-
-    

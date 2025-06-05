@@ -24,7 +24,8 @@ public abstract class CallNode : StatementNode
         {
 
             ErrorHelpers.WrongArity(errors, Location, Name, spec.ArgsCount,Args.Count);
-            ok = false;
+            //ok = false;
+            return false;
         }
 
         for (int i = 0; i < Args.Count && i < spec.ExpectedTypes.Length; i++)
@@ -57,9 +58,14 @@ public abstract class CallNode : StatementNode
                     ok &= expr.CheckSemantic(context, scope, errors);
             }
         }
-
+        ok &= ExtraArgumentChecks(context, scope, errors);
         return ok;
     }
+    protected virtual bool ExtraArgumentChecks(Context context, Scope scope, List<CompilingError> errors)
+{
+    // By default, do nothing extra
+    return true;
+}
     public override abstract void Accept(IStmtVisitor visitor);
 }
 public class CommandNode : CallNode

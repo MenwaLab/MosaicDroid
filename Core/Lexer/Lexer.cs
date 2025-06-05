@@ -54,6 +54,20 @@ public class LexicalAnalyzer
                     tokens.Add(new Token(type, tokenValue, stream.Location));
                 }
                 else
+    {
+        // Look at the last token to decide context
+        Token? lastToken = tokens.Count > 0 ? tokens[^1] : null;
+        bool afterParenOrComma = lastToken != null &&
+            lastToken.Type == TokenType.Delimeter &&
+             (lastToken.Value == TokenValues.OpenParenthesis || lastToken.Value == TokenValues.Comma);
+
+            bool afterAssign = lastToken != null && lastToken.Type == TokenType.Assign;
+        if (afterParenOrComma || afterAssign)
+        {
+             tokens.Add(new Token(TokenType.Variable, id, stream.Location));
+        }
+    
+                else
                 {
                     char nextChar = stream.CanLookAhead(1) ? stream.Peek(1) : '\0';
 
@@ -69,6 +83,8 @@ public class LexicalAnalyzer
                         //errors.Add(new CompilingError(stream.Location, ErrorCode.Invalid, $"Invalid identifier: {id}"));
                         ErrorHelpers.InvalidIdentifier(errors,stream.Location,id);
                 }
+
+    }
                 continue;
             }
 

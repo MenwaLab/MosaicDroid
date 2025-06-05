@@ -42,8 +42,9 @@ public class ExpressionEvaluatorVisitor : IExprVisitor<double>
     {
         double left = m.Left.Accept(this);
         double right = m.Right.Accept(this);
-        CheckDivisionByZero(right, m.Location);
+        CheckModulusByZero(right, m.Location);
         return left % right;
+        
     }
 
     public double VisitPow(PowerExpression p)

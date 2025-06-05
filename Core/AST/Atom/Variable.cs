@@ -36,6 +36,5 @@ public class VariableExpression : AtomExpression
         return visitor.VisitVariable(this);
     }
     public override string ToString() => Name;
-    
 }
 

@@ -1,7 +1,6 @@
 Spawn(0,0)
-label
 Color("Red")
-DrawLine(1,0,10)
-Color("Green")
-GoTo[label](1==1)
-
+n <- 1
+DrawLine(1,1,n)
+DrawRectangle(n - 1, 0, 2, 10, 10)
+DrawCircle(n, n, n - 1)

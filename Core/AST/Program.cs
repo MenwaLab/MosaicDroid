@@ -8,11 +8,7 @@ public class ProgramExpression : ASTNode
     public ProgramExpression(CodeLocation loc) : base(loc) {}
 
     public override bool CheckSemantic(Context ctx, Scope scope, List<CompilingError> errors)
-    {
-        /* foreach(var stmt in Statements)
-            if(stmt is LabelExpression lbl)
-                ctx.DeclareLabel(lbl.Name, lbl.Location, errors); */
-        
+    {       
         foreach (var kv in LabelIndices)
             ctx.DeclareLabel(kv.Key, kv.Value, errors);
 
