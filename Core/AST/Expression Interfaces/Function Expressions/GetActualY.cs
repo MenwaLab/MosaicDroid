@@ -1,12 +1,23 @@
-public class GetActualYExpression : Expression
+public class GetActualYExpression : FunctionCallExpression
+{
+    public GetActualYExpression(IReadOnlyList<Expression> args, CodeLocation loc)
+      : base(TokenValues.GetActualY, args, loc)
     {
-        public GetActualYExpression(CodeLocation loc) : base(loc) { }
-        public override ExpressionType Type { get; set; }
-        public override object? Value { get; set; }
-        public override void Evaluate() => Value = 1;
-        public override bool CheckSemantic(Context ctx, Scope sc, List<CompilingError> errs)
-        {
-            Type = ExpressionType.Number; return true;
-        }
-        public override string ToString() => "GetActualY()";
+        Type = ExpressionType.Number;
     }
+
+    public override ExpressionType Type { get; set; }
+    public override object? Value { get; set; }
+
+    public override void Evaluate()
+    {
+        // Stub implementation
+        Value = 0;  // Will be replaced with actual evaluation later
+    }
+
+    public override string ToString() => $"{Name}()";
+        public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+    {
+        return visitor.VisitActualY(this);
+    }
+}

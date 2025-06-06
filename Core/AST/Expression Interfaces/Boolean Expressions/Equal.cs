@@ -24,11 +24,15 @@ public class LogicalEqualExpression : BinaryExpression
 
         bool isNumberComparison = Left.Type == ExpressionType.Number && Right.Type == ExpressionType.Number;
         bool isTextComparison = Left.Type == ExpressionType.Text && Right.Type == ExpressionType.Text;
+        
+bool isBoolNumComparison =
+    (Left.Type == ExpressionType.Boolean && Right.Type == ExpressionType.Number) ||
+    (Left.Type == ExpressionType.Number  && Right.Type == ExpressionType.Boolean);
 
-        if (!isNumberComparison && !isTextComparison)
+
+        if (!isNumberComparison && !isTextComparison && !isBoolNumComparison)
         {
-            errs.Add(new CompilingError(Location, ErrorCode.Invalid,
-                "Operands for == must both be numeric or both be text."));
+            ErrorHelpers.InvalidOperands(errs, Location, "equality");
             Type = ExpressionType.ErrorType;
             return false;
         }
@@ -39,4 +43,9 @@ public class LogicalEqualExpression : BinaryExpression
 
     public override string ToString() =>
         Value == null ? $"({Left} == {Right})" : Value.ToString()!;
+
+    public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+    {
+        return visitor.VisitEqual(this);
+    }
 }

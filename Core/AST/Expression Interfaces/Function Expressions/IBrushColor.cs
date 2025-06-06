@@ -1,25 +1,29 @@
-public class IsBrushColorExpression : Expression
+public class IsBrushColorExpression : FunctionCallExpression
+{
+    public IsBrushColorExpression(IReadOnlyList<Expression> args, CodeLocation loc)
+        : base(TokenValues.IsBrushColor, args, loc)
     {
-        public ColorOptions Color { get; }
-        public IsBrushColorExpression(ColorOptions color, CodeLocation loc) : base(loc)
-        {
-            Color = color;
-        }
-
-        public override ExpressionType Type { get; set; }
-        public override object? Value { get; set; }
-
-        public override void Evaluate()
-        {
-            // (runtime engine will set Value to 1/0)
-            Value = 1; 
-        }
-
-        public override bool CheckSemantic(Context ctx, Scope sc, List<CompilingError> errs)
-        {
-            Type = ExpressionType.Boolean;
-            return true;
-        }
-
-        public override string ToString() => $"IsBrushColor({Color})";
+        Type = ExpressionType.Number;
     }
+
+    public override ExpressionType Type { get; set; }
+    public override object? Value { get; set; }
+
+    public override void Evaluate() => Value = 0; // Stub
+
+    public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
+    {
+        bool ok = base.CheckSemantic(context, scope, errors);
+        if (!ok) return false;
+
+        return ColorValidationHelper.ValidateColorArgument(Args, 0, Args[0].Location, errors);
+    }
+
+ public string Color => ((ColorLiteralExpression)Args[0]).Value!.ToString()!;
+
+        public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+    {
+        return visitor.VisitBrushColor(this);
+    }
+    public override string ToString() => $"{TokenValues.IsBrushColor}({Args[0]})";
+}

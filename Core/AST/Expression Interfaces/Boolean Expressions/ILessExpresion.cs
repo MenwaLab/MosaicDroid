@@ -1,5 +1,7 @@
 public class LogicalLessExpression : BinaryExpression
 {
+    
+
      public LogicalLessExpression(Expression left, Expression right, CodeLocation loc)
             : base(loc)
         {
@@ -41,8 +43,7 @@ else // both must be text
 
             if (!isNum && !isText)
             {
-                errs.Add(new CompilingError(Location, ErrorCode.Invalid,
-                    "Operands for < must both be numeric or both be text."));
+                ErrorHelpers.InvalidOperands(errs, Location, "less than");
                 Type = ExpressionType.ErrorType;
                 return false;
             }
@@ -55,4 +56,9 @@ else // both must be text
             Value == null
             ? $"({Left} < {Right})"
             : Value.ToString()!;
+
+        public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+        {
+            return visitor.VisitLess(this);
+        }  
     }

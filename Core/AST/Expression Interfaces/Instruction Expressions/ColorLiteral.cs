@@ -1,5 +1,6 @@
 public class ColorLiteralExpression : AtomExpression
 {
+    
     private ExpressionType _type;
     public override ExpressionType Type
         {
@@ -20,5 +21,9 @@ public class ColorLiteralExpression : AtomExpression
             return true;
         }
     public override void Evaluate() { /* no-op */ }
+    public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+    {
+        return visitor.VisitColorLiteral(this);
+    }
     public override string ToString() => Value?.ToString() ?? string.Empty;
 }

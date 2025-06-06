@@ -39,8 +39,7 @@ public class LogicalGreaterEqualExpression : BinaryExpression
 
             if (!isNum && !isText)
             {
-                errs.Add(new CompilingError(Location, ErrorCode.Invalid,
-                    "Operands for >= must both be numeric or both be text."));
+                ErrorHelpers.InvalidOperands(errs, Location, "greater than or equal to");
                 Type = ExpressionType.ErrorType;
                 return false;
             }
@@ -53,4 +52,9 @@ public class LogicalGreaterEqualExpression : BinaryExpression
             Value == null
             ? $"({Left} >= {Right})"
             : Value.ToString()!;
+            
+        public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+        {
+            return visitor.VisitGreaterEqual(this);
+        }  
     }

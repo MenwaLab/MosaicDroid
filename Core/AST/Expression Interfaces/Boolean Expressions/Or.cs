@@ -28,8 +28,7 @@ public class LogicalOrExpression : BinaryExpression
 
             if (!isNumberComparison || !isTextComparison)
         {
-            errs.Add(new CompilingError(Location, ErrorCode.Invalid,
-                "Operands for || must both be numeric or both be text."));
+            ErrorHelpers.InvalidOperands(errs, Location, "bolean or");
             Type = ExpressionType.ErrorType;
             return false;
         }
@@ -39,4 +38,9 @@ public class LogicalOrExpression : BinaryExpression
 
         public override string ToString() =>
             Value == null ? $"({Left} || {Right})" : Value.ToString()!;
+
+        public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
+        {
+            return visitor.VisitOr(this);
+        }  
     }

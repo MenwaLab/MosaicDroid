@@ -1,25 +1,32 @@
-public class SpawnCommand : ASTNode
+public class SpawnCommand : CallNode
+{
+    public SpawnCommand(IReadOnlyList<Expression> args, CodeLocation loc)
+      : base(TokenValues.Spawn, args, loc)
     {
-        public Expression X { get; }
-        public Expression Y { get; }
-
-        public SpawnCommand(Expression x, Expression y, CodeLocation loc) : base(loc)
-        {
-            X = x;
-            Y = y;
-        }
-
-        public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
-        {
-            bool okX = X.CheckSemantic(context, scope, errors);
-            bool okY = Y.CheckSemantic(context, scope, errors);
-            if (X.Type != ExpressionType.Number || Y.Type != ExpressionType.Number)
-            {
-                errors.Add(new CompilingError(Location, ErrorCode.Invalid, "Spawn requires numeric x and y."));
-                return false;
-            }
-            return okX && okY;
-        }
-
-        public override string ToString() => $"Spawn({X}, {Y}) at {Location.Line}:{Location.Column}";
     }
+        
+    public override bool CheckSemantic(Context ctx, Scope scope, List<CompilingError> errors)
+    {
+        // 1) base does arity (2?) and type‐check (both Number)
+        bool ok = base.CheckSemantic(ctx, scope, errors);
+
+        // 2) exactly one Spawn
+        if (ctx.SpawnSeen)
+        {
+            ErrorHelpers.DuplicateSpawn(errors,Location);
+            ok = false;
+        }
+        ctx.SpawnSeen = true;
+        return ok;
+    }
+
+
+    public override string ToString() =>
+        $"Spawn({Args[0]}, {Args[1]}) at {Location.Line}:{Location.Column}";
+
+    public override void Accept(IStmtVisitor visitor)
+    {
+        visitor.VisitSpawn(this);
+    }
+    
+}
