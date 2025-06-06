@@ -88,11 +88,11 @@ public class ExpressionEvaluatorVisitor : IExprVisitor<double>
                (int)fn.Y2.Accept(this)
            );
     public double VisitBrushColor(IsBrushColorExpression fn)
-{
-    string colorArg = fn.Color;
-    string wantedBrushCode = _canvasContext.GetBrushCodeForColor(colorArg);
-    return _canvasContext.BrushCode == wantedBrushCode ? 1 : 0;
-}
+    {
+        string colorArg = fn.Color;
+        string wantedBrushCode = _canvasContext.GetBrushCodeForColor(colorArg);
+        return _canvasContext.BrushCode == wantedBrushCode ? 1 : 0;
+    }
     public double VisitBrushSize(IsBrushSizeExpression fn)
 {
     double size = fn.Args[0].Accept(this); // let evaluator handle ANY expression

@@ -3,7 +3,7 @@ public class IsBrushSizeExpression : FunctionCallExpression
     public IsBrushSizeExpression(IReadOnlyList<Expression> args, CodeLocation loc)
         : base(TokenValues.IsBrushSize, args, loc)
     {
-        Type = ExpressionType.Boolean;
+        Type = ExpressionType.Number;
     }
 
     public override ExpressionType Type { get; set; }

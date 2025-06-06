@@ -1,6 +1,8 @@
 Spawn(0,0)
 Color("Red")
-n <- 1
-DrawLine(1,1,n)
-DrawRectangle(n - 1, 0, 2, 10, 10)
-DrawCircle(n, n, n - 1)
+DrawLine(GetActualY(),1,GetCanvasSize() - 1)
+x <- IsBrushColor("Red") 
+y <- IsBrushSize(3)
+n <- GetColorCount ("Red", y, y, x, x)
+Color("Green")
+DrawLine(1,0,n)
