@@ -1,3 +1,4 @@
+
 namespace MosaicDroid.Core
 {
     public static class FunctionFactory
