@@ -20,6 +20,9 @@ obj/
 # Ignorar archivos específicos del IDE
 .vscode/
 .idea/
+.vs/
+
+
 
 # Ignorar arcivos temp de ASP.NET
 [Tt]emp/
