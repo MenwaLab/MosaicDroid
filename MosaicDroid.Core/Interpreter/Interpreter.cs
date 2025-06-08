@@ -97,7 +97,7 @@ namespace MosaicDroid.Core
 
             CurrentX += dx * dist;
             CurrentY += dy * dist;
-            EnsureInBounds(CurrentX, CurrentY);
+            
         }
 
         public void VisitDrawCircle(DrawCircleCommand cmd)
@@ -138,7 +138,7 @@ namespace MosaicDroid.Core
             }
             CurrentX = cx;
             CurrentY = cy;
-            EnsureInBounds(CurrentX, CurrentY);
+            
         }
 
         public void VisitDrawRectangle(DrawRectangleCommand cmd)
@@ -158,7 +158,7 @@ namespace MosaicDroid.Core
 
             if (!ok)
             {
-                throw new PixelArtRuntimeException($"Runtime error: invalid arguments to DrawRectangle at {cmd.Location.Line}:{cmd.Location.Column}");
+                throw new PixelArtRuntimeException($"Invalid arguments to DrawRectangle at {cmd.Location.Line}:{cmd.Location.Column}");
             }
 
             int cx = CurrentX + dx * dist,
@@ -345,10 +345,16 @@ namespace MosaicDroid.Core
             {
                 // Reutilizamos el método OutOfBounds ya definido:
                 //ErrorHelpers.OutOfBounds(_runtimeErrors, new CodeLocation(0,0), x, y);
-                throw new PixelArtRuntimeException($"Runtime error: moved outside canvas at {x},{y}");
+                throw new PixelArtRuntimeException($"Moved outside canvas at {x},{y}");
             }
 
 
+        }
+        public string GetBrushCodeForUI(int x, int y)
+        {
+            if (x < 0 || y < 0 || x >= Size || y >= Size)
+                return "  ";  // Return transparent for out-of-bounds
+            return _canvas[x, y];
         }
 
 
