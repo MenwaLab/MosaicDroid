@@ -3,13 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.13.35931.197
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MosaicDroid.GUI.Server", "..\GUI\MosaicDroid.GUI\MosaicDroid.GUI.Server\MosaicDroid.GUI.Server.csproj", "{D1A13B20-CCD3-448E-B2D2-3B8BC2D3CFBC}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MosaicDroid.GUI.DataContracts", "..\GUI\MosaicDroid.GUI\MosaicDroid.GUI.DataContracts\MosaicDroid.GUI.DataContracts.csproj", "{D39BABE1-1DC4-4558-94F2-4C7098623CE5}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MosaicDroid.Core", "..\MosaicDroid.Core\MosaicDroid.Core.csproj", "{3D93EDAB-8BDA-892E-DEEF-2D13E9BA8041}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MosaicDroid.Cli", "..\MosaicDroid.Cli\MosaicDroid.Cli.csproj", "{F8B0B6A5-9F99-0850-53C2-2F918EE7F9DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MosaicDroid.UI", "..\GUI\MosaicDroid.UI\MosaicDroid.UI.csproj", "{DF7AADCB-1A50-4FFE-A4DA-C58EAC2D5492}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,14 +15,6 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{D1A13B20-CCD3-448E-B2D2-3B8BC2D3CFBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D1A13B20-CCD3-448E-B2D2-3B8BC2D3CFBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D1A13B20-CCD3-448E-B2D2-3B8BC2D3CFBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D1A13B20-CCD3-448E-B2D2-3B8BC2D3CFBC}.Release|Any CPU.Build.0 = Release|Any CPU
-		{D39BABE1-1DC4-4558-94F2-4C7098623CE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{D39BABE1-1DC4-4558-94F2-4C7098623CE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{D39BABE1-1DC4-4558-94F2-4C7098623CE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{D39BABE1-1DC4-4558-94F2-4C7098623CE5}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3D93EDAB-8BDA-892E-DEEF-2D13E9BA8041}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{3D93EDAB-8BDA-892E-DEEF-2D13E9BA8041}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D93EDAB-8BDA-892E-DEEF-2D13E9BA8041}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -33,6 +23,10 @@ Global
 		{F8B0B6A5-9F99-0850-53C2-2F918EE7F9DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8B0B6A5-9F99-0850-53C2-2F918EE7F9DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8B0B6A5-9F99-0850-53C2-2F918EE7F9DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DF7AADCB-1A50-4FFE-A4DA-C58EAC2D5492}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF7AADCB-1A50-4FFE-A4DA-C58EAC2D5492}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF7AADCB-1A50-4FFE-A4DA-C58EAC2D5492}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF7AADCB-1A50-4FFE-A4DA-C58EAC2D5492}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
