@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.13.35931.197
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MosaicDroid.Core", "MosaicDroid.Core.csproj", "{7958E1B2-4588-3006-AD0C-FD6381398C04}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MosaicDroid.Cli", "..\MosaicDroid.Cli\MosaicDroid.Cli.csproj", "{F8B0B6A5-9F99-0850-53C2-2F918EE7F9DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MosaicDroid.UI.Wpf", "..\GUI\MosaicDroid.UI.Wpf\MosaicDroid.UI.Wpf.csproj", "{B4D4BE2A-39E7-4047-9C39-EF0C1C703851}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{7958E1B2-4588-3006-AD0C-FD6381398C04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7958E1B2-4588-3006-AD0C-FD6381398C04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7958E1B2-4588-3006-AD0C-FD6381398C04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7958E1B2-4588-3006-AD0C-FD6381398C04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8B0B6A5-9F99-0850-53C2-2F918EE7F9DD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8B0B6A5-9F99-0850-53C2-2F918EE7F9DD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8B0B6A5-9F99-0850-53C2-2F918EE7F9DD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8B0B6A5-9F99-0850-53C2-2F918EE7F9DD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4D4BE2A-39E7-4047-9C39-EF0C1C703851}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4D4BE2A-39E7-4047-9C39-EF0C1C703851}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4D4BE2A-39E7-4047-9C39-EF0C1C703851}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4D4BE2A-39E7-4047-9C39-EF0C1C703851}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {68726374-AE66-4C6A-BB3C-792EA0E5B0A6}
+	EndGlobalSection
+EndGlobal
