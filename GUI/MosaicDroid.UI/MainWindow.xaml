@@ -2,59 +2,89 @@
     x:Class="MosaicDroid.UI.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    Title="MosaicDroid"
+    Title="Mosaic Droid"
     Height="600"
     Width="900">
 
+    <!-- 1. All your brushes, fonts & styles go here -->
     <Window.Resources>
-        <!-- Pastel texture behind editor & docs -->
+
+        <!-- pastel noise behind editor & docs only -->
         <ImageBrush x:Key="PanelBackground"
                 ImageSource="pack://application:,,,/MosaicDroid.UI;component/Assets/bluePurplePinkTones.png"
                 Opacity="0.2"
                 Stretch="UniformToFill"/>
+
+        <!-- a fun font -->
         <FontFamily x:Key="FunFont">Comic Sans MS</FontFamily>
-        <Style TargetType="Button" x:Key="PastelButton">
-            <Setter Property="FontFamily" Value="{StaticResource FunFont}"/>
-            <Setter Property="Padding"     Value="8,4"/>
-            <Setter Property="Margin"      Value="4"/>
+
+        <!-- Buttons get this style -->
+        <Style x:Key="PastelButton" TargetType="Button">
+            <Setter Property="FontFamily"    Value="{StaticResource FunFont}"/>
+            <Setter Property="Padding"       Value="8,4"/>
+            <Setter Property="Margin"        Value="4"/>
             <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="Background"  Value="LavenderBlush"/>
-            <Setter Property="BorderBrush" Value="LightPink"/>
+            <Setter Property="Background"    Value="LavenderBlush"/>
+            <Setter Property="BorderBrush"   Value="LightPink"/>
         </Style>
+
+        <!-- Inputs (ComboBox, TextBox) get this style -->
+        <Style x:Key="PastelInput" TargetType="Control">
+            <Setter Property="FontFamily"    Value="{StaticResource FunFont}"/>
+            <Setter Property="Padding"       Value="6,2"/>
+            <Setter Property="Margin"        Value="4"/>
+            <Setter Property="Background"    Value="LavenderBlush"/>
+            <Setter Property="BorderBrush"   Value="LightPink"/>
+            <Setter Property="BorderThickness" Value="2"/>
+        </Style>
+
+        <!-- Force each line‐number item to be a fixed height -->
+        <Style x:Key="LineNumberStyle" TargetType="ListBoxItem">
+            <Setter Property="Height"  Value="20"/>
+            <Setter Property="Padding" Value="0"/>
+        </Style>
+
     </Window.Resources>
 
     <DockPanel Background="MistyRose">
 
-        <!-- Toolbar -->
+        <!-- hidden WPF player for background music -->
+        <MediaElement x:Name="BgMusic"
+                  LoadedBehavior="Manual"
+                  UnloadedBehavior="Stop"
+                  Volume="0.3"
+                  Visibility="Collapsed"/>
+
+        <!-- toolbar -->
         <StackPanel DockPanel.Dock="Top"
                 Orientation="Horizontal"
                 Background="LightYellow"
                 Margin="5">
 
-            <!-- Language selector -->
+            <!-- language selector -->
             <TextBlock x:Name="_langLabel"
                  FontFamily="{StaticResource FunFont}"
                  VerticalAlignment="Center"
                  Margin="0,0,5,0"/>
             <ComboBox x:Name="LangCombo"
-                Width="100"
-                SelectionChanged="LangCombo_SelectionChanged"
-                Margin="0,0,15,0">
+                Style="{StaticResource PastelInput}"
+                MinWidth="60"
+                SelectionChanged="LangCombo_SelectionChanged">
                 <ComboBoxItem Tag="en">English</ComboBoxItem>
                 <ComboBoxItem Tag="es">Español</ComboBoxItem>
             </ComboBox>
 
-            <!-- Size label + box -->
+            <!-- canvas size -->
             <TextBlock x:Name="_sizeLabel"
                  FontFamily="{StaticResource FunFont}"
                  VerticalAlignment="Center"
                  Margin="0,0,5,0"/>
             <TextBox x:Name="SizeBox"
-               Width="50"
-               Text="40"
-               FontFamily="{StaticResource FunFont}"
-               Margin="0,0,15,0"/>
+               Style="{StaticResource PastelInput}"
+               MinWidth="40"
+               Text="40"/>
 
+            <!-- action buttons -->
             <Button x:Name="ResizeBtn"
               Style="{StaticResource PastelButton}"
               Click="ResizeBtn_Click"/>
@@ -67,46 +97,52 @@
             <Button x:Name="RunBtn"
               Style="{StaticResource PastelButton}"
               Click="RunBtn_Click"/>
+
         </StackPanel>
 
+        <!-- main area -->
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="2*"/>
                 <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- Line numbers + editor -->
+            <!-- line numbers + editor -->
             <Grid Grid.Column="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="40"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <ListBox x:Name="LineNums"
-                   Width="40"
-                   FontFamily="Consolas"
-                   IsHitTestVisible="False"
-                   Background="{StaticResource PanelBackground}"/>
-                </ScrollViewer>
+
+                <ListBox x:Name="LineNums"
+                 ItemContainerStyle="{StaticResource LineNumberStyle}"
+                 Width="40"
+                 FontFamily="Consolas"
+                 IsHitTestVisible="False"
+                 Background="{StaticResource PanelBackground}"
+                 ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+
                 <TextBox x:Name="Editor"
                  Grid.Column="1"
                  FontFamily="Consolas"
+                 Background="{StaticResource PanelBackground}"
+                 Foreground="Black"
                  AcceptsReturn="True"
                  VerticalScrollBarVisibility="Auto"
-                 Background="WhiteSmoke"
                  TextChanged="Editor_TextChanged"/>
             </Grid>
 
-            <!-- Canvas -->
+            <!-- white-only pixel canvas -->
             <ScrollViewer Grid.Column="1"
                     Background="White"
                     HorizontalScrollBarVisibility="Auto"
                     VerticalScrollBarVisibility="Auto">
-                <UniformGrid x:Name="PixelGrid" Background="White"/>
+                <UniformGrid x:Name="PixelGrid"
+                     Background="White"/>
             </ScrollViewer>
 
-            <!-- Docs panel -->
+            <!-- docs panel -->
             <TextBox Grid.Column="2"
                x:Name="DocsBox"
                FontFamily="{StaticResource FunFont}"

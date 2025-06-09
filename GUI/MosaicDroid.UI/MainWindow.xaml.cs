@@ -30,25 +30,18 @@ namespace MosaicDroid.UI
             Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
         
             InitializeComponent();
-            ReloadAllTexts();
             DataContext = this;
             LangCombo.SelectedIndex = (Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName == "es") ? 1 : 0;
-
+            //LangCombo.SelectionChanged += LangCombo_SelectionChanged;
             HookEvents();
-            StartMusic();
+            
             ReloadAllTexts();
-
-            /*var exeDir = AppDomain.CurrentDomain.BaseDirectory;
-            var docsPath = System.IO.Path.Combine(exeDir, "InstructionDocs.txt");
-            InstructionDocs = File.Exists(docsPath)
-                ? File.ReadAllText(docsPath)
-                : "Help file not found.";*/
             PixelGrid.SizeChanged += (s, e) => ResizeCanvas();
             ResizeCanvas();
+            Editor.TextChanged += Editor_TextChanged;
             UpdateLineNumbers();
 
-            _musicPlayer = new Player();
-            _ = _musicPlayer.Play("Assets/Osole_mio.mp3");
+            StartMusic();
         }
 
         private void HookEvents()
@@ -57,12 +50,32 @@ namespace MosaicDroid.UI
             LangCombo.SelectionChanged += LangCombo_SelectionChanged;
         }
 
-        private void StartMusic()
+        private async void StartMusic()
         {
-            _musicPlayer = new Player();
-            // path relative to exe
-            _ = _musicPlayer.Play("Assets/venice_chill.mp3");
+            var musicFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Osole_mio.mp3");
+            if (File.Exists(musicFile))
+            {
+                BgMusic.Source = new Uri(musicFile, UriKind.Absolute);
+                BgMusic.Play();
+            }
+            else
+            {
+                MessageBox.Show("Music file not found: " + musicFile, "Error");
+            }
         }
+            /*
+            _musicPlayer = new Player();
+            var musicPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Osole_mio.mp3");
+            try
+            {
+                await _musicPlayer.Play(musicPath);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Could not play music: {ex.Message}", "Music Error");
+            }
+            */
+        
 
 
         private void LangCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)

@@ -46,6 +46,9 @@
     <None Update="InstructionDocs_en.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+	  <None Update="InstructionDocs_es.txt">
+		  <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
   </ItemGroup>
 
 	
