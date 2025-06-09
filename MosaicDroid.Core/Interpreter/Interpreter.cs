@@ -203,6 +203,15 @@ namespace MosaicDroid.Core
                 q.Enqueue((x, y - 1));
             }
         }
+        public void VisitMove(MoveCommand cmd)
+        {
+            int x = (int)cmd.Args[0].Accept(_exprEval);
+            int y = (int)cmd.Args[1].Accept(_exprEval);
+
+            EnsureInBounds(x, y); 
+            CurrentX = x;
+            CurrentY = y;
+        }
 
         public void VisitLabel(LabelExpression lbl) { /* no-op */ }
 

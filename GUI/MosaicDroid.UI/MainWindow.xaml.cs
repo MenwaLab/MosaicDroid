@@ -1,32 +1,103 @@
 ﻿
 using MosaicDroid.Core;
-using System.IO;                   // for File and Path
+using NetCoreAudio;
+using System.IO;                   
+using System.Resources;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Interop;
 using System.Windows.Media;
+
+
+
 
 namespace MosaicDroid.UI
 {
     public partial class MainWindow : Window
     {
         private int CanvasSize = 40;
+        private const int MAX_CANVAS = 300;
+        public string InstructionDocs { get; private set; }
+        private Player _musicPlayer;
 
-        public string InstructionDocs { get; } = @"
-Color(string): cambia pincel…
-Size(int): …
-…";  // gotta paste my doc here or find another way
+        private ResourceManager _resmgr =
+  new ResourceManager("MosaicDroid.UI.Resources.Strings",
+                      typeof(MainWindow).Assembly);
+
+
 
         public MainWindow()
         {
+            Thread.CurrentThread.CurrentUICulture = Thread.CurrentThread.CurrentCulture;
+        
             InitializeComponent();
+            ReloadAllTexts();
             DataContext = this;
+            LangCombo.SelectedIndex = (Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName == "es") ? 1 : 0;
+
+            HookEvents();
+            StartMusic();
+            ReloadAllTexts();
+
+            /*var exeDir = AppDomain.CurrentDomain.BaseDirectory;
+            var docsPath = System.IO.Path.Combine(exeDir, "InstructionDocs.txt");
+            InstructionDocs = File.Exists(docsPath)
+                ? File.ReadAllText(docsPath)
+                : "Help file not found.";*/
             PixelGrid.SizeChanged += (s, e) => ResizeCanvas();
             ResizeCanvas();
             UpdateLineNumbers();
+
+            _musicPlayer = new Player();
+            _ = _musicPlayer.Play("Assets/Osole_mio.mp3");
         }
 
-        private void Editor_TextChanged(object sender, TextChangedEventArgs e)
+        private void HookEvents()
+        {
+            PixelGrid.SizeChanged += (s, e) => ResizeCanvas();
+            LangCombo.SelectionChanged += LangCombo_SelectionChanged;
+        }
+
+        private void StartMusic()
+        {
+            _musicPlayer = new Player();
+            // path relative to exe
+            _ = _musicPlayer.Play("Assets/venice_chill.mp3");
+        }
+
+
+        private void LangCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            var combo = (ComboBox)sender;
+            var tag = (combo.SelectedItem as ComboBoxItem)?.Tag as string ?? "en";
+            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(tag);
+            ReloadAllTexts();
+        }
+
+        private void ReloadAllTexts()
+        {
+            // buttons
+            ResizeBtn.Content = _resmgr.GetString("Btn_Resize");
+            LoadBtn.Content = _resmgr.GetString("Btn_Load");
+            SaveBtn.Content = _resmgr.GetString("Btn_Save");
+            RunBtn.Content = _resmgr.GetString("Btn_Run");
+
+            // labels
+            // we bound SizeBox label via x:Name on a TextBlock in XAML
+            ((TextBlock)LogicalTreeHelper.FindLogicalNode(this, "_sizeLabel"))
+              .Text = _resmgr.GetString("Lbl_Size");
+            ((TextBlock)LogicalTreeHelper.FindLogicalNode(this, "_langLabel"))
+              .Text = _resmgr.GetString("Lbl_Language");
+
+            // load docs text file (e.g. InstructionDocs_en.txt or .es)
+            string docsFile = $"InstructionDocs_{Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName}.txt";
+            string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, docsFile);
+            DocsBox.Text = File.Exists(path)
+                ? File.ReadAllText(path)
+                : _resmgr.GetString("Docs_NotFound");
+        }
+
+
+private void Editor_TextChanged(object sender, TextChangedEventArgs e)
           => UpdateLineNumbers();
 
         private void UpdateLineNumbers()
@@ -40,7 +111,7 @@ Size(int): …
         {
             if (int.TryParse(SizeBox.Text, out var sz) && sz > 0)
             {
-                CanvasSize = sz;
+                CanvasSize = Math.Min(sz, MAX_CANVAS); ;
                 ResizeCanvas();
             }
         }

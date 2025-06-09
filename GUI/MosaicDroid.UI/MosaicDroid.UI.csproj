@@ -9,13 +9,48 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="NewFolder1\**" />
+    <EmbeddedResource Remove="NewFolder1\**" />
+    <None Remove="NewFolder1\**" />
+    <Page Remove="NewFolder1\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="Resources\Strings.en.Designer.cs" />
+    <Compile Remove="Resources\Strings.es.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\bluePurplePinkTones.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NetCoreAudio" Version="2.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\MosaicDroid.Core\MosaicDroid.Core.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\bluePurplePinkTones.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Assets\Osole_mio.mp3">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Code.gw">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="InstructionDocs_en.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
+
+	
+
+
+
 
 </Project>

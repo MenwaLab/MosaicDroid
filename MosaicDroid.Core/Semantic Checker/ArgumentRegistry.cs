@@ -14,6 +14,7 @@ namespace MosaicDroid.Core
                                             ExpressionType.Number, ExpressionType.Number, ExpressionType.Number,
                                             ExpressionType.Number, ExpressionType.Number),
             [TokenValues.Fill] = new ArgumentSpec(0),
+            [TokenValues.Move] = new ArgumentSpec(2, ExpressionType.Number, ExpressionType.Number),
 
             // Functions:
             [TokenValues.GetActualX] = new ArgumentSpec(0),

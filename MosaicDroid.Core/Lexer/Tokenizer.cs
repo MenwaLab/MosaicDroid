@@ -57,6 +57,7 @@ namespace MosaicDroid.Core
 
         public const string GoTo = "GoTo";
         public const string Size = "Size";
+        public const string Move = "Move";
 
 
         // Funciones

@@ -137,6 +137,9 @@ namespace MosaicDroid.Core
         }
         private void EnsureNewlineAfter(ASTNode stmt)
         {
+            if (!_stream.CanLookAhead())
+                return;
+            /*
             if (!(_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline))
             {
                 // _errors.Add(new CompilingError(stmt.Location,ErrorCode.Expected,        "Missing newline after statement" ));
@@ -144,6 +147,14 @@ namespace MosaicDroid.Core
             }
             // swallow all actual newlines to stay in sync
             ExpectNewLine();
+            */
+
+             if (_stream.LookAhead().Type != TokenType.Jumpline)
+        ErrorHelpers.MissingNewLine(_errors, stmt.Location, "statement");
+
+    // now consume any newlines
+    while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
+        _stream.MoveNext();
         }
         private void EnsureNewlineAfter(CodeLocation loc)
         {
@@ -206,6 +217,10 @@ namespace MosaicDroid.Core
                 case TokenValues.Fill:
                     var fillArgs = ParseArgumentList();
                     return new FillCommand(fillArgs, instr.Location);
+
+                case TokenValues.Move:
+                    var moveArgs = ParseArgumentList();
+                    return new MoveCommand(moveArgs, instr.Location);
 
                 default:
                     //_errors.Add(new CompilingError(instr.Location, ErrorCode.Invalid, $"Unknown instruction: {instr.Value}"));
@@ -432,57 +447,7 @@ namespace MosaicDroid.Core
             _stream.MoveNext();
             return new NoOpExpression(_stream.LookAhead().Location);
         }
-        private Expression ParsePrimary()
-        {
-            // Handle integer literals
-            if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Integer)
-            {
-                var tok = _stream.Advance();
-                return new Number(double.Parse(tok.Value), tok.Location);
-            }
-
-            // Handle string literals
-            if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.String)
-            {
-                var tok = _stream.Advance();
-                return new StringExpression(tok.Value, tok.Location);
-            }
-
-            // Handle color literals
-            if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Color)
-            {
-                var tok = _stream.Advance();
-                return new ColorLiteralExpression(tok.Value, tok.Location);
-            }
-
-            // Handle function calls
-            if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Function)
-            {
-                return ParseFunctionCall();
-            }
-
-            // Handle variables
-            if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Variable)
-            {
-                var tok = _stream.Advance();
-                return new VariableExpression(tok.Value, tok.Location);
-            }
-
-            // Handle parenthesized expressions
-            if (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Delimeter && _stream.LookAhead().Value == TokenValues.OpenParenthesis)
-            {
-                _stream.MoveNext();
-                var expr = ParseExpression();
-                EatDelimiter(TokenValues.ClosedParenthesis);
-                return expr;
-            }
-
-            // Error handling for unexpected tokens
-            // _errors.Add(new CompilingError(_stream.LookAhead().Location, ErrorCode.Expected, $"Unexpected token {_stream.LookAhead().Value} in primary expression"));
-            ErrorHelpers.UnexpectedToken(_errors, _stream.LookAhead().Location, _stream.LookAhead().Value);
-            _stream.MoveNext();
-            return new NoOpExpression(_stream.LookAhead().Location);
-        }
+      
         private Expression ParsePower()
         {
             var left = ParseFactor();

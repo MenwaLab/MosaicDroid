@@ -9,6 +9,7 @@ namespace MosaicDroid.Core
         void VisitDrawCircle(DrawCircleCommand cmd);
         void VisitDrawRectangle(DrawRectangleCommand cmd);
         void VisitFill(FillCommand cmd);
+        void VisitMove(MoveCommand cmd);
 
         void VisitLabel(LabelExpression lbl);
         void VisitGoto(GotoCommand gt);

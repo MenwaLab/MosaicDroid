@@ -1,0 +1,63 @@
+﻿=== Referencia del Lenguaje Pixel-Wall-E ===
+
+MODO DE ENTRADA:
+ - Puedes escribir tu programa directamente en el editor izquierdo o hacer clic en **Cargar** para abrir un archivo ".gw".
+ - Haz clic en **Guardar** para exportar el contenido del editor a un archivo ".gw".
+
+BOTONES:
+ - **Tamaño [n] + Redimensionar**: establece el lienzo a n×n píxeles (máx. 300).
+ - **Ejecutar**: realiza el análisis léxico, sintáctico, verificación semántica, interpretación y repinta la cuadrícula.
+ - **Cargar / Guardar**: carga o guarda un archivo de script ".gw".
+
+COMANDOS (cada uno debe terminar con salto de línea):
+  • **Spawn(int x, int y)**  
+      Inicializa las coordenadas de inicio de Wall-E.  
+      *Debe ser el primer (y único) Spawn en un programa.*  
+
+  • **Color("Nombre")**  
+      Cambia el color del pincel. Nombres permitidos: "Rojo", "Azul", "Verde", "Amarillo",  
+      "Naranja", "Morado", "Negro", "Blanco" (borrador), "Transparente" (sin pintar).  
+
+  • **Tamaño(int k)**  
+      Cambia el grosor del pincel. Si k es par, se usa el número impar inferior.  
+
+  • **DibujarLínea(dx, dy, distancia)**  
+      Desde el píxel actual, dibuja una línea recta de `distancia` píxeles en la dirección  
+      (`dx`,`dy`), donde dx,dy ∈ {–1,0,1}.  
+
+  • **DibujarCírculo(dx, dy, radio)**  
+      Desde el píxel actual, muévete `radio` en (dx,dy) y dibuja solo la circunferencia.  
+
+  • **DibujarRectángulo(dx, dy, dist, ancho, alto)**  
+      Desde la posición actual, muévete (`dx`,`dy`)*`dist` al centro de un rectángulo de `ancho`×`alto` y dibuja su borde.  
+
+  • **Rellenar()**  
+      Rellena la región contigua bajo el píxel actual con el color del pincel.  
+
+VARIABLES & EXPRESIONES:
+  • **Asignación:**  
+      `miVar <- Expresión`  
+  • **Aritmética:** `+`, `-`, `*`, `/`, `**`, `%`  
+  • **Booleanos:** comparaciones `==,>,<,>=,<=`, `&&`, `||`  
+
+FUNCIONES INCORPORADAS:
+  • **ObtenerXActual() / ObtenerYActual()**  
+      Devuelve la X o Y actual de Wall-E.  
+  • **ObtenerTamañoLienzo()**  
+      Devuelve el ancho del lienzo (==altura).  
+  • **ContarColor(color, x1, y1, x2, y2)**  
+      Cuenta los píxeles de `color` en el rectángulo entre (x1,y1) y (x2,y2).  
+  • **EsColorPincel(color)**  
+      1 si el pincel actual coincide con `color`, sino 0.  
+  • **EsTamañoPincel(tamaño)**  
+      1 si el grosor actual del pincel == `tamaño`, sino 0.  
+  • **EsColorLienzo(color, vertical, horizontal)**  
+      1 si el píxel en el desplazamiento (vertical,horizontal) desde la posición actual es igual a `color`, sino 0.  
+
+SALTOS CONDICIONALES & ETIQUETAS:
+  • **Etiquetas:**  
+      `miEtiqueta` en una línea marca un destino de salto.  
+  • **IrA [miEtiqueta] (condición)**  
+      Si `condición` es verdadera (distinta de cero), continúa la ejecución en `miEtiqueta`.  
+
+PROGRAMA DE EJEMPLO:

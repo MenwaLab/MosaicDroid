@@ -1,53 +1,119 @@
-﻿<Window x:Class="MosaicDroid.UI.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="MosaicDroid" Height="600" Width="900">
-    <DockPanel>
-        <!-- Top toolbar -->
-        <StackPanel Orientation="Horizontal" DockPanel.Dock="Top" Margin="5">
-            <TextBlock VerticalAlignment="Center" Text="Size:" Margin="0,0,5,0"/>
-            <TextBox   x:Name="SizeBox"   Width="50" Text="40" Margin="0,0,15,0"/>
-            <Button    x:Name="ResizeBtn" Content="Resize" Margin="0,0,15,0"
-                 Click="ResizeBtn_Click"/>
-            <Button    x:Name="LoadBtn"   Content="Load"   Click="LoadBtn_Click"/>
-            <Button    x:Name="SaveBtn"   Content="Save"   Click="SaveBtn_Click"/>
-            <Button    x:Name="RunBtn"    Content="Run"    Click="RunBtn_Click"/>
+﻿<Window
+    x:Class="MosaicDroid.UI.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="MosaicDroid"
+    Height="600"
+    Width="900">
+
+    <Window.Resources>
+        <!-- Pastel texture behind editor & docs -->
+        <ImageBrush x:Key="PanelBackground"
+                ImageSource="pack://application:,,,/MosaicDroid.UI;component/Assets/bluePurplePinkTones.png"
+                Opacity="0.2"
+                Stretch="UniformToFill"/>
+        <FontFamily x:Key="FunFont">Comic Sans MS</FontFamily>
+        <Style TargetType="Button" x:Key="PastelButton">
+            <Setter Property="FontFamily" Value="{StaticResource FunFont}"/>
+            <Setter Property="Padding"     Value="8,4"/>
+            <Setter Property="Margin"      Value="4"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Background"  Value="LavenderBlush"/>
+            <Setter Property="BorderBrush" Value="LightPink"/>
+        </Style>
+    </Window.Resources>
+
+    <DockPanel Background="MistyRose">
+
+        <!-- Toolbar -->
+        <StackPanel DockPanel.Dock="Top"
+                Orientation="Horizontal"
+                Background="LightYellow"
+                Margin="5">
+
+            <!-- Language selector -->
+            <TextBlock x:Name="_langLabel"
+                 FontFamily="{StaticResource FunFont}"
+                 VerticalAlignment="Center"
+                 Margin="0,0,5,0"/>
+            <ComboBox x:Name="LangCombo"
+                Width="100"
+                SelectionChanged="LangCombo_SelectionChanged"
+                Margin="0,0,15,0">
+                <ComboBoxItem Tag="en">English</ComboBoxItem>
+                <ComboBoxItem Tag="es">Español</ComboBoxItem>
+            </ComboBox>
+
+            <!-- Size label + box -->
+            <TextBlock x:Name="_sizeLabel"
+                 FontFamily="{StaticResource FunFont}"
+                 VerticalAlignment="Center"
+                 Margin="0,0,5,0"/>
+            <TextBox x:Name="SizeBox"
+               Width="50"
+               Text="40"
+               FontFamily="{StaticResource FunFont}"
+               Margin="0,0,15,0"/>
+
+            <Button x:Name="ResizeBtn"
+              Style="{StaticResource PastelButton}"
+              Click="ResizeBtn_Click"/>
+            <Button x:Name="LoadBtn"
+              Style="{StaticResource PastelButton}"
+              Click="LoadBtn_Click"/>
+            <Button x:Name="SaveBtn"
+              Style="{StaticResource PastelButton}"
+              Click="SaveBtn_Click"/>
+            <Button x:Name="RunBtn"
+              Style="{StaticResource PastelButton}"
+              Click="RunBtn_Click"/>
         </StackPanel>
 
-        <!-- Main area -->
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="2*"/>
-                <ColumnDefinition Width="4*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="3*"/>
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
 
             <!-- Line numbers + editor -->
             <Grid Grid.Column="0">
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="30"/>
+                    <ColumnDefinition Width="40"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <ListBox   x:Name="LineNums" FontFamily="Consolas"
-                   IsHitTestVisible="False"/>
-                <TextBox   x:Name="Editor" Grid.Column="1" FontFamily="Consolas"
-                   AcceptsReturn="True"
-                   VerticalScrollBarVisibility="Auto"
-                   TextChanged="Editor_TextChanged"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                    <ListBox x:Name="LineNums"
+                   Width="40"
+                   FontFamily="Consolas"
+                   IsHitTestVisible="False"
+                   Background="{StaticResource PanelBackground}"/>
+                </ScrollViewer>
+                <TextBox x:Name="Editor"
+                 Grid.Column="1"
+                 FontFamily="Consolas"
+                 AcceptsReturn="True"
+                 VerticalScrollBarVisibility="Auto"
+                 Background="WhiteSmoke"
+                 TextChanged="Editor_TextChanged"/>
             </Grid>
 
-            <!-- Pixel grid -->
-            <ScrollViewer Grid.Column="1" HorizontalScrollBarVisibility="Auto"
+            <!-- Canvas -->
+            <ScrollViewer Grid.Column="1"
+                    Background="White"
+                    HorizontalScrollBarVisibility="Auto"
                     VerticalScrollBarVisibility="Auto">
-                <UniformGrid x:Name="PixelGrid" />
+                <UniformGrid x:Name="PixelGrid" Background="White"/>
             </ScrollViewer>
 
-            <!-- Documentation panel -->
-            <TextBox Grid.Column="2" 
-         Text="{Binding InstructionDocs, Mode=OneWay}"
-         IsReadOnly="True" 
-         TextWrapping="Wrap"
-         VerticalScrollBarVisibility="Auto"/>
+            <!-- Docs panel -->
+            <TextBox Grid.Column="2"
+               x:Name="DocsBox"
+               FontFamily="{StaticResource FunFont}"
+               Background="{StaticResource PanelBackground}"
+               IsReadOnly="True"
+               TextWrapping="Wrap"
+               VerticalScrollBarVisibility="Auto"/>
         </Grid>
     </DockPanel>
 </Window>

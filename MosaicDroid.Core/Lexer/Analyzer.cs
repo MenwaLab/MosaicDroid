@@ -43,6 +43,7 @@ namespace MosaicDroid.Core
             analyzer.RegisterKeyword("Fill", TokenValues.Fill);
             analyzer.RegisterKeyword("GoTo", TokenValues.GoTo);
             analyzer.RegisterKeyword("Size", TokenValues.Size);
+            analyzer.RegisterKeyword("Move", TokenValues.Move);
 
             // Funciones (GetActualX, IsBrushColor)
             analyzer.RegisterKeyword("GetActualX", TokenValues.GetActualX);
