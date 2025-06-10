@@ -43,7 +43,7 @@ namespace MosaicDroid.Core
                         TokenType type = tokenValue switch
                         {
                             TokenValues.Spawn or TokenValues.Color or TokenValues.Size or TokenValues.DrawLine
-                            or TokenValues.DrawCircle or TokenValues.DrawRectangle or TokenValues.Fill
+                            or TokenValues.DrawCircle or TokenValues.DrawRectangle or TokenValues.Fill or TokenValues.Move
                             => TokenType.Instruction,
 
                             TokenValues.GoTo => TokenType.GoTo,

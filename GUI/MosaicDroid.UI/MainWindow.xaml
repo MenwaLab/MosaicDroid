@@ -53,6 +53,7 @@
                   LoadedBehavior="Manual"
                   UnloadedBehavior="Stop"
                   Volume="0.3"
+                  MediaEnded="BgMusic_MediaEnded"
                   Visibility="Collapsed"/>
 
         <!-- toolbar -->
@@ -68,8 +69,17 @@
                  Margin="0,0,5,0"/>
             <ComboBox x:Name="LangCombo"
                 Style="{StaticResource PastelInput}"
+                Background="LavenderBlush"
+                BorderBrush="LightPink"
                 MinWidth="60"
                 SelectionChanged="LangCombo_SelectionChanged">
+                <ComboBox.ItemContainerStyle>
+                    <Style TargetType="ComboBoxItem">
+                        <Setter Property="Background" Value="MistyRose"/>
+                        <Setter Property="Foreground" Value="Black"/>
+                        <Setter Property="Padding"    Value="4"/>
+                    </Style>
+                </ComboBox.ItemContainerStyle>
                 <ComboBoxItem Tag="en">English</ComboBoxItem>
                 <ComboBoxItem Tag="es">Español</ComboBoxItem>
             </ComboBox>
@@ -97,6 +107,10 @@
             <Button x:Name="RunBtn"
               Style="{StaticResource PastelButton}"
               Click="RunBtn_Click"/>
+            
+            <!--<Button x:Name="StopBtn"
+            Style="{StaticResource PastelButton}"
+            Click="StopBtn_Click"/> -->
 
         </StackPanel>
 

@@ -18,6 +18,7 @@ namespace MosaicDroid.UI
         private const int MAX_CANVAS = 300;
         public string InstructionDocs { get; private set; }
         private Player _musicPlayer;
+        private CancellationTokenSource _runCts;
 
         private ResourceManager _resmgr =
   new ResourceManager("MosaicDroid.UI.Resources.Strings",
@@ -63,19 +64,12 @@ namespace MosaicDroid.UI
                 MessageBox.Show("Music file not found: " + musicFile, "Error");
             }
         }
-            /*
-            _musicPlayer = new Player();
-            var musicPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Osole_mio.mp3");
-            try
-            {
-                await _musicPlayer.Play(musicPath);
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"Could not play music: {ex.Message}", "Music Error");
-            }
-            */
-        
+        private void BgMusic_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            BgMusic.Position = TimeSpan.Zero;
+            BgMusic.Play();
+        }
+
 
 
         private void LangCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -109,8 +103,7 @@ namespace MosaicDroid.UI
                 : _resmgr.GetString("Docs_NotFound");
         }
 
-
-private void Editor_TextChanged(object sender, TextChangedEventArgs e)
+         private void Editor_TextChanged(object sender, TextChangedEventArgs e)
           => UpdateLineNumbers();
 
         private void UpdateLineNumbers()
@@ -172,6 +165,7 @@ private void Editor_TextChanged(object sender, TextChangedEventArgs e)
             if (dlg.ShowDialog() == true)
                 File.WriteAllText(dlg.FileName, Editor.Text);
         }
+
 
         private void RunBtn_Click(object s, RoutedEventArgs e)
         {

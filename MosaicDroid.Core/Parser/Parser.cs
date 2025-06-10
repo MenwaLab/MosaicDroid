@@ -73,8 +73,6 @@ namespace MosaicDroid.Core
                         continue;
 
 
-
-
                     case TokenType.Instruction:
                         node = ParseInstruction();
                         statements.Add(node);
@@ -99,7 +97,7 @@ namespace MosaicDroid.Core
                         }
 
                         // Instrucción malformada como DrawLine1,0)
-                        if (Regex.IsMatch(la.Value, @"^(Spawn|Color|Size|DrawLine|DrawCircle|DrawRectangle|Fill)(?=[^(\s])"))
+                        if (Regex.IsMatch(la.Value, @"^(Spawn|Color|Size|DrawLine|DrawCircle|DrawRectangle|Fill|Move)(?=[^(\s])"))
                         {
                             //_errors.Add(new CompilingError(la.Location, ErrorCode.Expected,"'(' expected after instruction name"));
                             ErrorHelpers.MissingOpenParen(_errors, la.Location, la.Value);
