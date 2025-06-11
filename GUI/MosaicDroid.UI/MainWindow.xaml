@@ -107,10 +107,9 @@
             <Button x:Name="RunBtn"
               Style="{StaticResource PastelButton}"
               Click="RunBtn_Click"/>
-            
-            <!--<Button x:Name="StopBtn"
+            <Button x:Name="StopBtn"
             Style="{StaticResource PastelButton}"
-            Click="StopBtn_Click"/> -->
+            Click="StopBtn_Click"/> 
 
         </StackPanel>
 
@@ -144,7 +143,9 @@
                  Foreground="Black"
                  AcceptsReturn="True"
                  VerticalScrollBarVisibility="Auto"
+                            
                  TextChanged="Editor_TextChanged"/>
+                
             </Grid>
 
             <!-- white-only pixel canvas -->

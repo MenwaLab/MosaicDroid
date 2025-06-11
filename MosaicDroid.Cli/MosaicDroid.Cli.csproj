@@ -8,11 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-	  <ProjectReference Include="..\MosaicDroid.Core\MosaicDroid.Core.csproj" />
-	  
-  </ItemGroup>
-
-  <ItemGroup>
     <None Update="Code.pw">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

@@ -92,8 +92,9 @@ namespace MosaicDroid.Core
 
                 // Matching ints
                 if (stream.ReadNumber(out string number))
+
                 {
-                    if (!int.TryParse(number, out _))
+                    if (!double.TryParse(number, out _))
                         //errors.Add(new CompilingError(stream.Location, ErrorCode.Invalid, "Invalid integer"));
                         ErrorHelpers.InvalidInteger(errors, stream.Location, number);
 
@@ -157,14 +158,8 @@ namespace MosaicDroid.Core
                     return false;
                 }
 
-                var names = Enum.GetNames(typeof(ColorOptions));
-                bool isExactColor = names
-                    .Any(n => string.Equals(n, text, StringComparison.OrdinalIgnoreCase));
-
-                var type = isExactColor
-                    ? TokenType.Color
-                    : TokenType.String;
-
+                bool isColor = ColorValidationHelper.IsValidWpfColor(text);
+                var type = isColor ? TokenType.Color : TokenType.String;
                 tokens.Add(new Token(type, text, startLoc));
                 return true;
             }
@@ -179,13 +174,19 @@ namespace MosaicDroid.Core
                     return false;
                 }
 
-                TokenType type = IsColor(text) ? TokenType.Color : TokenType.String;
+                TokenType type = ColorValidationHelper.IsValidWpfColor(text) ? TokenType.Color : TokenType.String;
                 tokens.Add(new Token(type, text, stream.Location));
                 return true;
             }
             return false;
         }
-        private static bool IsColor(string text) => Enum.TryParse<ColorOptions>(text, true, out _);
+       // private static bool IsColor(string text) => Enum.TryParse<ColorOptions>(text, true, out _);
+        private static bool IsWpfColor(string text)
+        {
+            // reuse your fast check method—you’ll need to expose it publicly
+            return ColorValidationHelper.IsValidWpfColor(text);
+        }
+
         private static bool IsValidIdentifier(string id) => !string.IsNullOrEmpty(id) &&
         (char.IsLetter(id[0]) || id[0] == '_') && id.All(c => char.IsLetterOrDigit(c) || c == '_' || c == '-');
     }

@@ -46,12 +46,6 @@ namespace MosaicDroid.Core
             int x = (int)cmd.Args[0].Accept(_exprEval);
             int y = (int)cmd.Args[1].Accept(_exprEval);
 
-            /*    if (x < 0 || x >= Size || y < 0 || y >= Size)
-               {
-                   ErrorHelpers.OutOfBounds(_runtimeErrors, cmd.Location, x, y);
-                   throw new PixelArtRuntimeException(
-                   $"Runtime error: Spawn at ({x},{y}) is outside canvas 0..{Size-1}");
-               } */
             EnsureInBounds(x, y);
 
 
@@ -63,7 +57,8 @@ namespace MosaicDroid.Core
         {
 
             var lit = (ColorLiteralExpression)cmd.Args[0];
-            BrushCode = GetBrushCode((string)lit.Value!);
+            // BrushCode = GetBrushCode((string)lit.Value!);
+            BrushCode = (string)lit.Value!;
         }
 
 
@@ -238,46 +233,53 @@ namespace MosaicDroid.Core
             {
                 return 0;
             }
-            string want = GetBrushCode(colorName);
+            //string want = GetBrushCode(colorName);
             int cnt = 0;
             int xmin = Math.Min(x1, x2), xmax = Math.Max(x1, x2);
             int ymin = Math.Min(y1, y2), ymax = Math.Max(y1, y2);
 
             for (int y = ymin; y <= ymax; y++)
                 for (int x = xmin; x <= xmax; x++)
-                    if (_canvas[x, y] == want)
+                    if (string.Equals(_canvas[x, y], colorName, StringComparison.OrdinalIgnoreCase))
                         cnt++;
 
             return cnt;
         }
-        private string GetBrushCode(string colorName)
-        {
-            if (colorName == null) return "  ";
+        /*  private string GetBrushCode(string colorName)
+          {
+              if (colorName == null) return "  ";
 
-            switch (colorName.ToLower())
-            {
-                case "black": return "bk";
-                case "blue": return "bl";
-                case "red": return "r ";
-                case "green": return "g ";
-                case "yellow": return "y ";
-                case "orange": return "o ";
-                case "purple": return "p ";
-                case "white": return "w ";
-                case "transparent": return "  ";
-                default: return "??";
-            }
-        }
-        public string GetBrushCodeForColor(string colorName)
-        {
-            return GetBrushCode(colorName);
-        }
+              switch (colorName.ToLower())
+              {
+                  case "black": return "bk";
+                  case "blue": return "bl";
+                  case "brown": return "br";
+                  case "red": return "r ";
+                  case "green": return "g ";
+                  case "gray": return "gr ";
+                  case "yellow": return "y ";
+                  case "orange": return "o ";
+                  case "purple": return "p ";
+                  case "pink": return "pi ";
+                  case "white": return "w ";
+                  case "transparent": return "  ";
+                  default: return "??";
+              }
+          }
+
+          public string GetBrushCodeForColor(string colorName)
+          {
+              return GetBrushCode(colorName);
+          }
+          */
         public bool CanvasColor(string colorName, int dx, int dy)
         {
-            string want = GetBrushCode(colorName);
+            //string want = GetBrushCode(colorName);
             int x = CurrentX + dx, y = CurrentY + dy;
             if (x < 0 || y < 0 || x >= Size || y >= Size) return false;
-            return _canvas[x, y] == want;
+            // raw canvas cell is exactly the last BrushCode string used there
+            // so we just compare (case‐insensitive for safety)
+            return string.Equals(_canvas[x, y], colorName, StringComparison.OrdinalIgnoreCase);
         }
         private void Stamp(int x, int y)
         {

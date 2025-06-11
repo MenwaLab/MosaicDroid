@@ -59,11 +59,9 @@ namespace MosaicDroid.UI
                 BgMusic.Source = new Uri(musicFile, UriKind.Absolute);
                 BgMusic.Play();
             }
-            else
-            {
-                MessageBox.Show("Music file not found: " + musicFile, "Error");
-            }
+            
         }
+        
         private void BgMusic_MediaEnded(object sender, RoutedEventArgs e)
         {
             BgMusic.Position = TimeSpan.Zero;
@@ -87,6 +85,7 @@ namespace MosaicDroid.UI
             LoadBtn.Content = _resmgr.GetString("Btn_Load");
             SaveBtn.Content = _resmgr.GetString("Btn_Save");
             RunBtn.Content = _resmgr.GetString("Btn_Run");
+            StopBtn.Content = _resmgr.GetString("Btn_Stop");
 
             // labels
             // we bound SizeBox label via x:Name on a TextBlock in XAML
@@ -165,10 +164,15 @@ namespace MosaicDroid.UI
             if (dlg.ShowDialog() == true)
                 File.WriteAllText(dlg.FileName, Editor.Text);
         }
-
-
-        private void RunBtn_Click(object s, RoutedEventArgs e)
+        private void StopBtn_Click(object sender, RoutedEventArgs e)
         {
+            _runCts?.Cancel();
+        }
+
+        private async void RunBtn_Click(object s, RoutedEventArgs e)
+        {
+            _runCts?.Cancel();
+            _runCts = new CancellationTokenSource();
             // persist to Code.gw so your CLI logic works unchanged
             File.WriteAllText("Code.gw", Editor.Text);
 
@@ -200,7 +204,7 @@ namespace MosaicDroid.UI
         $"[{err1.Location.Line},{err1.Location.Column}] {err1.Message}"
       )
     );
-                MessageBox.Show(lexMsg, "Errors");
+                MessageBox.Show(lexMsg, "Lexer Errors");
                 //return;
             }
 
@@ -212,7 +216,7 @@ namespace MosaicDroid.UI
         $"[{err2.Location.Line},{err2.Location.Column}] {err2.Message}"
       )
     );
-                MessageBox.Show(parMsg, "Errors");
+                MessageBox.Show(parMsg, "Parse Errors");
                 //return;
             }
 
@@ -224,41 +228,81 @@ semErr.Select(err3 =>
 $"[{err3.Location.Line},{err3.Location.Column}] {err3.Message}"
 )
 );
-                MessageBox.Show(semMsg, "Errors");
+                MessageBox.Show(semMsg, "Semantic Errors");
                 return;
             }
+
+
 
             // 5b) Interpret
             var runErr = new List<CompilingError>();
             var interp = new MatrixInterpreterVisitor(CanvasSize, runErr);
+
+
             try
             {
-                interp.VisitProgram(prog);
+                //interp.VisitProgram(prog);
+                await Task.Run(() => interp.VisitProgram(prog), _runCts.Token);
             }
             catch (PixelArtRuntimeException ex)
             {
-                MessageBox.Show("Runtime error: " + ex.Message);
+                string message = string.Format(
+                    _resmgr.GetString("Err_Runtime"),
+                    ex.Message
+                );
+                MessageBox.Show(message, _resmgr.GetString("Err_Title"));
             }
+            catch (OperationCanceledException)
+            {
+                // user hit Stop
+            }
+            
+
 
             // 5c) Paint the WPF grid
             for (int y = 0; y < CanvasSize; y++)
                 for (int x = 0; x < CanvasSize; x++)
                 {
+                    var raw = interp.GetBrushCodeForUI(x, y);
+                    SolidColorBrush brush;
+                    if (string.IsNullOrEmpty(raw) || raw.Equals("Transparent", StringComparison.OrdinalIgnoreCase))
+                    {
+                        brush = Brushes.Transparent;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            // use the WPF converter to turn the name or "#RRGGBB" into a Color
+                            var col = (Color)ColorConverter.ConvertFromString(raw.Trim());
+                            brush = new SolidColorBrush(col);
+                        }
+                        catch
+                        {
+                            brush = Brushes.Transparent;  // fallback on error
+                        }
+                    }
+((Border)PixelGrid.Children[y * CanvasSize + x]).Background = brush;
+
                     // NOTE: expose a getter in your interpreter
-                    var code = interp.GetBrushCodeForUI(x, y);
+                    /*var code = interp.GetBrushCodeForUI(x, y);
                     var brush = code switch
                     {
                         "bk" => Brushes.Black,
                         "bl" => Brushes.Blue,
+                        "br" => Brushes.SaddleBrown,
                         "r " => Brushes.Red,
                         "g " => Brushes.Green,
+                        "gr " => Brushes.Gray,
                         "y " => Brushes.Yellow,
                         "o " => Brushes.Orange,
                         "p " => Brushes.Purple,
+                        "pi " => Brushes.Pink,
                         "w " => Brushes.White,
                         _ => Brushes.Transparent
                     };
-                    ((Border)PixelGrid.Children[y * CanvasSize + x]).Background = brush;
+                    
+                    ((Border)PixelGrid.Children[y * CanvasSize + x]).Background = brush;*/
                 }
         }
     }

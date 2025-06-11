@@ -1,11 +1,16 @@
 namespace MosaicDroid.Core
 {
+    using System.Resources;
     using System.Text.RegularExpressions;
+
 
     public class Parser
     {
         private readonly TokenStream _stream;
         private readonly List<CompilingError> _errors;
+     
+ 
+
 
         public Parser(TokenStream stream, List<CompilingError> errors)
         {
@@ -32,12 +37,10 @@ namespace MosaicDroid.Core
             {
                 if ((first.Type == TokenType.Instruction || first.Type == TokenType.Variable) && first.Value.StartsWith("Spawn"))
                 {
-                    //_errors.Add(new CompilingError(first.Location, ErrorCode.Expected, "'OpenParenthesis' expected"));
-                    ErrorHelpers.MissingOpenParen(_errors, first.Location, "Spawn");
+                     ErrorHelpers.MissingOpenParen(_errors, first.Location, "Spawn");
                 }
                 else
                 {
-                    //_errors.Add(new CompilingError(first.Location, ErrorCode.Expected, "Se esperaba Spawn(x, y) al inicio"));
                     ErrorHelpers.ExpectedSpawn(_errors, first.Location);
                 }
 
@@ -59,9 +62,8 @@ namespace MosaicDroid.Core
                         continue;
 
                     case TokenType.Label:
-                        if (Regex.IsMatch(la.Value, @"^(Spawn|Color|Size|DrawLine|DrawCircle|DrawRectangle|Fill)(?=[^(\s])"))
+                        if (Regex.IsMatch(la.Value, @"^(Spawn|Color|Size|DrawLine|DrawCircle|DrawRectangle|Fill|Move)(?=[^(\s])"))
                         {
-                            //_errors.Add(new CompilingError(la.Location, ErrorCode.Expected, "'(' expected after instruction name"));
                             ErrorHelpers.MissingOpenParen(_errors, la.Location, la.Value);
                             _stream.MoveNext();
                             continue;
@@ -89,8 +91,6 @@ namespace MosaicDroid.Core
 
                         if (la.Value.StartsWith("-") && Regex.IsMatch(la.Value.Substring(1), @"^[A-Za-z][A-Za-z0-9_]*$"))
                         {
-                            //“-x” (invalid start), or typed “-x123” as a variable name
-                            //_errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Invalid variable name '{la.Value}'"));
                             ErrorHelpers.InvalidVariableName(_errors, la.Location, la.Value);
                             Synchronize();
                             continue;
@@ -99,7 +99,6 @@ namespace MosaicDroid.Core
                         // Instrucción malformada como DrawLine1,0)
                         if (Regex.IsMatch(la.Value, @"^(Spawn|Color|Size|DrawLine|DrawCircle|DrawRectangle|Fill|Move)(?=[^(\s])"))
                         {
-                            //_errors.Add(new CompilingError(la.Location, ErrorCode.Expected,"'(' expected after instruction name"));
                             ErrorHelpers.MissingOpenParen(_errors, la.Location, la.Value);
                             _stream.MoveNext();
                             continue;
@@ -116,7 +115,6 @@ namespace MosaicDroid.Core
                         _stream.MoveNext();
                         continue;
                     default:
-                        //_errors.Add(new CompilingError(la.Location, ErrorCode.Invalid, $"Token inesperado: {la.Value}"));
                         ErrorHelpers.UnexpectedToken(_errors, la.Location, la.Value);
                         Synchronize();
                         break;
@@ -137,15 +135,7 @@ namespace MosaicDroid.Core
         {
             if (!_stream.CanLookAhead())
                 return;
-            /*
-            if (!(_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline))
-            {
-                // _errors.Add(new CompilingError(stmt.Location,ErrorCode.Expected,        "Missing newline after statement" ));
-                ErrorHelpers.MissingNewLine(_errors, stmt.Location, "statement");
-            }
-            // swallow all actual newlines to stay in sync
-            ExpectNewLine();
-            */
+           
 
              if (_stream.LookAhead().Type != TokenType.Jumpline)
         ErrorHelpers.MissingNewLine(_errors, stmt.Location, "statement");

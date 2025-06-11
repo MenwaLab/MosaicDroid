@@ -14,7 +14,13 @@ namespace MosaicDroid.Core
             _runtimeErrors = runtimeErrors;
         }
 
-        public double VisitNumber(Number num) => (double)num.Value!;
+        public double VisitNumber(Number num)
+        {
+            if (num.Value is int i)
+                return (double)i;
+            else
+                return (double)num.Value!;
+        }
 
         public double VisitVariable(VariableExpression v)
         {
@@ -91,9 +97,13 @@ namespace MosaicDroid.Core
                );
         public double VisitBrushColor(IsBrushColorExpression fn)
         {
-            string colorArg = fn.Color;
-            string wantedBrushCode = _canvasContext.GetBrushCodeForColor(colorArg);
-            return _canvasContext.BrushCode == wantedBrushCode ? 1 : 0;
+            string colorArg = fn.Color.Trim();
+            //string wantedBrushCode = _canvasContext.GetBrushCodeForColor(colorArg);
+            var current = _canvasContext.BrushCode.Trim();
+            return string.Equals(current, colorArg, StringComparison.OrdinalIgnoreCase)
+         ? 1.0
+         : 0.0;
+            //return _canvasContext.BrushCode == wantedBrushCode ? 1 : 0;
         }
         public double VisitBrushSize(IsBrushSizeExpression fn)
         {

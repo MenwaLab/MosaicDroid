@@ -129,13 +129,25 @@
   <data name="Btn_Save" xml:space="preserve">
     <value>Save</value>
   </data>
+  <data name="Btn_Stop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
   <data name="Docs_NotFound" xml:space="preserve">
     <value>Help file not found.</value>
+  </data>
+  <data name="Err_InvalidValue" xml:space="preserve">
+    <value>Sorry, invalid value: {0}</value>
   </data>
   <data name="Lbl_Language" xml:space="preserve">
     <value>Language</value>
   </data>
   <data name="Lbl_Size" xml:space="preserve">
     <value>Size</value>
+  </data>
+  <data name="Err_MissingNewLine" xml:space="preserve">
+    <value>Missing newline after {0}</value>
+  </data>
+  <data name="Err_Runtime" xml:space="preserve">
+    <value />
   </data>
 </root>

@@ -129,13 +129,25 @@
   <data name="Btn_Save" xml:space="preserve">
     <value>Guardar</value>
   </data>
+  <data name="Btn_Stop" xml:space="preserve">
+    <value>Detener</value>
+  </data>
   <data name="Docs_NotFound" xml:space="preserve">
     <value>Archivo no encontrado</value>
+  </data>
+  <data name="Err_InvalidValue" xml:space="preserve">
+    <value>Disculpe, valor inválido: {0}</value>
   </data>
   <data name="Lbl_Language" xml:space="preserve">
     <value>Idioma</value>
   </data>
   <data name="Lbl_Size" xml:space="preserve">
     <value>Tamaño</value>
+  </data>
+  <data name="Err_MissingNewLine" xml:space="preserve">
+    <value>Salto de línea faltante después de {0}</value>
+  </data>
+  <data name="Err_Runtime" xml:space="preserve">
+    <value>Error en tiempo de ejecución: {0}</value>
   </data>
 </root>
