@@ -107,9 +107,6 @@
             <Button x:Name="RunBtn"
               Style="{StaticResource PastelButton}"
               Click="RunBtn_Click"/>
-            <Button x:Name="StopBtn"
-            Style="{StaticResource PastelButton}"
-            Click="StopBtn_Click"/> 
 
         </StackPanel>
 

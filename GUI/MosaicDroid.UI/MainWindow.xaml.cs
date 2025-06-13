@@ -85,7 +85,6 @@ namespace MosaicDroid.UI
             LoadBtn.Content = _resmgr.GetString("Btn_Load");
             SaveBtn.Content = _resmgr.GetString("Btn_Save");
             RunBtn.Content = _resmgr.GetString("Btn_Run");
-            StopBtn.Content = _resmgr.GetString("Btn_Stop");
 
             // labels
             // we bound SizeBox label via x:Name on a TextBlock in XAML
@@ -163,10 +162,6 @@ namespace MosaicDroid.UI
             };
             if (dlg.ShowDialog() == true)
                 File.WriteAllText(dlg.FileName, Editor.Text);
-        }
-        private void StopBtn_Click(object sender, RoutedEventArgs e)
-        {
-            _runCts?.Cancel();
         }
 
         private async void RunBtn_Click(object s, RoutedEventArgs e)
@@ -251,11 +246,9 @@ $"[{err3.Location.Line},{err3.Location.Column}] {err3.Message}"
                     ex.Message
                 );
                 MessageBox.Show(message, _resmgr.GetString("Err_Title"));
+                return;
             }
-            catch (OperationCanceledException)
-            {
-                // user hit Stop
-            }
+
             
 
 
@@ -288,7 +281,7 @@ $"[{err3.Location.Line},{err3.Location.Column}] {err3.Message}"
                     /*var code = interp.GetBrushCodeForUI(x, y);
                     var brush = code switch
                     {
-                        "bk" => Brushes.Black,
+                        "bk" => Brushes.Black,                              
                         "bl" => Brushes.Blue,
                         "br" => Brushes.SaddleBrown,
                         "r " => Brushes.Red,

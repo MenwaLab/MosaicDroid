@@ -32,10 +32,10 @@ namespace MosaicDroid.Core
         {
             bool ok = true;
 
-            int count = Math.Min(Args.Count, 3);
+            
             // Args[0] = dirX, Args[1] = dirY, Args[2] = distance
 
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < 3; i++)
             {
                 // If it is literally a Number node with an integer value, check range:
                 if (Args[i] is Number literalNum && literalNum.IsInt)
@@ -52,7 +52,7 @@ namespace MosaicDroid.Core
                         ok &= ArgumentSpec.EnsurePositive(value, literalNum.Location, "DrawLine: distance", errors);
                     }
                 }
-                else if (Args[i] is Number numNode && !numNode.IsInt)
+                /*else if (Args[i] is Number numNode && !numNode.IsInt)
                 {
                     // A double‐literal is not allowed (must be an integer literal if literal):
                     ErrorHelpers.ArgMismatch(
@@ -69,7 +69,7 @@ namespace MosaicDroid.Core
                 {
                     // If it’s not a literal Number, it must be a VariableExpression or compound expression
                     // whose type already looked up as Number.  In that case, we skip literal‐only checks.
-                }
+                } */
             }
 
             return ok;

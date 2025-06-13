@@ -75,17 +75,18 @@ namespace MosaicDroid.Core
             int dx = (int)cmd.Args[0].Accept(_exprEval),
                 dy = (int)cmd.Args[1].Accept(_exprEval),
                 dist = (int)cmd.Args[2].Accept(_exprEval);
+                var loc = cmd.Location;
 
-            bool ok = true;
-            ok &= ArgumentSpec.EnsureDirectionInRange(dx, cmd.Location, "DrawLine: dirX", _runtimeErrors);
-            ok &= ArgumentSpec.EnsureDirectionInRange(dy, cmd.Location, "DrawLine: dirY", _runtimeErrors);
-            ok &= ArgumentSpec.EnsurePositive(dist, cmd.Location, "DrawLine: distance", _runtimeErrors);
+             bool ok = true;
+             ok &= ArgumentSpec.EnsureDirectionInRange(dx, cmd.Location, "DrawLine: dirX", _runtimeErrors);
+             ok &= ArgumentSpec.EnsureDirectionInRange(dy, cmd.Location, "DrawLine: dirY", _runtimeErrors);
+             ok &= ArgumentSpec.EnsurePositive(dist, cmd.Location, "DrawLine: distance", _runtimeErrors);
 
-            if (!ok)
-            {
-                // Si alguna falla, detenemos:
-                throw new PixelArtRuntimeException($"Runtime error: invalid arguments to DrawLine at {cmd.Location.Line}:{cmd.Location.Column}");
-            }
+             if (!ok)
+             {
+                 // Si alguna falla, detenemos:
+                 throw new PixelArtRuntimeException($"Runtime error: invalid arguments to DrawLine at {cmd.Location.Line}:{cmd.Location.Column}");
+             } 
 
             for (int i = 0; i < dist; i++)
                 Stamp(CurrentX + dx * i, CurrentY + dy * i);
@@ -112,8 +113,8 @@ namespace MosaicDroid.Core
             }
 
             // center:
-            int cx = CurrentX + dx * radius,
-                cy = CurrentY + dy * radius;
+            int cx = CurrentX + dx * radius - dx,//mueve un pixel
+                cy = CurrentY + dy * radius - dy;
 
             int x = 0, y = radius, d = 3 - 2 * radius;
             while (x <= y)
@@ -131,9 +132,11 @@ namespace MosaicDroid.Core
                 else { d += 4 * (x - y) + 10; y--; }
                 x++;
             }
-            CurrentX = cx;
-            CurrentY = cy;
-            
+            // CurrentX = cx;
+            //CurrentY = cy;
+            CurrentX += dx * (radius + 1);
+            CurrentY += dy * (radius + 1);
+
         }
 
         public void VisitDrawRectangle(DrawRectangleCommand cmd)
@@ -143,7 +146,7 @@ namespace MosaicDroid.Core
                 dist = (int)cmd.Args[2].Accept(_exprEval),
                 width = (int)cmd.Args[3].Accept(_exprEval),
                 height = (int)cmd.Args[4].Accept(_exprEval);
-
+                
             bool ok = true;
             ok &= ArgumentSpec.EnsureDirectionInRange(dx, cmd.Location, "DrawRectangle: dirX", _runtimeErrors);
             ok &= ArgumentSpec.EnsureDirectionInRange(dy, cmd.Location, "DrawRectangle: dirY", _runtimeErrors);
@@ -156,24 +159,43 @@ namespace MosaicDroid.Core
                 throw new PixelArtRuntimeException($"Invalid arguments to DrawRectangle at {cmd.Location.Line}:{cmd.Location.Column}");
             }
 
-            int cx = CurrentX + dx * dist,
-                cy = CurrentY + dy * dist;
+             int cx = CurrentX + dx * dist,
+             cy = CurrentY + dy * dist;
 
-            int hw = width / 2,
-                hh = height / 2;
+            // Calculate rectangle bounds
+            int topLeftX = cx - width / 2;
+            int topLeftY = cy - height / 2;
+            int bottomRightX = topLeftX + width;
+            int bottomRightY = topLeftY + height;
 
-            for (int x = cx - hw; x <= cx + hw; x++)
+
+            /* for (int x = cx - hw; x <= cx + hw; x++)
+             {
+                 Stamp(x, cy - hh);
+                 Stamp(x, cy + hh);
+             }
+             // left/right edges
+             for (int y = cy - hh; y <= cy + hh; y++)
+             {
+                 Stamp(cx - hw, y);
+                 Stamp(cx + hw, y);
+             } */
+            // Draw rectangle outline (border only)
+            for (int x = topLeftX; x < bottomRightX; x++)
             {
-                Stamp(x, cy - hh);
-                Stamp(x, cy + hh);
+                for (int y = topLeftY; y < bottomRightY; y++)
+                {
+                    // Check if current pixel is on the border
+                    bool isBorder = (x == topLeftX) || (x == bottomRightX - 1) ||
+                                   (y == topLeftY) || (y == bottomRightY - 1);
+
+                    if (isBorder)
+                    {
+                        Stamp(x, y);
+                    }
+                }
             }
-            // left/right edges
-            for (int y = cy - hh; y <= cy + hh; y++)
-            {
-                Stamp(cx - hw, y);
-                Stamp(cx + hw, y);
-            }
-            CurrentX = cx;
+                CurrentX = cx;
             CurrentY = cy;
         }
 
