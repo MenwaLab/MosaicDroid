@@ -189,7 +189,7 @@
     <value>Potential infinite loop at {0}:{1}</value>
   </data>
 	<data name="MovedOutsideCanvas" xml:space="preserve">
-    <value>Moved outside canvas at {0},{1}</value>
+    <value>Moved outside canvas at {0}:{1}</value>
   </data>
 	<data name="DivByZero" xml:space="preserve">
     <value>Division by zero at {0}:{1}</value>

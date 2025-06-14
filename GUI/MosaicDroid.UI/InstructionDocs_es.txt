@@ -1,63 +1,68 @@
-﻿=== Referencia del Lenguaje Pixel-Wall-E ===
+﻿=== 🤖 Guía del Lenguaje Pixel-Wall-E 🤖 ===
 
-MODO DE ENTRADA:
- - Puedes escribir tu programa directamente en el editor izquierdo o hacer clic en **Cargar** para abrir un archivo ".pw".
- - Haz clic en **Guardar** para exportar el contenido del editor a un archivo ".pw".
+ 🎨 MODO DE ENTRADA 🎨 :
+ - Puedes escribir tu programa directamente en el editor de la izquierda, o hacer clic en "Cargar" para abrir un archivo ".pw".
+ - Haz clic en "Guardar" para exportar el contenido actual del editor a un archivo ".pw".
 
-BOTONES:
- - **Tamaño [n] + Redimensionar**: establece el lienzo a n×n píxeles (máx. 300).
- - **Ejecutar**: realiza el análisis léxico, sintáctico, verificación semántica, interpretación y repinta la cuadrícula.
- - **Cargar / Guardar**: carga o guarda un archivo de script ".pw".
+🔱 BOTONES 🔱:
+ - Tamaño [n] + Redimensionar [n]: establece el lienzo a n×n píxeles.
+ - Ejecutar: si el código es correcto, pintará tu dibujo en el lienzo.
+ - Cargar / Guardar: carga desde o guarda en un archivo de script ".pw".
 
-COMANDOS (cada uno debe terminar con salto de línea):
-  • **Spawn(int x, int y)**  
-      Inicializa las coordenadas de inicio de Wall-E.  
-      *Debe ser el primer (y único) Spawn en un programa.*  
+COMANDOS (cada uno debe terminar con un salto de línea ):
+  • Spawn(int x, int y)
+      Inicializa las coordenadas de inicio de Wall-E.
+      Si están fuera de los límites del lienzo, devuelve un error en tiempo de ejecución.
+      Debe ser el primer (y único) Spawn en un programa.
 
-  • **Color("Nombre")**  
-      Cambia el color del pincel. Nombres permitidos: "Rojo", "Azul", "Verde", "Amarillo",  
-      "Naranja", "Morado", "Negro", "Blanco" (borrador), "Transparente" (sin pintar).  
+  • Color("Nombre") o Color("#RRGGBB")
+      Cambia el color del pincel de todos los colores conocidos por WPF. Por favor, consulta este enlace para encontrar la lista completa: 
 
-  • **Tamaño(int k)**  
-      Cambia el grosor del pincel. Si k es par, se usa el número impar inferior.  
+   "https://tse1.mm.bing.net/th/id/OIP.qWrNDbmK4HJUFYPZaacmTAHaFx?rs=1&pid=ImgDetMain&cb=idpwebp1&o=7&rm=3"
+		
+	Ten en cuenta que "Blanco" actúa como borrador y "Transparente" no pinta nada.
 
-  • **DibujarLínea(dx, dy, distancia)**  
-      Desde el píxel actual, dibuja una línea recta de `distancia` píxeles en la dirección  
-      (`dx`,`dy`), donde dx,dy ∈ {–1,0,1}.  
+  • Size(int k)
+      Cambia el grosor del pincel. Si k es par, se utiliza el siguiente número impar inmediatamente menor.
 
-  • **DibujarCírculo(dx, dy, radio)**  
-      Desde el píxel actual, muévete `radio` en (dx,dy) y dibuja solo la circunferencia.  
+  • DrawLine(dx, dy, distance)
+      Desde el píxel actual, dibuja una línea recta de `distance` píxeles en la dirección (`dx`,`dy`), donde cada dx,dy ∈ {–1,0,1} y distance > 0.
 
-  • **DibujarRectángulo(dx, dy, dist, ancho, alto)**  
-      Desde la posición actual, muévete (`dx`,`dy`)*`dist` al centro de un rectángulo de `ancho`×`alto` y dibuja su borde.  
+  • DrawCircle(dx, dy, radius)
+      Desde el píxel actual, se mueve `radius` en (dx,dy) y luego dibuja solo la circunferencia.
 
-  • **Rellenar()**  
-      Rellena la región contigua bajo el píxel actual con el color del pincel.  
+  • DrawRectangle(dx, dy, dist, width, height)
+      Desde la posición actual, se mueve al centro de un rectángulo de `width`×`height` y dibuja su borde.
 
-VARIABLES & EXPRESIONES:
-  • **Asignación:**  
-      `miVar <- Expresión`  
-  • **Aritmética:** `+`, `-`, `*`, `/`, `**`, `%`  
-  • **Booleanos:** comparaciones `==,>,<,>=,<=`, `&&`, `||`  
+  • Fill()
+      Rellena con el color de pincel actual todos los píxeles del color de la posición actual que son alcanzables sin tener que caminar sobre algún otro color.
+       
 
-FUNCIONES INCORPORADAS:
-  • **ObtenerXActual() / ObtenerYActual()**  
-      Devuelve la X o Y actual de Wall-E.  
-  • **ObtenerTamañoLienzo()**  
-      Devuelve el ancho del lienzo (==altura).  
-  • **ContarColor(color, x1, y1, x2, y2)**  
-      Cuenta los píxeles de `color` en el rectángulo entre (x1,y1) y (x2,y2).  
-  • **EsColorPincel(color)**  
-      1 si el pincel actual coincide con `color`, sino 0.  
-  • **EsTamañoPincel(tamaño)**  
-      1 si el grosor actual del pincel == `tamaño`, sino 0.  
-  • **EsColorLienzo(color, vertical, horizontal)**  
-      1 si el píxel en el desplazamiento (vertical,horizontal) desde la posición actual es igual a `color`, sino 0.  
+  • Move(int x,int y)
+      Mueve a Pixel Wall-E a la posición (x,y) solo si está dentro de los límites del lienzo, si no, reporta un error en tiempo de ejecución.
 
-SALTOS CONDICIONALES & ETIQUETAS:
-  • **Etiquetas:**  
-      `miEtiqueta` en una línea marca un destino de salto.  
-  • **IrA [miEtiqueta] (condición)**  
-      Si `condición` es verdadera (distinta de cero), continúa la ejecución en `miEtiqueta`.  
+VARIABLES Y EXPRESIONES (deben ir seguidas de un salto de línea ):
+  • Asignación:
+      `myVar <- Expresión` 
+  • Aritméticas: `+`, `-`, `*`, `/`, `**`, `%` 
+  • Booleanas: comparaciones `==,>,<,>=,<=`, `&&`, `||` 
 
-PROGRAMA DE EJEMPLO:
+🎵 FUNCIONES INCORPORADAS 🎵:
+  • GetActualX() / GetActualY()
+      Devuelve la X o Y actual de Wall-E.
+  • GetCanvasSize()
+      Devuelve el tamaño actual del lienzo n.
+  • GetColorCount(color, x1, y1, x2, y2)
+      Cuenta los píxeles de `color` en el rectángulo entre (x1,y1) y (x2,y2).
+  • IsBrushColor(color)
+      Devuelve 1 si el pincel actual coincide con `color`, de lo contrario 0.
+  • IsBrushSize(size)
+      Devuelve 1 si el grosor del pincel actual == `size`, de lo contrario 0.
+  • IsCanvasColor(color, vertical, horizontal)
+      Devuelve 1 si el píxel en (X + horizontal, Y + vertical desde la posición actual es igual a `color`, de lo contrario 0.
+
+SALTOS CONDICIONALES Y ETIQUETAS:
+  • Etiquetas:
+      `miEtiqueta` en su propia línea marca un objetivo de salto.
+  • GoTo [miEtiqueta] (condición)
+      Si `condición` es verdadera, reanuda la ejecución en `miEtiqueta`.

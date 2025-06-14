@@ -16,8 +16,9 @@ COMMANDS (each must end with a newline):
       Must be the first (and only) Spawn in one program.
 
   • Color("Name") or Color("#RRGGBB")
-      Changes the brush color from all the WPF-known colors. Please refer to this link to find the complete list "https://www.codeproject.com/Articles/5296124/Definitive-Guide-to-WPF-Colors-Color-Spaces-Colorhttps://www.codeproject.com/Articles/5296124/Definitive-Guide-to-WPF-Colors-Color-Spaces-Color"  
+      Changes the brush color from all the WPF-known colors. Please refer to this link to find the complete list 
       
+      "https://tse1.mm.bing.net/th/id/OIP.qWrNDbmK4HJUFYPZaacmTAHaFx?rs=1&pid=ImgDetMain&cb=idpwebp1&o=7&rm=3"
       Note that “White” acts as an eraser and “Transparent” paint nothing.  
 
   • Size(int k)
@@ -63,5 +64,3 @@ CONDITIONAL JUMPS & LABELS:
       `myLabel` on its own line marks a jump‐target.  
   • GoTo [myLabel] (condition)
       If `condition` is true, resume execution at `myLabel`.  
-
-EXAMPLE PROGRAM:
