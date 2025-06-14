@@ -4,7 +4,7 @@ namespace MosaicDroid.Core
     {
         private static readonly Dictionary<string, ArgumentSpec> _specs = new()
         {
-            // Instructions:
+            // Instruciones:
             [TokenValues.Spawn] = new ArgumentSpec(2, ExpressionType.Number, ExpressionType.Number),
             [TokenValues.Color] = new ArgumentSpec(1, ExpressionType.Text),
             [TokenValues.Size] = new ArgumentSpec(1, ExpressionType.Number),
@@ -14,9 +14,9 @@ namespace MosaicDroid.Core
                                             ExpressionType.Number, ExpressionType.Number, ExpressionType.Number,
                                             ExpressionType.Number, ExpressionType.Number),
             [TokenValues.Fill] = new ArgumentSpec(0),
-            [TokenValues.Move] = new ArgumentSpec(2, ExpressionType.Number, ExpressionType.Number),
+            [TokenValues.Move] = new ArgumentSpec(2, ExpressionType.Number, ExpressionType.Number), // nueva instr
 
-            // Functions:
+            // Funciones:
             [TokenValues.GetActualX] = new ArgumentSpec(0),
             [TokenValues.GetActualY] = new ArgumentSpec(0),
             [TokenValues.GetCanvasSize] = new ArgumentSpec(0),

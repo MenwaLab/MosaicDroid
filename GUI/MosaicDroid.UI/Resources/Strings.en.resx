@@ -150,4 +150,25 @@
   <data name="Err_Runtime" xml:space="preserve">
     <value>Runtime error: {0}</value>
   </data>
+  <data name="Lex_Err" xml:space="preserve">
+    <value>Lexer Errors</value>
+  </data>
+  <data name="Parser_Error" xml:space="preserve">
+    <value>Parser Errors</value>
+  </data>
+  <data name="Sem_Err" xml:space="preserve">
+    <value>Semantic Errors</value>
+  </data>
+  <data name="Inv_DrwLine" xml:space="preserve">
+    <value>Invalid arguments to DrawLine at</value>
+  </data>
+  <data name="Err_LabelUndefined" xml:space="preserve">
+    <value>Runtime error: label '{0}' not declared</value>
+  </data>
+  <data name="Btn_Unmute" xml:space="preserve">
+    <value>Unmute</value>
+  </data>
+  <data name="Btn_Mute" xml:space="preserve">
+    <value>Mute</value>
+  </data>
 </root>

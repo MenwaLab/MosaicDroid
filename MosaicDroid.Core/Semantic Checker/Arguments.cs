@@ -27,7 +27,7 @@ namespace MosaicDroid.Core
 
         public static bool EnsureDirectionInRange(int value, CodeLocation loc, string label, List<CompilingError> errors)
         {
-            if (value < -1 || value > 1)
+            if (value < -1 || value > 1) // asegura dirx y diry sean válidos
             {
                 ErrorHelpers.InvalidDirection(errors, loc, value, 0);
                 return false;
@@ -37,9 +37,9 @@ namespace MosaicDroid.Core
 
         public static bool EnsurePositive(int value, CodeLocation loc, string label, List<CompilingError> errors)
         {
-            if (value <= 0)
+            if (value <= 0) // aseura direction siempre sea mayor q 0
             {
-                ErrorHelpers.InvalidValue(errors, loc, $"{label} must be > 0; got {value}");
+                ErrorHelpers.InvalidValue(errors, loc, label, value); //$"{label} must be/ tiene que ser > 0; got/obtuvo {value}");
                 return false;
             }
             return true;

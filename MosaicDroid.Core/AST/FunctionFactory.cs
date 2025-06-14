@@ -22,7 +22,6 @@ namespace MosaicDroid.Core
                 case TokenValues.IsCanvasColor:
                     return new IsCanvasColorExpression(args, loc);
                 default:
-                    //errors.Add(new CompilingError(loc, ErrorCode.Invalid, $"Unknown function: {name}"));
                     ErrorHelpers.UnknownInstrFunc(errors, loc, name);
                     return new NoOpExpression(loc);
             }

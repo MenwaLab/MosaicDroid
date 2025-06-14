@@ -8,9 +8,6 @@ namespace MosaicDroid.Core
     {
         private readonly TokenStream _stream;
         private readonly List<CompilingError> _errors;
-     
- 
-
 
         public Parser(TokenStream stream, List<CompilingError> errors)
         {
@@ -126,11 +123,6 @@ namespace MosaicDroid.Core
             return program;
 
         }
-        private void ExpectNewLine()
-        {
-            while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
-                _stream.MoveNext();
-        }
         private void EnsureNewlineAfter(ASTNode stmt)
         {
             if (!_stream.CanLookAhead())
@@ -138,17 +130,16 @@ namespace MosaicDroid.Core
            
 
              if (_stream.LookAhead().Type != TokenType.Jumpline)
-        ErrorHelpers.MissingNewLine(_errors, stmt.Location, "statement");
+                ErrorHelpers.MissingNewLine(_errors, stmt.Location, "statement");
 
-    // now consume any newlines
-    while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
-        _stream.MoveNext();
+            // now consume any newlines
+            while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
+                _stream.MoveNext();
         }
         private void EnsureNewlineAfter(CodeLocation loc)
         {
             if (!(_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline))
                 ErrorHelpers.MissingNewLine(_errors, loc, "label");
-            //errors.Add(new CompilingError(loc, ErrorCode.Expected, "Missing newline after label"));
 
             // now swallow any blank lines
             while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
@@ -178,7 +169,6 @@ namespace MosaicDroid.Core
                     var tokCol = _stream.Advance();
                     if (tokCol.Type != TokenType.String && tokCol.Type != TokenType.Color)
                     {
-                        //_errors.Add(new CompilingError(tokCol.Location, ErrorCode.Expected, "Color argument must be a quoted string (e.g., \"Red\")"));
                         ErrorHelpers.MissingQuotation(_errors, tokCol.Location);
                     }
 
@@ -211,24 +201,10 @@ namespace MosaicDroid.Core
                     return new MoveCommand(moveArgs, instr.Location);
 
                 default:
-                    //_errors.Add(new CompilingError(instr.Location, ErrorCode.Invalid, $"Unknown instruction: {instr.Value}"));
                     ErrorHelpers.UnknownInstrFunc(_errors, instr.Location, instr.Value);
                     return new NoOpExpression(instr.Location);
             }
         }
-
-        /* private LabelExpression ParseLabel() //no ref?
-        {
-            var tok = _stream.Advance();
-            var label = new LabelExpression(tok.Value, tok.Location);
-
-            /* if (_stream.CanLookAhead() && _stream.LookAhead().Type != TokenType.Jumpline)
-            {
-            _errors.Add(new CompilingError(tok.Location, ErrorCode.Expected, "Expected newline after label declaration"));
-            } 
-
-            return label;
-        } */
 
         private ASTNode ParseAssignment()
         {
@@ -236,7 +212,6 @@ namespace MosaicDroid.Core
 
             if (!Regex.IsMatch(varTok.Value, @"^[a-zA-Z][a-zA-Z0-9_]*$"))
             {
-                //_errors.Add(new CompilingError(varTok.Location, ErrorCode.Invalid, $"Invalid variable name '{varTok.Value}'"));
                 ErrorHelpers.InvalidVariableName(_errors, varTok.Location, varTok.Value);
             }
 
@@ -245,8 +220,7 @@ namespace MosaicDroid.Core
 
             if (!_stream.CanLookAhead() || _stream.LookAhead().Type != TokenType.Jumpline)
             {
-                //_errors.Add(new CompilingError(expr.Location, ErrorCode.Expected, "Expected a newline after variable assignment."));
-                ErrorHelpers.MissingNewLine(_errors, expr.Location, "variable assignment");
+                ErrorHelpers.MissingNewLine(_errors, expr.Location, "var assign");
             }
 
             return new AssignExpression(varTok.Value, expr, varTok.Location);
@@ -267,19 +241,16 @@ namespace MosaicDroid.Core
             return new GotoCommand(lbl, cond, tok.Location);
         }
 
-        public Expression ParseExpression() => ParseLogicalOr();
-        //change back to priv
+        private Expression ParseExpression() => ParseLogicalOr();
         private Expression ParseLogicalOr()
         {
             var left = ParseLogicalAnd();
             while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Bool_OP && _stream.LookAhead().Value == TokenValues.Or)
             {
-                //_stream.MoveNext();
                 _stream.Advance();
 
                 var right = ParseLogicalAnd();
-                left = new LogicalOrExpression(left, right, left.Location); //var node=
-                                                                            //left = node;
+                left = new LogicalOrExpression(left, right, left.Location); 
             }
             return left;
         }
@@ -289,8 +260,7 @@ namespace MosaicDroid.Core
             var left = ParseEquality();
             while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Bool_OP && _stream.LookAhead().Value == TokenValues.And)
             {
-                _stream.Advance();//wasnt here
-                                  //_stream.MoveNext();
+                _stream.Advance();
                 var right = ParseEquality();
                 left = new LogicalAndExpression(left, right, left.Location);
             }
@@ -365,7 +335,6 @@ namespace MosaicDroid.Core
             while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Operator &&
             (_stream.LookAhead().Value == TokenValues.Mul
             || _stream.LookAhead().Value == TokenValues.Div || _stream.LookAhead().Value == TokenValues.Mod))
-            // || _stream.LookAhead().Value == TokenValues.Pow ))
             {
                 var op = _stream.Advance().Value;
                 var right = ParsePower();
@@ -429,8 +398,6 @@ namespace MosaicDroid.Core
                 EatDelimiter(TokenValues.ClosedParenthesis);
                 return expr;
             }
-
-            //_errors.Add(new CompilingError(_stream.LookAhead().Location, ErrorCode.Expected, $"Unexpected token {_stream.LookAhead().Value} in factor"));
             ErrorHelpers.UnexpectedToken(_errors, _stream.LookAhead().Location, _stream.LookAhead().Value);
             _stream.MoveNext();
             return new NoOpExpression(_stream.LookAhead().Location);
@@ -472,8 +439,7 @@ namespace MosaicDroid.Core
         private void EatDelimiter(string d)
         {
             if (!(_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Delimeter && _stream.LookAhead().Value == d))
-                // _errors.Add(new CompilingError(_stream.LookAhead().Location, ErrorCode.Expected, $"'{d}' expected"));
-                ErrorHelpers.MissingCloseParen(_errors, _stream.LookAhead().Location, d);
+                 ErrorHelpers.MissingCloseParen(_errors, _stream.LookAhead().Location, d);
             else
                 _stream.MoveNext();
         }

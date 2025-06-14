@@ -1,12 +1,17 @@
+using System.Resources;
+
 namespace MosaicDroid.Core
 {
     public class MatrixInterpreterVisitor : IStmtVisitor
     {
         private readonly string[,] _canvas;
-        private readonly Dictionary<string, double> _variables
-            = new Dictionary<string, double>();
+        private readonly Dictionary<string, double> _variables = new Dictionary<string, double>();
         private readonly ExpressionEvaluatorVisitor _exprEval;
+
         private readonly List<CompilingError> _runtimeErrors;
+
+        private static readonly ResourceManager _resmgr = 
+            new ResourceManager("MosaicDroid.Core.Resources.Strings", typeof(MatrixInterpreterVisitor).Assembly);
 
         public int Size { get; }
         public int CurrentX { get; private set; }
@@ -15,7 +20,7 @@ namespace MosaicDroid.Core
         public int BrushSize { get; private set; } = 1;
 
         private int _executionSteps;
-        private const int MaxExecutionSteps = 100_000;
+        private const int MaxExecutionSteps = int.MaxValue;
 
         public MatrixInterpreterVisitor(int size, List<CompilingError> runtimeErrors)
         {
@@ -23,22 +28,13 @@ namespace MosaicDroid.Core
             _runtimeErrors = runtimeErrors;
 
             _canvas = new string[size, size];
+
             for (int y = 0; y < size; y++)
                 for (int x = 0; x < size; x++)
                     _canvas[x, y] = "w ";
 
             _runtimeErrors = runtimeErrors ?? throw new ArgumentNullException(nameof(runtimeErrors));
             _exprEval = new ExpressionEvaluatorVisitor(_variables, this, _runtimeErrors);
-        }
-
-        public void PrintCanvas()
-        {
-            for (int y = 0; y < Size; y++)
-            {
-                for (int x = 0; x < Size; x++)
-                    Console.Write(_canvas[x, y]);
-                Console.WriteLine();
-            }
         }
 
         public void VisitSpawn(SpawnCommand cmd)
@@ -55,9 +51,7 @@ namespace MosaicDroid.Core
 
         public void VisitColor(ColorCommand cmd)
         {
-
             var lit = (ColorLiteralExpression)cmd.Args[0];
-            // BrushCode = GetBrushCode((string)lit.Value!);
             BrushCode = (string)lit.Value!;
         }
 
@@ -75,25 +69,24 @@ namespace MosaicDroid.Core
             int dx = (int)cmd.Args[0].Accept(_exprEval),
                 dy = (int)cmd.Args[1].Accept(_exprEval),
                 dist = (int)cmd.Args[2].Accept(_exprEval);
-                var loc = cmd.Location;
 
              bool ok = true;
              ok &= ArgumentSpec.EnsureDirectionInRange(dx, cmd.Location, "DrawLine: dirX", _runtimeErrors);
              ok &= ArgumentSpec.EnsureDirectionInRange(dy, cmd.Location, "DrawLine: dirY", _runtimeErrors);
-             ok &= ArgumentSpec.EnsurePositive(dist, cmd.Location, "DrawLine: distance", _runtimeErrors);
+             ok &= ArgumentSpec.EnsurePositive(dist, cmd.Location, "DrawLine: dist", _runtimeErrors);
 
              if (!ok)
              {
                  // Si alguna falla, detenemos:
-                 throw new PixelArtRuntimeException($"Runtime error: invalid arguments to DrawLine at {cmd.Location.Line}:{cmd.Location.Column}");
-             } 
+                 throw new PixelArtRuntimeException($"{_resmgr.GetString("Inv_DrwLine")} ¨{cmd.Location.Line}:{cmd.Location.Column}");
+             }
+            
 
             for (int i = 0; i < dist; i++)
                 Stamp(CurrentX + dx * i, CurrentY + dy * i);
 
             CurrentX += dx * dist;
             CurrentY += dy * dist;
-            
         }
 
         public void VisitDrawCircle(DrawCircleCommand cmd)
@@ -109,11 +102,13 @@ namespace MosaicDroid.Core
 
             if (!ok)
             {
-                throw new PixelArtRuntimeException($"Runtime error: invalid arguments to DrawCircle at {cmd.Location.Line}:{cmd.Location.Column}");
+                throw new PixelArtRuntimeException($"{_resmgr.GetString("Inv_DrwCircle")} {cmd.Location.Line}:{cmd.Location.Column}"
+);
+
             }
 
-            // center:
-            int cx = CurrentX + dx * radius - dx,//mueve un pixel
+            // centro:
+            int cx = CurrentX + dx * radius - dx, // mueve un pixel
                 cy = CurrentY + dy * radius - dy;
 
             int x = 0, y = radius, d = 3 - 2 * radius;
@@ -132,8 +127,6 @@ namespace MosaicDroid.Core
                 else { d += 4 * (x - y) + 10; y--; }
                 x++;
             }
-            // CurrentX = cx;
-            //CurrentY = cy;
             CurrentX += dx * (radius + 1);
             CurrentY += dy * (radius + 1);
 
@@ -156,36 +149,24 @@ namespace MosaicDroid.Core
 
             if (!ok)
             {
-                throw new PixelArtRuntimeException($"Invalid arguments to DrawRectangle at {cmd.Location.Line}:{cmd.Location.Column}");
+                throw new PixelArtRuntimeException($"{_resmgr.GetString("Inv_DrwRectangle")} {cmd.Location.Line}:{cmd.Location.Column}");
             }
 
              int cx = CurrentX + dx * dist,
              cy = CurrentY + dy * dist;
 
-            // Calculate rectangle bounds
+            // calcula los limites
             int topLeftX = cx - width / 2;
             int topLeftY = cy - height / 2;
             int bottomRightX = topLeftX + width;
             int bottomRightY = topLeftY + height;
 
-
-            /* for (int x = cx - hw; x <= cx + hw; x++)
-             {
-                 Stamp(x, cy - hh);
-                 Stamp(x, cy + hh);
-             }
-             // left/right edges
-             for (int y = cy - hh; y <= cy + hh; y++)
-             {
-                 Stamp(cx - hw, y);
-                 Stamp(cx + hw, y);
-             } */
-            // Draw rectangle outline (border only)
+            // pinta el borde
             for (int x = topLeftX; x < bottomRightX; x++)
             {
                 for (int y = topLeftY; y < bottomRightY; y++)
                 {
-                    // Check if current pixel is on the border
+                    // chequea si el pixel actyal esta en el borde
                     bool isBorder = (x == topLeftX) || (x == bottomRightX - 1) ||
                                    (y == topLeftY) || (y == bottomRightY - 1);
 
@@ -234,11 +215,6 @@ namespace MosaicDroid.Core
 
         public void VisitGoto(GotoCommand gt)
         {
-            // You’ll need to implement a simple “instruction pointer” loop
-            // over your ProgramExpression.  Many students find it easier
-            // to *transform* their AST into a flat list, then run an index
-            // with explicit “ip = labelIndex” jumps.  But that’s a small
-            // state machine on top of what we have here.
         }
 
         public void VisitAssign(AssignExpression assign)
@@ -255,53 +231,25 @@ namespace MosaicDroid.Core
             {
                 return 0;
             }
-            //string want = GetBrushCode(colorName);
-            int cnt = 0;
-            int xmin = Math.Min(x1, x2), xmax = Math.Max(x1, x2);
-            int ymin = Math.Min(y1, y2), ymax = Math.Max(y1, y2);
 
-            for (int y = ymin; y <= ymax; y++)
-                for (int x = xmin; x <= xmax; x++)
-                    if (string.Equals(_canvas[x, y], colorName, StringComparison.OrdinalIgnoreCase))
+            int cnt = 0;
+
+            int rowMin = Math.Min(x1, x2), rowMax = Math.Max(x1, x2);
+            int colMin = Math.Min(y1, y2), colMax = Math.Max(y1, y2);
+
+            for (int row = rowMin; row <= rowMax; row++)
+                for (int col = colMin; col <= colMax; col++)
+                    if (string.Equals(_canvas[col, row], colorName, StringComparison.OrdinalIgnoreCase))
                         cnt++;
 
             return cnt;
         }
-        /*  private string GetBrushCode(string colorName)
-          {
-              if (colorName == null) return "  ";
 
-              switch (colorName.ToLower())
-              {
-                  case "black": return "bk";
-                  case "blue": return "bl";
-                  case "brown": return "br";
-                  case "red": return "r ";
-                  case "green": return "g ";
-                  case "gray": return "gr ";
-                  case "yellow": return "y ";
-                  case "orange": return "o ";
-                  case "purple": return "p ";
-                  case "pink": return "pi ";
-                  case "white": return "w ";
-                  case "transparent": return "  ";
-                  default: return "??";
-              }
-          }
-
-          public string GetBrushCodeForColor(string colorName)
-          {
-              return GetBrushCode(colorName);
-          }
-          */
         public bool CanvasColor(string colorName, int dx, int dy)
         {
-            //string want = GetBrushCode(colorName);
             int x = CurrentX + dx, y = CurrentY + dy;
             if (x < 0 || y < 0 || x >= Size || y >= Size) return false;
-            // raw canvas cell is exactly the last BrushCode string used there
-            // so we just compare (case‐insensitive for safety)
-            return string.Equals(_canvas[x, y], colorName, StringComparison.OrdinalIgnoreCase);
+            return string.Equals(_canvas[x, y], colorName, StringComparison.OrdinalIgnoreCase); // case-insensitive
         }
         private void Stamp(int x, int y)
         {
@@ -317,18 +265,18 @@ namespace MosaicDroid.Core
         }
         public void VisitProgram(ProgramExpression prog)
         {
-            // build label→statement index map: jump to the first stmt *after* the label line
             var labelToIndex = prog.LabelIndices.ToDictionary(
               kv => kv.Key,
               kv =>
               {
                   var loc = kv.Value;
-                  // find first statement whose location is strictly after the label token:
+
+                  // encuentre el primer stm tq su location es despues de la etiqueta 
                   int idx = prog.Statements.FindIndex(stmt =>
               stmt.Location.Line > loc.Line ||
-              (stmt.Location.Line == loc.Line && stmt.Location.Column > loc.Column)
-          );
-                  // if label is the last thing in the file, jump past end → will terminate
+              (stmt.Location.Line == loc.Line && stmt.Location.Column > loc.Column) );
+
+                  // si la etiqueta es lo ultimo del arhivo -> termina
                   return idx < 0 ? prog.Statements.Count : idx;
               }
             );
@@ -343,28 +291,25 @@ namespace MosaicDroid.Core
 
                 if (_executionSteps > MaxExecutionSteps)
                 {
-                    // We decide this is an infinite‐loop situation
-                    // Record it as a runtime error, then throw
+                    // error en tiempo de ejecucion
                     var loc = stmts[ip].Location;
                     ErrorHelpers.InfiniteLoopDetected(_runtimeErrors, loc);
-                    throw new PixelArtRuntimeException($"Runtime error: Potential infinite loop at {loc.Line}:{loc.Column}");
+                    throw new PixelArtRuntimeException($"{_resmgr.GetString("PotentialInfiniteLoop")} {loc.Line}:{loc.Column}");
                 }
-                // 1) conditional jump:
+
                 if (stmts[ip] is GotoCommand gt
                  && gt.Condition.Accept(_exprEval) != 0)
                 {
                     if (!labelToIndex.TryGetValue(gt.Label, out ip))
                     {
-                        // Record “undefined label” as a runtime error
                         ErrorHelpers.UndefinedLabel(_runtimeErrors, gt.Location, gt.Label);
-                        throw new PixelArtRuntimeException(
-                            $"Runtime error: label '{gt.Label}' not declared"
-                        );
+                        throw new PixelArtRuntimeException(string.Format(_resmgr.GetString("Err_LabelUndefined"), gt.Label));
+
                     }
                     continue;
                 }
 
-                // 2) normal statement:
+                // statement usual
                 if (stmts[ip] is StatementNode stmt)
                     stmt.Accept(this);
 
@@ -376,17 +321,14 @@ namespace MosaicDroid.Core
         {
             if (x < 0 || x >= Size || y < 0 || y >= Size)
             {
-                // Reutilizamos el método OutOfBounds ya definido:
-                //ErrorHelpers.OutOfBounds(_runtimeErrors, new CodeLocation(0,0), x, y);
-                throw new PixelArtRuntimeException($"Moved outside canvas at {x},{y}");
+                throw new PixelArtRuntimeException($"{_resmgr.GetString("MovedOutsideCanvas")} {x},{y}");
+
             }
-
-
         }
         public string GetBrushCodeForUI(int x, int y)
         {
             if (x < 0 || y < 0 || x >= Size || y >= Size)
-                return "  ";  // Return transparent for out-of-bounds
+                return "  ";  // Retorna transparente para out-of-bounds
             return _canvas[x, y];
         }
 

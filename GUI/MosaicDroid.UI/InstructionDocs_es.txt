@@ -1,13 +1,13 @@
 ﻿=== Referencia del Lenguaje Pixel-Wall-E ===
 
 MODO DE ENTRADA:
- - Puedes escribir tu programa directamente en el editor izquierdo o hacer clic en **Cargar** para abrir un archivo ".gw".
- - Haz clic en **Guardar** para exportar el contenido del editor a un archivo ".gw".
+ - Puedes escribir tu programa directamente en el editor izquierdo o hacer clic en **Cargar** para abrir un archivo ".pw".
+ - Haz clic en **Guardar** para exportar el contenido del editor a un archivo ".pw".
 
 BOTONES:
  - **Tamaño [n] + Redimensionar**: establece el lienzo a n×n píxeles (máx. 300).
  - **Ejecutar**: realiza el análisis léxico, sintáctico, verificación semántica, interpretación y repinta la cuadrícula.
- - **Cargar / Guardar**: carga o guarda un archivo de script ".gw".
+ - **Cargar / Guardar**: carga o guarda un archivo de script ".pw".
 
 COMANDOS (cada uno debe terminar con salto de línea):
   • **Spawn(int x, int y)**  

@@ -52,24 +52,6 @@ namespace MosaicDroid.Core
                         ok &= ArgumentSpec.EnsurePositive(value, literalNum.Location, "DrawLine: distance", errors);
                     }
                 }
-                /*else if (Args[i] is Number numNode && !numNode.IsInt)
-                {
-                    // A double‐literal is not allowed (must be an integer literal if literal):
-                    ErrorHelpers.ArgMismatch(
-                        errors,
-                        numNode.Location,
-                        "DrawLine",
-                        i + 1,
-                        ExpressionType.Number,  // expected an integer literal
-                        ExpressionType.Number   // actual is “Number but not integer literal”
-                    );
-                    ok = false;
-                }
-                else
-                {
-                    // If it’s not a literal Number, it must be a VariableExpression or compound expression
-                    // whose type already looked up as Number.  In that case, we skip literal‐only checks.
-                } */
             }
 
             return ok;

@@ -13,18 +13,18 @@ namespace MosaicDroid.Core
         TResult VisitMod(ModulusExpression mod);
         TResult VisitPow(PowerExpression p);
 
-        // Comparisons
+        // Compaciones
         TResult VisitLess(LogicalLessExpression l);
         TResult VisitLessEqual(LogicalLessEqualExpression l);
         TResult VisitGreater(LogicalGreaterExpression g);
         TResult VisitGreaterEqual(LogicalGreaterEqualExpression g);
         TResult VisitEqual(LogicalEqualExpression e);
 
-        // Boolean ops
+        // Operadores Booleanos 
         TResult VisitAnd(LogicalAndExpression a);
         TResult VisitOr(LogicalOrExpression o);
 
-        // Function calls
+        // Funciones
         TResult VisitActualX(GetActualXExpression fn);
         TResult VisitActualY(GetActualYExpression fn);
         TResult VisitCanvasSize(GetCanvasSize fn);

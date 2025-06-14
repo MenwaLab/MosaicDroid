@@ -51,13 +51,13 @@ namespace MosaicDroid.Core
                             TokenValues.GetActualX or TokenValues.GetActualY or TokenValues.GetCanvasSize
                             or TokenValues.GetColorCount or TokenValues.IsBrushColor or TokenValues.IsBrushSize
                             or TokenValues.IsCanvasColor => TokenType.Function,
-                            _ => TokenType.Variable // Fallback 
+                            _ => TokenType.Variable 
                         };
                         tokens.Add(new Token(type, tokenValue, stream.Location));
                     }
                     else
                     {
-                        // Look at the last token to decide context
+                        // Mirar el ultimo token para decidir el context
                         Token? lastToken = tokens.Count > 0 ? tokens[^1] : null;
                         bool afterParenOrComma = lastToken != null &&
                             lastToken.Type == TokenType.Delimeter &&
@@ -82,7 +82,6 @@ namespace MosaicDroid.Core
                                 tokens.Add(new Token(TokenType.Variable, id, stream.Location));
 
                             else
-                                //errors.Add(new CompilingError(stream.Location, ErrorCode.Invalid, $"Invalid identifier: {id}"));
                                 ErrorHelpers.InvalidIdentifier(errors, stream.Location, id);
                         }
 
@@ -90,12 +89,11 @@ namespace MosaicDroid.Core
                     continue;
                 }
 
-                // Matching ints
+                // Matchear ints
                 if (stream.ReadNumber(out string number))
 
                 {
                     if (!double.TryParse(number, out _))
-                        //errors.Add(new CompilingError(stream.Location, ErrorCode.Invalid, "Invalid integer"));
                         ErrorHelpers.InvalidInteger(errors, stream.Location, number);
 
                     tokens.Add(new Token(TokenType.Integer, number, stream.Location));
@@ -103,15 +101,14 @@ namespace MosaicDroid.Core
                 }
 
 
-                // Match Strings/Colors
+                // Matchear Strings/Colors
                 if (MatchText(stream, tokens, errors)) continue;
 
-                // Match Symbols (Operators, Delimiters, Assignments)
+                // Matchear Simbolos (Operadores, Delimiters, Assignments)
                 if (MatchSymbol(stream, tokens)) continue;
 
-                // Handle Unknown Characters
+                // Caracteres desconocidos
                 var unknownChar = stream.ReadAny();
-                //errors.Add(new CompilingError(stream.Location, ErrorCode.Unknown, unknownChar.ToString()));
                 ErrorHelpers.UnrecognizedChar(errors, stream.Location, unknownChar);
             }
 
@@ -153,7 +150,6 @@ namespace MosaicDroid.Core
                 stream.ReadAny(); // consume  "
                 if (!stream.ReadUntil("\"", out string text))
                 {
-                    //errors.Add(new CompilingError(stream.Location, ErrorCode.Expected, "Closing quote for string literal"));
                     ErrorHelpers.UnterminatedString(errors, stream.Location);
                     return false;
                 }
@@ -179,12 +175,6 @@ namespace MosaicDroid.Core
                 return true;
             }
             return false;
-        }
-       // private static bool IsColor(string text) => Enum.TryParse<ColorOptions>(text, true, out _);
-        private static bool IsWpfColor(string text)
-        {
-            // reuse your fast check method—you’ll need to expose it publicly
-            return ColorValidationHelper.IsValidWpfColor(text);
         }
 
         private static bool IsValidIdentifier(string id) => !string.IsNullOrEmpty(id) &&

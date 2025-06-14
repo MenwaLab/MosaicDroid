@@ -6,7 +6,7 @@ namespace MosaicDroid.Core
 
         public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
         {
-            // JumpLine is always semantically valid (it just separates statements).
+            // siempre es valido semanticamente
             return true;
         }
 

@@ -7,9 +7,6 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-
-
-
 namespace MosaicDroid.UI
 {
     public partial class MainWindow : Window
@@ -20,11 +17,7 @@ namespace MosaicDroid.UI
         private Player _musicPlayer;
         private CancellationTokenSource _runCts;
 
-        private ResourceManager _resmgr =
-  new ResourceManager("MosaicDroid.UI.Resources.Strings",
-                      typeof(MainWindow).Assembly);
-
-
+        private static readonly ResourceManager _resmgr = new ResourceManager("MosaicDroid.Core.Resources.Strings", typeof(MatrixInterpreterVisitor).Assembly);
 
         public MainWindow()
         {
@@ -32,14 +25,14 @@ namespace MosaicDroid.UI
         
             InitializeComponent();
             DataContext = this;
+
             LangCombo.SelectedIndex = (Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName == "es") ? 1 : 0;
-            //LangCombo.SelectionChanged += LangCombo_SelectionChanged;
             HookEvents();
             
             ReloadAllTexts();
-            PixelGrid.SizeChanged += (s, e) => ResizeCanvas();
+            //PixelGrid.SizeChanged += (s, e) => ResizeCanvas();
             ResizeCanvas();
-            Editor.TextChanged += Editor_TextChanged;
+            Editor.TextChanged += Editor_TextChanged; // se activa cuando el usuario escribe,pega o borra texto en el editor
             UpdateLineNumbers();
 
             StartMusic();
@@ -56,7 +49,7 @@ namespace MosaicDroid.UI
             var musicFile = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Assets", "Osole_mio.mp3");
             if (File.Exists(musicFile))
             {
-                BgMusic.Source = new Uri(musicFile, UriKind.Absolute);
+                BgMusic.Source = new Uri(musicFile, UriKind.Absolute); // une el path a un obj q mediaElement de WPF puede consumir
                 BgMusic.Play();
             }
             
@@ -64,74 +57,70 @@ namespace MosaicDroid.UI
         
         private void BgMusic_MediaEnded(object sender, RoutedEventArgs e)
         {
-            BgMusic.Position = TimeSpan.Zero;
+            BgMusic.Position = TimeSpan.Zero; // para q la cancion se reproduzca indefinidamente
             BgMusic.Play();
         }
 
-
-
         private void LangCombo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            var combo = (ComboBox)sender;
+            var combo = (ComboBox)sender; //lee el selectedItem
             var tag = (combo.SelectedItem as ComboBoxItem)?.Tag as string ?? "en";
             Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo(tag);
-            ReloadAllTexts();
+            ReloadAllTexts(); // para q se actualicen los botones de acuerdo al lenguaje
         }
 
         private void ReloadAllTexts()
         {
-            // buttons
+            // botones
             ResizeBtn.Content = _resmgr.GetString("Btn_Resize");
             LoadBtn.Content = _resmgr.GetString("Btn_Load");
             SaveBtn.Content = _resmgr.GetString("Btn_Save");
             RunBtn.Content = _resmgr.GetString("Btn_Run");
+            MuteBtn.Content = _resmgr.GetString("Btn_Mute");
 
-            // labels
-            // we bound SizeBox label via x:Name on a TextBlock in XAML
+
             ((TextBlock)LogicalTreeHelper.FindLogicalNode(this, "_sizeLabel"))
               .Text = _resmgr.GetString("Lbl_Size");
             ((TextBlock)LogicalTreeHelper.FindLogicalNode(this, "_langLabel"))
               .Text = _resmgr.GetString("Lbl_Language");
 
-            // load docs text file (e.g. InstructionDocs_en.txt or .es)
+            // Carga los docs 
             string docsFile = $"InstructionDocs_{Thread.CurrentThread.CurrentUICulture.TwoLetterISOLanguageName}.txt";
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, docsFile);
-            DocsBox.Text = File.Exists(path)
-                ? File.ReadAllText(path)
-                : _resmgr.GetString("Docs_NotFound");
+            DocsBox.Text = File.Exists(path) ? File.ReadAllText(path) : _resmgr.GetString("Docs_NotFound");
         }
 
-         private void Editor_TextChanged(object sender, TextChangedEventArgs e)
-          => UpdateLineNumbers();
+         private void Editor_TextChanged(object sender, TextChangedEventArgs e) => UpdateLineNumbers();
 
         private void UpdateLineNumbers()
         {
-            int lineCount = Math.Max(0, Editor.LineCount); // Ensure non-negative count
-            LineNums.ItemsSource = Enumerable.Range(1, lineCount)
+            int lineCount = Math.Max(0, Editor.LineCount); 
+            LineNums.ItemsSource = Enumerable.Range(1, lineCount) // muestra un numero por linea en el editor
                                              .Select(i => i.ToString());
         }
 
         private void ResizeBtn_Click(object s, RoutedEventArgs e)
         {
-            if (int.TryParse(SizeBox.Text, out var sz) && sz > 0)
+            if (int.TryParse(SizeBox.Text, out var size) && size > 0)
             {
-                CanvasSize = Math.Min(sz, MAX_CANVAS); ;
+                CanvasSize = Math.Min(size, MAX_CANVAS); ;
                 ResizeCanvas();
             }
         }
 
         private void ResizeCanvas()
         {
-            double avail = PixelGrid.ActualWidth;
-            // If it's not laid out yet, fall back to 15px:
-            double cell = CanvasSize > 0 && avail > CanvasSize
-                          ? Math.Floor(avail / CanvasSize)
-                          : 15;
+            double width = PixelGrid.ActualWidth;
+
+            // 15px para que el canvas se vea cuadriculado aunque el tamaño sea pequeño 
+            double cell = CanvasSize > 0 && width > CanvasSize ? Math.Floor(width / CanvasSize): 15;
+
             PixelGrid.Rows = PixelGrid.Columns = CanvasSize;
             PixelGrid.Children.Clear();
+
             for (int i = 0; i < CanvasSize * CanvasSize; i++)
             {
-                var rect = new Border
+                var border = new Border
                 {
                     Width = cell,
                     Height = cell,
@@ -139,120 +128,42 @@ namespace MosaicDroid.UI
                     BorderBrush = Brushes.LightGray,
                     BorderThickness = new Thickness(0.5)
                 };
-                PixelGrid.Children.Add(rect);
+                PixelGrid.Children.Add(border);
             }
         }
 
         private void LoadBtn_Click(object s, RoutedEventArgs e)
         {
-            var dlg = new Microsoft.Win32.OpenFileDialog
+            var dialog = new Microsoft.Win32.OpenFileDialog // abre los archivos de windows
             {
-                Filter = "Mosaic scripts|*.gw"
+                Filter = "Mosaic scripts|*.pw" //solo permite .pw
             };
-            if (dlg.ShowDialog() == true)
-                Editor.Text = File.ReadAllText(dlg.FileName);
+            if (dialog.ShowDialog() == true) // retorna true si el usuario selecciono Open
+                Editor.Text = File.ReadAllText(dialog.FileName); // lee el contenido y lo pone en el editor
         }
 
         private void SaveBtn_Click(object s, RoutedEventArgs e)
         {
-            var dlg = new Microsoft.Win32.SaveFileDialog
+            var dialog = new Microsoft.Win32.SaveFileDialog
             {
-                Filter = "Mosaic scripts|*.gw",
-                FileName = "Code.gw"
+                Filter = "Mosaic scripts|*.pw",
+                FileName = "Code.pw" // nombre por defecto
             };
-            if (dlg.ShowDialog() == true)
-                File.WriteAllText(dlg.FileName, Editor.Text);
+            if (dialog.ShowDialog() == true)
+                File.WriteAllText(dialog.FileName, Editor.Text);
+        }
+        private void MuteBtn_Click(object sender, RoutedEventArgs e)
+        {
+            BgMusic.IsMuted = !BgMusic.IsMuted;
+            // Actualiza la etiqueta:
+            MuteBtn.Content = BgMusic.IsMuted
+                ? _resmgr.GetString("Btn_Unmute")
+                : _resmgr.GetString("Btn_Mute");
         }
 
-        private async void RunBtn_Click(object s, RoutedEventArgs e)
+        private void PaintCanvas(MatrixInterpreterVisitor interp)
         {
-            _runCts?.Cancel();
-            _runCts = new CancellationTokenSource();
-            // persist to Code.gw so your CLI logic works unchanged
-            File.WriteAllText("Code.gw", Editor.Text);
-
-            // 5a) Lex / parse / semant
-            var lexErr = new List<CompilingError>();
-            var tokens = Compiling.Lexical.GetTokens(Editor.Text, lexErr);
-            var parErr = new List<CompilingError>();
-            var parser = new Parser(new TokenStream(tokens), parErr);
-            var prog = parser.ParseProgram();
-            var semErr = new List<CompilingError>();
-            prog.CheckSemantic(new Context(), new Scope(), semErr);
-            
-            var allErr = lexErr.Cast<CompilingError>().Concat(parErr).Concat(semErr).ToList();
-
-            /* if (allErr.Any()) {
-    // show each with its location
-    var msg = string.Join("\n",
-      allErr.Select(err =>
-        $"[{err.Location.Line},{err.Location.Column}] {err.Message}"
-      )
-    );
-    MessageBox.Show(msg, "Errors");
-    return;
-  }*/
-            if (lexErr.Any())
-            {
-                var lexMsg = string.Join("\n",
-      lexErr.Select(err1 =>
-        $"[{err1.Location.Line},{err1.Location.Column}] {err1.Message}"
-      )
-    );
-                MessageBox.Show(lexMsg, "Lexer Errors");
-                //return;
-            }
-
-            
-            if (parErr.Any())
-            {
-                var parMsg = string.Join("\n",
-      parErr.Select(err2 =>
-        $"[{err2.Location.Line},{err2.Location.Column}] {err2.Message}"
-      )
-    );
-                MessageBox.Show(parMsg, "Parse Errors");
-                //return;
-            }
-
-            
-            if (semErr.Any())
-            {
-                var semMsg = string.Join("\n",
-semErr.Select(err3 =>
-$"[{err3.Location.Line},{err3.Location.Column}] {err3.Message}"
-)
-);
-                MessageBox.Show(semMsg, "Semantic Errors");
-                return;
-            }
-
-
-
-            // 5b) Interpret
-            var runErr = new List<CompilingError>();
-            var interp = new MatrixInterpreterVisitor(CanvasSize, runErr);
-
-
-            try
-            {
-                //interp.VisitProgram(prog);
-                await Task.Run(() => interp.VisitProgram(prog), _runCts.Token);
-            }
-            catch (PixelArtRuntimeException ex)
-            {
-                string message = string.Format(
-                    _resmgr.GetString("Err_Runtime"),
-                    ex.Message
-                );
-                MessageBox.Show(message, _resmgr.GetString("Err_Title"));
-                return;
-            }
-
-            
-
-
-            // 5c) Paint the WPF grid
+            // Pinta el canvas de WPF
             for (int y = 0; y < CanvasSize; y++)
                 for (int x = 0; x < CanvasSize; x++)
                 {
@@ -266,37 +177,73 @@ $"[{err3.Location.Line},{err3.Location.Column}] {err3.Message}"
                     {
                         try
                         {
-                            // use the WPF converter to turn the name or "#RRGGBB" into a Color
+                            // Usa el convertidor de WPF para transformar el nombre del Color o el #RRGGBB a un color
                             var col = (Color)ColorConverter.ConvertFromString(raw.Trim());
                             brush = new SolidColorBrush(col);
                         }
                         catch
                         {
-                            brush = Brushes.Transparent;  // fallback on error
+                            brush = Brushes.Transparent;  // fallback si hay un error
                         }
                     }
-((Border)PixelGrid.Children[y * CanvasSize + x]).Background = brush;
-
-                    // NOTE: expose a getter in your interpreter
-                    /*var code = interp.GetBrushCodeForUI(x, y);
-                    var brush = code switch
-                    {
-                        "bk" => Brushes.Black,                              
-                        "bl" => Brushes.Blue,
-                        "br" => Brushes.SaddleBrown,
-                        "r " => Brushes.Red,
-                        "g " => Brushes.Green,
-                        "gr " => Brushes.Gray,
-                        "y " => Brushes.Yellow,
-                        "o " => Brushes.Orange,
-                        "p " => Brushes.Purple,
-                        "pi " => Brushes.Pink,
-                        "w " => Brushes.White,
-                        _ => Brushes.Transparent
-                    };
-                    
-                    ((Border)PixelGrid.Children[y * CanvasSize + x]).Background = brush;*/
+                    ((Border)PixelGrid.Children[y * CanvasSize + x]).Background = brush;
                 }
+        }
+
+        private async void RunBtn_Click(object s, RoutedEventArgs e)
+        {
+            _runCts?.Cancel();
+            _runCts = new CancellationTokenSource();
+            File.WriteAllText("Code.pw", Editor.Text);
+
+            // Lexea? / Parsea /  Chequea semánticamente
+            var lexErr = new List<CompilingError>();
+            var tokens = Compiling.Lexical.GetTokens(Editor.Text, lexErr);
+
+            var parErr = new List<CompilingError>();
+            var parser = new Parser(new TokenStream(tokens), parErr);
+            var prog = parser.ParseProgram();
+
+            var semErr = new List<CompilingError>();
+            prog.CheckSemantic(new Context(), new Scope(), semErr);
+            
+            if (lexErr.Any())
+            {
+                var lexMsg = string.Join("\n",lexErr.Select(err1 => $"[{err1.Location.Line},{err1.Location.Column}] {err1.Message}" ));
+                MessageBox.Show(lexMsg, _resmgr.GetString("Lex_Err"));
+                return; // permite que cuando haya un error se pueda seguir escribiendo en el editor
+            }
+            
+            if (parErr.Any())
+            {
+                var parMsg = string.Join("\n",parErr.Select(err2 => $"[{err2.Location.Line},{err2.Location.Column}] {err2.Message}"));
+                MessageBox.Show(parMsg, _resmgr.GetString("Parse_Err"));
+                return;
+            }
+            
+            if (semErr.Any())
+            {
+                var semMsg = string.Join("\n",semErr.Select(err3 => $"[{err3.Location.Line},{err3.Location.Column}] {err3.Message}"));
+                MessageBox.Show(semMsg, _resmgr.GetString("Sem_Err"));
+                return;
+            }
+
+            // Interpreta
+            var runErr = new List<CompilingError>();
+            var interp = new MatrixInterpreterVisitor(CanvasSize, runErr);
+
+            try
+            {
+                await Task.Run(() => interp.VisitProgram(prog), _runCts.Token);
+            }
+            catch (PixelArtRuntimeException ex)
+            {
+                PaintCanvas(interp); // siempre pinta el canvas lo que haya antes del error:
+                string message = string.Format(_resmgr.GetString("Err_Runtime"),ex.Message);
+                MessageBox.Show(message, _resmgr.GetString("Err_Title"));
+                return;
+            }
+            PaintCanvas(interp); // si no hay excepcion pinta el canvas sin problema
         }
     }
 }

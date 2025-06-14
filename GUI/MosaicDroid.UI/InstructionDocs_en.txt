@@ -1,63 +1,67 @@
-﻿=== Pixel-Wall-E Language Reference ===
+﻿=== 🤖 Pixel-Wall-E Language Guide 🤖 ===
 
-ENTRY MODE:
- - You may type your program directly into the left-hand editor, or click **Load** to open a “.gw” file.
- - Click **Save** to export the current editor contents back to a “.gw” file.
+ 🎨 ENTRY MODE 🎨 :
+ - You may type your program directly into the left-hand editor, or click Load to open a “.pw” file.
+ - Click Save to export the current editor contents to a “.pw” file.
 
-BUTTONS:
- - **Size [n] + Resize**: set the canvas to n×n pixels (max 300).
- - **Run**: lex, parse, check semantics, interpret, and repaint the grid.
- - **Load / Save**: load from or save to a “.gw” script file.
+🔱 BUTTONS 🔱:
+ - Size [n] + Resize [n]: sets the canvas to a n×n pixels.
+ - Run: if the code is correct it will paint your drawing on the canvas.
+ - Load / Save: loads from or saves to a “.pw” script file.
 
 COMMANDS (each must end with a newline):
-  • **Spawn(int x, int y)**  
-      Initialize Wall-E’s starting coordinates.  
-      *Must be the first (and only) Spawn in a program.*  
+  • Spawn(int x, int y)
+      Initializes Wall-E’s starting coordinates.  
+      If they are outside of the canvas bounds, returns a runtime error
+      Must be the first (and only) Spawn in one program.
 
-  • **Color("Name")**  
-      Change the brush color. Allowed names: “Red”, “Blue”, “Green”, “Yellow”,  
-      “Orange”, “Purple”, “Black”, “White” (eraser), “Transparent” (no paint).  
+  • Color("Name") or Color("#RRGGBB")
+      Changes the brush color from all the WPF-known colors. Please refer to this link to find the complete list "https://www.codeproject.com/Articles/5296124/Definitive-Guide-to-WPF-Colors-Color-Spaces-Colorhttps://www.codeproject.com/Articles/5296124/Definitive-Guide-to-WPF-Colors-Color-Spaces-Color"  
+      
+      Note that “White” acts as an eraser and “Transparent” paint nothing.  
 
-  • **Size(int k)**  
+  • Size(int k)
       Change brush thickness. If k is even, the next lower odd number is used.  
 
-  • **DrawLine(dx, dy, distance)**  
-      From the current pixel, draw a straight line `distance` pixels in direction  
-      (`dx`,`dy`), where each of dx,dy ∈ {–1,0,1}.  
+  • DrawLine(dx, dy, distance)
+      From the current pixel, draws a straight line `distance` pixels in direction  (`dx`,`dy`), where each of dx,dy ∈ {–1,0,1} and distance > 0.  
 
-  • **DrawCircle(dx, dy, radius)**  
-      From current pixel, move `radius` in (dx,dy) then draw the circumference only.  
+  • DrawCircle(dx, dy, radius) 
+      From the current pixel, moves `radius` in (dx,dy) then draws the circumference only.  
 
-  • **DrawRectangle(dx, dy, dist, width, height)**  
-      From current position, move (`dx`,`dy`)*`dist` to center of a `width`×`height` rectangle and draw its border.  
+  • DrawRectangle(dx, dy, dist, width, height) 
+      From the current position, moves to the center of a `width`×`height` rectangle and draws its border.  
 
-  • **Fill()**  
+  • Fill() 
       Flood-fill the contiguous region under the current pixel with the current brush color.  
+        
+  • Move(int x,int y)
+      Moves Pixel Wall-e to the position (x,y) only if its inside te canvas bounds, if not reports a runtime error
 
-VARIABLES & EXPRESSIONS:
-  • **Assignment:**  
+VARIABLES & EXPRESSIONS (must have a jumpline follow it):
+  • Assignment:
       `myVar <- Expression`  
-  • **Arithmetic:** `+`, `-`, `*`, `/`, `**`, `%`  
-  • **Boolean:** comparisons `==,>,<,>=,<=`, `&&`, `||`  
+  • Arithmetic: `+`, `-`, `*`, `/`, `**`, `%`  
+  • Boolean: comparisons `==,>,<,>=,<=`, `&&`, `||`  
 
-BUILT-IN FUNCTIONS:
-  • **GetActualX() / GetActualY()**  
-      Return Wall-E’s current X or Y.  
-  • **GetCanvasSize()**  
-      Returns the current canvas width (==height).  
-  • **GetColorCount(color, x1, y1, x2, y2)**  
-      Count pixels of `color` in the rectangle between (x1,y1) and (x2,y2).  
-  • **IsBrushColor(color)**  
-      1 if the current brush matches `color`, else 0.  
-  • **IsBrushSize(size)**  
-      1 if the current brush thickness == `size`, else 0.  
-  • **IsCanvasColor(color, vertical, horizontal)**  
-      1 if the pixel at offset (vertical,horizontal) from the current position equals `color`, else 0.  
+🎵 BUILT-IN FUNCTIONS 🎵:
+  • GetActualX() / GetActualY()
+      Returns Wall-E’s current X or Y.  
+  • GetCanvasSize()  
+      Returns the current canvas size n.  
+  • GetColorCount(color, x1, y1, x2, y2)  
+      Counts pixels of `color` in the rectangle between (x1,y1) and (x2,y2).  
+  • IsBrushColor(color)
+      returns 1 if the current brush matches `color`, else 0.  
+  • IsBrushSize(size)
+      Returns 1 if the current brush thickness == `size`, else 0.  
+  • IsCanvasColor(color, vertical, horizontal)
+      Returns 1 if the pixel at (X + horizontal, Y +vertical from the current position equals `color`, else 0.  
 
 CONDITIONAL JUMPS & LABELS:
-  • **Labels:**  
+  • Labels: 
       `myLabel` on its own line marks a jump‐target.  
-  • **GoTo [myLabel] (condition)**  
-      If `condition` is true (nonzero), resume execution at `myLabel`.  
+  • GoTo [myLabel] (condition)
+      If `condition` is true, resume execution at `myLabel`.  
 
 EXAMPLE PROGRAM:

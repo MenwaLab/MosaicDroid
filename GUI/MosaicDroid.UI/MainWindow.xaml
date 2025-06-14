@@ -6,19 +6,18 @@
     Height="600"
     Width="900">
 
-    <!-- 1. All your brushes, fonts & styles go here -->
+    <!-- Todos los brushes, fonts y estilos -->
     <Window.Resources>
 
-        <!-- pastel noise behind editor & docs only -->
+        <!-- foto solamente detrás del editor y el panel de info, no del canvas -->
         <ImageBrush x:Key="PanelBackground"
                 ImageSource="pack://application:,,,/MosaicDroid.UI;component/Assets/bluePurplePinkTones.png"
                 Opacity="0.2"
                 Stretch="UniformToFill"/>
 
-        <!-- a fun font -->
         <FontFamily x:Key="FunFont">Comic Sans MS</FontFamily>
 
-        <!-- Buttons get this style -->
+        <!-- Botones -->
         <Style x:Key="PastelButton" TargetType="Button">
             <Setter Property="FontFamily"    Value="{StaticResource FunFont}"/>
             <Setter Property="Padding"       Value="8,4"/>
@@ -28,7 +27,6 @@
             <Setter Property="BorderBrush"   Value="LightPink"/>
         </Style>
 
-        <!-- Inputs (ComboBox, TextBox) get this style -->
         <Style x:Key="PastelInput" TargetType="Control">
             <Setter Property="FontFamily"    Value="{StaticResource FunFont}"/>
             <Setter Property="Padding"       Value="6,2"/>
@@ -38,9 +36,9 @@
             <Setter Property="BorderThickness" Value="2"/>
         </Style>
 
-        <!-- Force each line‐number item to be a fixed height -->
+        <!-- La altura de los números de línea estén lo más alineadas posible con el editor -->
         <Style x:Key="LineNumberStyle" TargetType="ListBoxItem">
-            <Setter Property="Height"  Value="20"/>
+            <Setter Property="Height"  Value="13"/>
             <Setter Property="Padding" Value="0"/>
         </Style>
 
@@ -48,7 +46,7 @@
 
     <DockPanel Background="MistyRose">
 
-        <!-- hidden WPF player for background music -->
+        <!--  WPF player para la músics -->
         <MediaElement x:Name="BgMusic"
                   LoadedBehavior="Manual"
                   UnloadedBehavior="Stop"
@@ -62,7 +60,7 @@
                 Background="LightYellow"
                 Margin="5">
 
-            <!-- language selector -->
+            <!-- selector de lenguaje -->
             <TextBlock x:Name="_langLabel"
                  FontFamily="{StaticResource FunFont}"
                  VerticalAlignment="Center"
@@ -84,7 +82,7 @@
                 <ComboBoxItem Tag="es">Español</ComboBoxItem>
             </ComboBox>
 
-            <!-- canvas size -->
+            <!-- tamaño del canvas -->
             <TextBlock x:Name="_sizeLabel"
                  FontFamily="{StaticResource FunFont}"
                  VerticalAlignment="Center"
@@ -94,7 +92,7 @@
                MinWidth="40"
                Text="40"/>
 
-            <!-- action buttons -->
+            <!-- botones -->
             <Button x:Name="ResizeBtn"
               Style="{StaticResource PastelButton}"
               Click="ResizeBtn_Click"/>
@@ -107,10 +105,14 @@
             <Button x:Name="RunBtn"
               Style="{StaticResource PastelButton}"
               Click="RunBtn_Click"/>
+            <Button x:Name="MuteBtn"
+            Style="{StaticResource PastelButton}"
+            Click="MuteBtn_Click"
+            Content="{Binding MuteLabel}" />
 
         </StackPanel>
 
-        <!-- main area -->
+        <!--  area principal -->
         <Grid>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
@@ -118,7 +120,7 @@
                 <ColumnDefinition Width="2*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- line numbers + editor -->
+            <!-- nnúmeros de linea + editor -->
             <Grid Grid.Column="0">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="40"/>
@@ -142,10 +144,10 @@
                  VerticalScrollBarVisibility="Auto"
                             
                  TextChanged="Editor_TextChanged"/>
-                
+
             </Grid>
 
-            <!-- white-only pixel canvas -->
+            <!--  canvas blanco -->
             <ScrollViewer Grid.Column="1"
                     Background="White"
                     HorizontalScrollBarVisibility="Auto"
@@ -154,7 +156,7 @@
                      Background="White"/>
             </ScrollViewer>
 
-            <!-- docs panel -->
+            <!-- panel de info -->
             <TextBox Grid.Column="2"
                x:Name="DocsBox"
                FontFamily="{StaticResource FunFont}"

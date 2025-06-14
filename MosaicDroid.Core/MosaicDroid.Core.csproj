@@ -9,11 +9,21 @@
 
   <ItemGroup>
     <Compile Remove="Compiler\Program.cs" />
+    <Compile Remove="Resources\Strings.Designer.cs" />
+    <Compile Remove="Resources\Strings.en.Designer.cs" />
+    <Compile Remove="Resources\Strings.es.Designer.cs" />
   </ItemGroup>
 
 
 	<ItemGroup>
 	  <PackageReference Include="System.Drawing.Common" Version="9.0.6" />
+	</ItemGroup>
+
+
+	<ItemGroup>
+	  <EmbeddedResource Update="Resources\Strings.resx">
+	    <SubType>Designer</SubType>
+	  </EmbeddedResource>
 	</ItemGroup>
 
 </Project>

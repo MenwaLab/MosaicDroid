@@ -10,14 +10,13 @@
 
   <ItemGroup>
     <Compile Remove="NewFolder1\**" />
+    <Compile Remove="Resources\**" />
     <EmbeddedResource Remove="NewFolder1\**" />
+    <EmbeddedResource Remove="Resources\**" />
     <None Remove="NewFolder1\**" />
+    <None Remove="Resources\**" />
     <Page Remove="NewFolder1\**" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Remove="Resources\Strings.en.Designer.cs" />
-    <Compile Remove="Resources\Strings.es.Designer.cs" />
+    <Page Remove="Resources\**" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,7 +39,7 @@
     <None Update="Assets\Osole_mio.mp3">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
-    <None Update="Code.gw">
+    <None Update="Code.pw">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="InstructionDocs_en.txt">

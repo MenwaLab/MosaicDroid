@@ -12,8 +12,6 @@ namespace MosaicDroid.Core
             Value = value;
             Location = location;
         }
-
-        public override string ToString() => $"{Type} [{Value}] at line {Location.Line}, column {Location.Column}";
     }
 
 
@@ -26,7 +24,7 @@ namespace MosaicDroid.Core
     public enum TokenType
     {
         Instruction, // Commandos: Spawn, Color, etc
-        GoTo, //y
+        GoTo, 
         Operator, // Operadores aritméticos: +, -, *, /, **, %
         Bool_OP, // Operadores booleanos: ==, >=, <=, >, <, &&, ||
         Assign, // Assignación <-
@@ -43,7 +41,7 @@ namespace MosaicDroid.Core
     {
         protected TokenValues() { }
 
-        // Instrucionses
+        // Instruciones
         public const string Spawn = "Spawn";
         public const string Color = "Color";
         public const string DrawLine = "DrawLine";

@@ -1,3 +1,5 @@
+using System.Resources;
+
 namespace MosaicDroid.Core
 {
     public class ExpressionEvaluatorVisitor : IExprVisitor<double>
@@ -5,6 +7,9 @@ namespace MosaicDroid.Core
         private readonly Dictionary<string, double> _variables;
         private readonly MatrixInterpreterVisitor _canvasContext;
         private readonly List<CompilingError> _runtimeErrors;
+
+        private static readonly ResourceManager _resmgr =
+    new ResourceManager("MosaicDroid.Core.Resources.Strings", typeof(MatrixInterpreterVisitor).Assembly);
 
         public ExpressionEvaluatorVisitor(Dictionary<string, double> variables,
                                           MatrixInterpreterVisitor canvasContext, List<CompilingError> runtimeErrors)
@@ -25,7 +30,7 @@ namespace MosaicDroid.Core
         public double VisitVariable(VariableExpression v)
         {
             if (!_variables.TryGetValue(v.Name, out var val))
-                throw new InvalidOperationException($"Undefined variable {v.Name}"); //try catch it
+                throw new InvalidOperationException($"{_resmgr.GetString("UndefinedVariable")} {v.Name}"); 
             return val;
         }
 
@@ -33,6 +38,7 @@ namespace MosaicDroid.Core
             => 0.0;
         public double VisitColorLiteral(ColorLiteralExpression c)
             => 0.0;
+        // operadores aritmeticos
         public double VisitAdd(Add a)
             => a.Left.Accept(this) + a.Right.Accept(this);
         public double VisitSub(Sub s)
@@ -63,7 +69,7 @@ namespace MosaicDroid.Core
             return Math.Pow(left, right);
         }
 
-        // Comparisons: return 1.0 for true, 0.0 for false
+        // operadores booleanos
         public double VisitLess(LogicalLessExpression l)
             => l.Left.Accept(this) < l.Right.Accept(this) ? 1 : 0;
         public double VisitLessEqual(LogicalLessEqualExpression l)
@@ -80,7 +86,7 @@ namespace MosaicDroid.Core
         public double VisitOr(LogicalOrExpression o)
             => (o.Left.Accept(this) != 0 || o.Right.Accept(this) != 0) ? 1 : 0;
 
-        // Functions—may need to delegate back to the canvas context:
+        // Funciones
         public double VisitActualX(GetActualXExpression fn)
             => _canvasContext.CurrentX;
         public double VisitActualY(GetActualYExpression fn)
@@ -98,16 +104,14 @@ namespace MosaicDroid.Core
         public double VisitBrushColor(IsBrushColorExpression fn)
         {
             string colorArg = fn.Color.Trim();
-            //string wantedBrushCode = _canvasContext.GetBrushCodeForColor(colorArg);
             var current = _canvasContext.BrushCode.Trim();
             return string.Equals(current, colorArg, StringComparison.OrdinalIgnoreCase)
          ? 1.0
          : 0.0;
-            //return _canvasContext.BrushCode == wantedBrushCode ? 1 : 0;
         }
         public double VisitBrushSize(IsBrushSizeExpression fn)
         {
-            double size = fn.Args[0].Accept(this); // let evaluator handle ANY expression
+            double size = fn.Args[0].Accept(this); 
             return _canvasContext.BrushSize == (int)size ? 1.0 : 0.0;
         }
 
@@ -120,7 +124,7 @@ namespace MosaicDroid.Core
            ? 1 : 0;
         public double VisitNoOp(NoOpExpression noOp)
         {
-            // any unrecognized expression just evaluates to 0.0
+            // cualquier expresion no reconocida evalua a 0.0
             return 0.0;
         }
         private void CheckDivisionByZero(double divisor, CodeLocation loc)
@@ -128,7 +132,7 @@ namespace MosaicDroid.Core
             if (Math.Abs(divisor) < 1e-9)
             {
                 ErrorHelpers.DivisionByZero(_runtimeErrors, loc);
-                throw new PixelArtRuntimeException($"Runtime error: division by zero at {loc.Line}:{loc.Column}");
+                throw new PixelArtRuntimeException($"{_resmgr.GetString("DivByZero")} {loc.Line}:{loc.Column}");
             }
 
         }
@@ -138,7 +142,7 @@ namespace MosaicDroid.Core
             if (Math.Abs(divisor) < 1e-9)
             {
                 ErrorHelpers.ModulusByZero(_runtimeErrors, loc);
-                throw new PixelArtRuntimeException($"Runtime error: modulus by zero at {loc.Line}:{loc.Column}");
+                throw new PixelArtRuntimeException($"{_resmgr.GetString("ModulusByZero")} {loc.Line}:{loc.Column}");
             }
         }
 
@@ -147,7 +151,7 @@ namespace MosaicDroid.Core
             if (Math.Abs(baseVal) < 1e-9 && Math.Abs(exponent) < 1e-9)
             {
                 ErrorHelpers.ZeroToZeroPower(_runtimeErrors, loc);
-                throw new PixelArtRuntimeException($"Runtime error: 0^0 is undefined at {loc.Line}:{loc.Column}");
+                throw new PixelArtRuntimeException($"{_resmgr.GetString("ZeroToZeroPower")} {loc.Line}:{loc.Column}");
             }
         }
 

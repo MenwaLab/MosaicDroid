@@ -118,57 +118,185 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="Btn_Load" xml:space="preserve">
-    <value>Load</value>
+    <value>Cargar</value>
   </data>
   <data name="Btn_Resize" xml:space="preserve">
-    <value>Resize</value>
+    <value>Redimensionar</value>
   </data>
   <data name="Btn_Run" xml:space="preserve">
-    <value>Run</value>
+    <value>Ejecutar</value>
   </data>
   <data name="Btn_Save" xml:space="preserve">
-    <value>Save</value>
-  </data>
-  <data name="Btn_Stop" xml:space="preserve">
-    <value>Stop</value>
+    <value>Guardar</value>
   </data>
   <data name="Docs_NotFound" xml:space="preserve">
-    <value>Help file not found.</value>
+    <value>Archivo no encontrado</value>
   </data>
   <data name="Err_InvalidValue" xml:space="preserve">
-    <value>Sorry, invalid value: {0}</value>
+    <value>Disculpe, valor inválido: {0}</value>
   </data>
   <data name="Lbl_Language" xml:space="preserve">
-    <value>Language</value>
+    <value>Idioma</value>
   </data>
   <data name="Lbl_Size" xml:space="preserve">
-    <value>Size</value>
+    <value>Tamaño</value>
   </data>
   <data name="Err_MissingNewLine" xml:space="preserve">
-    <value>Missing newline after {0}</value>
+    <value>Salto de línea faltante después de {0}</value>
   </data>
   <data name="Err_Runtime" xml:space="preserve">
-    <value>Runtime error: {0}</value>
+    <value>Error en tiempo de ejecución: {0}</value>
   </data>
   <data name="Lex_Err" xml:space="preserve">
-    <value>Lexer Error</value>
+    <value>Error Léxico</value>
   </data>
   <data name="Parser_Error" xml:space="preserve">
-    <value>Parser Error</value>
+    <value>Error al Parsear</value>
   </data>
   <data name="Sem_Err" xml:space="preserve">
-    <value>Sem_Err</value>
+    <value>Error semántico</value>
   </data>
   <data name="Inv_DrwLine" xml:space="preserve">
-    <value>Invalid arguments to DrawLine at</value>
+    <value>Argumento inválido en DrawLine</value>
   </data>
   <data name="Err_LabelUndefined" xml:space="preserve">
-    <value>Runtime error: label '{0}' not declared</value>
+    <value>Error en tiempo de ejecución: etiqueta '{0}' no declarada</value>
   </data>
   <data name="Btn_Unmute" xml:space="preserve">
-    <value>Unmute</value>
+    <value>Reproducir</value>
   </data>
   <data name="Btn_Mute" xml:space="preserve">
-    <value>Mute</value>
+    <value>Silenciar</value>
   </data>
+
+	<data name="Inv_DrwCircle" xml:space="preserve">
+  <value>Argumentos inválidos para DrawCircle en</value>
+</data>
+
+	<data name="Inv_DrwRectangle" xml:space="preserve">
+  <value>Argumentos inválidos para DrawLine en</value>
+</data>
+
+	<data name="PotentialInfiniteLoop" xml:space="preserve">
+  <value>Posible bucle infinito en {0}:{1}</value>
+</data>
+	<data name="MovedOutsideCanvas" xml:space="preserve">
+  <value>Movido fuera del lienzo en {0},{1}</value>
+</data>
+	<data name="DivByZero" xml:space="preserve">
+  <value>División por cero en {0}:{1}</value>
+</data>
+	<data name="ModulusByZero" xml:space="preserve">
+  <value>Módulo por cero en {0}:{1}</value>
+</data>
+	<data name="UndefinedVariable" xml:space="preserve">
+  <value>Variable indefinida {0}</value>
+</data>
+	<data name="ZeroToZeroPower" xml:space="preserve">
+  <value>Cero elevado a la potencia de cero (0^0) en {0}:{1}</value>
+</data>
+
+	<data name="ExpectedSpawn" xml:space="preserve">
+  <value>Asegúrate de que tu código comience con un Spawn(x,y)</value>
+</data>
+
+	<data name="MissingNewLine" xml:space="preserve">
+  <value>Falta nueva línea {0}</value>
+</data>
+
+	<data name="MissingnewLine" xml:space="preserve">
+  <value>Falta nueva línea</value>
+</data>
+
+	<data name="MissingParenthesis" xml:space="preserve">
+  <value>Se esperaba {0}</value>
+</data>
+
+	<data name="MissingOpenParen" xml:space="preserve">
+  <value>Lo siento, falta un paréntesis de apertura {0}</value>
+</data>
+
+	<data name="InvalidVariableName" xml:space="preserve">
+  <value>Lo siento, asegúrate de que el nombre de la variable {0} sea válido según las reglas gramaticales</value>
+</data>
+
+	<data name="InvalidLabelName" xml:space="preserve">
+  <value>Lo siento, asegúrate de que el nombre de la etiqueta {0} sea válido según las reglas gramaticales</value>
+</data>
+
+	<data name="UnexpectedToken" xml:space="preserve">
+  <value>Token inesperado</value>
+</data>
+
+	<data name="MissingQuotation" xml:space="preserve">
+  <value>Asegúrate de que tu color esté entre comillas</value>
+</data>
+
+	<data name="UnknownInstrFunc" xml:space="preserve">
+  <value>Instrucción o Función desconocida {0}</value>
+</data>
+
+	<data name="DuplicateSpawn" xml:space="preserve">
+  <value>Solo se permite un Spawn(x,y)</value>
+</data>
+
+	<data name="DuplicateLabel" xml:space="preserve">
+  <value>Lo siento, la etiqueta {0} solo se puede declarar una vez.</value>
+</data>
+
+	<data name="UndefinedVariableSemantic" xml:space="preserve">
+  <value>La variable '{0}' no está declarada</value>
+</data>
+
+	<data name="InvalidColor" xml:space="preserve">
+  <value>Lo siento, color desconocido detectado: '{0}'</value>
+</data>
+
+	<data name="InvalidGoTo" xml:space="preserve">
+  <value>Lo siento, asegúrate de que la condición para GoTo sea booleana</value>
+</data>
+
+	<data name="InvalidOperands" xml:space="preserve">
+  <value>Lo siento, ambos operandos para la operación {0} deben ser enteros o ambos deben ser texto (para operaciones booleanas)</value>
+</data>
+
+	<data name="ArgMismatch" xml:space="preserve">
+  <value>Lo siento, para {0} esperamos que el argumento {1} sea del tipo {2} pero se obtuvo {3}</value>
+</data>
+
+	<data name="WrongArity" xml:space="preserve">
+  <value>Lo siento, para {0} esperamos {1} argumentos pero se obtuvieron {2}</value>
+</data>
+
+	<data name="UndefinedLabel" xml:space="preserve">
+  <value>Lo siento, la etiqueta '{0}' no está declarada</value>
+</data>
+
+	<data name="InvalidAssign" xml:space="preserve">
+  <value>No se puede asignar una expresión inválida a: </value>
+</data>
+
+	<data name="InvalidFunctionCall" xml:space="preserve">
+  <value>Las llamadas a funciones no pueden anidarse como argumentos</value>
+</data>
+
+	<data name="UnrecognizedChar" xml:space="preserve">
+  <value>Carácter no reconocido</value>
+</data>
+
+	<data name="UnterminatedString" xml:space="preserve">
+  <value>Lo siento, literal de cadena sin terminar</value>
+</data>
+
+	<data name="UnterminatedText" xml:space="preserve">
+  <value>Lo siento, literal de texto sin terminar; se esperaba cierre</value>
+</data>
+
+	<data name="InvalidId" xml:space="preserve">
+  <value>Lo siento, por favor corrige el identificador inválido</value>
+</data>
+
+	<data name="InvalidInt" xml:space="preserve">
+  <value>Lo siento, por favor corrige el entero inválido</value>
+</data>
 </root>

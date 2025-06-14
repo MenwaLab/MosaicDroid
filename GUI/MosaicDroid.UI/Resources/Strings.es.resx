@@ -150,4 +150,25 @@
   <data name="Err_Runtime" xml:space="preserve">
     <value>Error en tiempo de ejecución: {0}</value>
   </data>
+  <data name="Lex_Err" xml:space="preserve">
+    <value>Error Léxico</value>
+  </data>
+  <data name="Parser_Error" xml:space="preserve">
+    <value>Error al Parsear</value>
+  </data>
+  <data name="Sem_Err" xml:space="preserve">
+    <value>Error semántico</value>
+  </data>
+  <data name="Inv_DrwLine" xml:space="preserve">
+    <value>Argumento inválido en DrawLine</value>
+  </data>
+  <data name="Err_LabelUndefined" xml:space="preserve">
+    <value>Error en tiempo de ejecución: etiqueta '{0}' no declarada</value>
+  </data>
+  <data name="Btn_Unmute" xml:space="preserve">
+    <value>Reproducir</value>
+  </data>
+  <data name="Btn_Mute" xml:space="preserve">
+    <value>Silenciar</value>
+  </data>
 </root>

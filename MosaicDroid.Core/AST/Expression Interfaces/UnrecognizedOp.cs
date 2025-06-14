@@ -8,11 +8,11 @@ namespace MosaicDroid.Core
         public override ExpressionType Type { get; set; } = ExpressionType.ErrorType;
         public override object? Value { get; set; }
 
-        public override void Evaluate() { /* no runtime effect */ }
+        public override void Evaluate() { /* ningun efecto en tiempo de ejecucion */ }
 
         public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
         {
-            // Always valid, but carries no value
+            // Asiempre es valido pero no tiene valor
             return true;
         }
         public override TResult Accept<TResult>(IExprVisitor<TResult> v)
