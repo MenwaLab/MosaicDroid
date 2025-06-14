@@ -39,7 +39,7 @@ This application allows you to write commands in a text editor or load them from
 ## 📸 Pictures 📸
 
 * **Main Menu:**
-    * *Imagine a screenshot here showing the main application window with the text editor, canvas, and control buttons.*
+![Game Screenshot](Assets\paisajess.png)
 
 * **Example Code Execution:**
     * *Imagine a screenshot here showing a piece of code in the editor and the corresponding pixel art drawn on the canvas.*
