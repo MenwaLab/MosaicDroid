@@ -1,6 +1,6 @@
 ## 🎨 Description 🎨
 
-AImagine this: you are an artist in Venice, Italy and overwhelmed with clients eager to have their portraits painted on a serene gondola ride, you programmed a little robot friend, Mosaic Droid, to assist you in bringing your pixel-art visions to life. 
+Imagine this: you are an artist in Venice, Italy and overwhelmed with clients eager to have their portraits painted on a serene gondola ride, you programmed a little robot friend, Mosaic Droid, to assist you in bringing your pixel-art visions to life. 
 
 Mosaic Droid is an application that interprets a specialized programming language, enabling it to paint pixels onto a digital canvas. 
 
@@ -15,7 +15,7 @@ This application allows you to write commands in a text editor or load them from
 * **Built-in Functions:** Utilize functions like `GetActualX()`, `GetActualY()`, `GetCanvasSize()`, `GetColorCount()`, `IsBrushColor()`, `IsBrushSize()`, and `IsCanvasColor()` to retrieve information and make decisions within your code.
 * **Conditional Jumps:** Implement `GoTo` statements with labels and conditions to create loops and branching logic, allowing for complex artistic patterns.
 
-## 🎄 Features 🎄
+## 🤖 Features 🤖
 
 * **User-Friendly Interface (WPF):** A modern graphical interface built with WPF, featuring a text editor with line numbers, a dynamic canvas, and intuitive controls.
 * **Language Localization (.NET Resources):** Seamlessly switch the application's language between English and Spanish for a fully customizable experience.
@@ -60,9 +60,9 @@ This application allows you to write commands in a text editor or load them from
 
 ## 🔧 Built With 🔧
 
-* C#
-* WPF (Windows Presentation Foundation)
-* .NET Resource Management
+- C#
+- WPF (Windows Presentation Foundation)
+- .NET Resource Management
 
 ## 🙏 Recognition 🙏
 
@@ -70,6 +70,6 @@ Special thanks to my professors and the teacher assistants at The University of 
 
 ## 📩 Contact Info 📩
 
-Author: Meylí
-Email: [meylijv@gmail.com]
-GitHub: [[https://github.com/MenwaLab](https://github.com/MenwaLab)]
+- Author: Meylí
+- Email: [meylijv@gmail.com]
+- GitHub: [[https://github.com/MenwaLab](https://github.com/MenwaLab)]
