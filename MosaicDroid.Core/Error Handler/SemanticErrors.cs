@@ -27,6 +27,7 @@ namespace MosaicDroid.Core
         InvalidGoTo,
         InvalidOperands,
         InvalidAssign,
+        
         InvalidFunctionCall
     }
 }

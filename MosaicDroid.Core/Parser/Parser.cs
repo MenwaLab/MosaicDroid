@@ -65,10 +65,17 @@ namespace MosaicDroid.Core
                             _stream.MoveNext();
                             continue;
                         }
-
-                        var lblTok = _stream.Advance();
-                        program.LabelIndices[lblTok.Value] = lblTok.Location;
-                        EnsureNewlineAfter(lblTok.Location);
+                        var lbelTok = _stream.Advance();
+                        if (program.LabelIndices.ContainsKey(lbelTok.Value))
+                        {
+                            // semantic error: “Lo siento, la etiqueta {0} solo se puede declarar una vez.”
+                            ErrorHelpers.DuplicateLabel( _errors,lbelTok.Location,lbelTok.Value);
+                        }
+                        else {
+                            program.LabelIndices[lbelTok.Value] = lbelTok.Location;
+                        }
+                       
+                        EnsureNewlineAfter(lbelTok.Location);
                         continue;
 
 
@@ -98,6 +105,14 @@ namespace MosaicDroid.Core
                         {
                             ErrorHelpers.MissingOpenParen(_errors, la.Location, la.Value);
                             _stream.MoveNext();
+                            continue;
+                        }
+
+                        if (_stream.CanLookAhead(1) && _stream.LookAhead(1).Type == TokenType.Jumpline)
+                        {
+                            var labelTok = _stream.Advance();
+                            program.LabelIndices[labelTok.Value] = labelTok.Location;
+                            EnsureNewlineAfter(labelTok.Location);
                             continue;
                         }
 

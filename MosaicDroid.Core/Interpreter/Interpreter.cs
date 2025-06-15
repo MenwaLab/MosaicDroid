@@ -20,7 +20,7 @@ namespace MosaicDroid.Core
         public int BrushSize { get; private set; } = 1;
 
         private int _executionSteps;
-        private const int MaxExecutionSteps = int.MaxValue;
+        private const int MaxExecutionSteps = 100000;
 
         public MatrixInterpreterVisitor(int size, List<CompilingError> runtimeErrors)
         {

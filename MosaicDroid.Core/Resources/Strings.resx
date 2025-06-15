@@ -117,6 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+	
   <data name="Btn_Load" xml:space="preserve">
     <value>Load</value>
   </data>
@@ -142,7 +143,7 @@
     <value>Size</value>
   </data>
   <data name="Err_MissingNewLine" xml:space="preserve">
-    <value>Missing newline after {0}</value>
+    <value>Missing newline after</value>
   </data>
   <data name="Err_Runtime" xml:space="preserve">
     <value>Runtime error: {0}</value>
@@ -154,7 +155,7 @@
     <value>Parser Error</value>
   </data>
   <data name="Sem_Err" xml:space="preserve">
-    <value>Sem_Err</value>
+    <value>Semantic Error</value>
   </data>
   <data name="Inv_DrwLine" xml:space="preserve">
     <value>Invalid arguments to DrawLine at</value>
@@ -169,7 +170,7 @@
   </data>
 	
   <data name="Err_LabelUndefined" xml:space="preserve">
-    <value>Runtime error: label '{0}' not declared</value>
+    <value>Label {0} not declared</value>
   </data>
   <data name="Btn_Unmute" xml:space="preserve">
     <value>Unmute</value>
@@ -177,23 +178,24 @@
   <data name="Btn_Mute" xml:space="preserve">
     <value>Mute</value>
   </data>
+	<!-- Runtime errors-->
   <data name="PotentialInfiniteLoop" xml:space="preserve">
-    <value>Potential infinite loop at {0}:{1}</value>
+    <value>Potential infinite loop at</value>
   </data>
   <data name="MovedOutsideCanvas" xml:space="preserve">
-    <value>Moved outside canvas at {0},{1}</value>
+    <value>Moved outside canvas at</value>
   </data>
   <data name="DivByZero" xml:space="preserve">
-    <value>Division by zero at {0}:{1}</value>
+    <value>Division by zero at</value>
   </data>
   <data name="ModulusByZero" xml:space="preserve">
-    <value>Modulus by zero at {0}:{1}</value>
+    <value>Modulus by zero at</value>
   </data>
   <data name="UndefinedVariable" xml:space="preserve">
-    <value>Undefined variable {0}</value>
+    <value>Undefined variable</value>
   </data>
   <data name="ZeroToZeroPower" xml:space="preserve">
-    <value>Zero to zero power (0^0) at {0}:{1}</value>
+    <value>Zero to zero power (0^0) at</value>
   </data>
 	
 	<!-- Parse Errors-->
@@ -203,19 +205,19 @@
 </data>
 
 	<data name="MissingNewLine" xml:space="preserve">
-  <value>Missing newline{0}</value>
+  <value>Missing newline after</value>
 </data>
 
 	<data name="MissingnewLine" xml:space="preserve">
-  <value>Missing newline</value>
+  <value>Missing newline after </value>
 </data>
 
 	<data name="MissingParenthesis" xml:space="preserve">
-  <value>Expected '{0}'</value>
+  <value>Expected</value>
 </data>
 
 	<data name="MissingOpenParen" xml:space="preserve">
-  <value>Sorry, there's a missing open parenthesis{0}</value>
+  <value>Sorry, there's a missing open parenthesis</value>
 </data>
 
 	<data name="InvalidVariableName" xml:space="preserve">
@@ -227,7 +229,7 @@
 </data>
 
 	<data name="UnexpectedToken" xml:space="preserve">
-  <value>Unexpected token</value>
+  <value>Unexpected token: </value>
 </data>
 
 	<data name="MissingQuotation" xml:space="preserve">
@@ -235,7 +237,7 @@
 </data>
 
 	<data name="UnknownInstrFunc" xml:space="preserve">
-  <value>Unknown Instruction or Function '{0}'</value>
+  <value>Unknown Instruction or Function</value>
 </data>
 
 	<!--Semantic-->
@@ -246,17 +248,17 @@
 
 
 	<data name="DuplicateLabel" xml:space="preserve">
-  <value>Sorry the label {0} can only be declared once.</value>
+  <value>Sorry the label {0} can only be declared once</value>
 </data>
 
 
 	<data name="UndefinedVariableSemantic" xml:space="preserve">
-  <value>Variable '{0}' is not declared</value>
+  <value>Variable {0} is not declared</value>
 </data>
 
 
 	<data name="InvalidColor" xml:space="preserve">
-  <value>Sorry, unknown color detected: '{0}'</value>
+  <value>Sorry, unknown color detected: </value>
 </data>
 
 
@@ -283,7 +285,7 @@
 
 
 	<data name="UndefinedLabel" xml:space="preserve">
-  <value>Sorry, label '{0}' not declared</value>
+  <value>Sorry, label {0} not declared</value>
 </data>
 
 
@@ -298,7 +300,7 @@
 
 	<!--Lexer-->
 	<data name="UnrecognizedChar" xml:space="preserve">
-  <value>Unrecognized Character</value>
+  <value>Unrecognized Character </value>
 </data>
 
 	<data name="UnterminatedString" xml:space="preserve">
