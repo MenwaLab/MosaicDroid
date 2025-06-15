@@ -30,7 +30,6 @@ namespace MosaicDroid.UI
             HookEvents();
             
             ReloadAllTexts();
-            //PixelGrid.SizeChanged += (s, e) => ResizeCanvas();
             ResizeCanvas();
             Editor.TextChanged += Editor_TextChanged; // se activa cuando el usuario escribe,pega o borra texto en el editor
             UpdateLineNumbers();
