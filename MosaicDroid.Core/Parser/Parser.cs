@@ -69,18 +69,11 @@ namespace MosaicDroid.Core
                         if (program.LabelIndices.ContainsKey(lbelTok.Value))
                         {
                             // semantic error: “Lo siento, la etiqueta {0} solo se puede declarar una vez.”
-                            ErrorHelpers.DuplicateLabel(
-                                _errors,
-                                lbelTok.Location,
-                                lbelTok.Value
-                            );
+                            ErrorHelpers.DuplicateLabel( _errors,lbelTok.Location,lbelTok.Value);
                         }
                         else {
                             program.LabelIndices[lbelTok.Value] = lbelTok.Location;
                         }
-
-
-                            //var lblTok = _stream.Advance();
                        
                         EnsureNewlineAfter(lbelTok.Location);
                         continue;
