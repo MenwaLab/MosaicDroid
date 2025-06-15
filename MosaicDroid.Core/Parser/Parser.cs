@@ -74,7 +74,6 @@ namespace MosaicDroid.Core
                                 lbelTok.Location,
                                 lbelTok.Value
                             );
-                            // you can choose to skip or override; I'll skip re‑registration:
                         }
                         else {
                             program.LabelIndices[lbelTok.Value] = lbelTok.Location;
