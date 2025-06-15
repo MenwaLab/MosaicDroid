@@ -1,4 +1,5 @@
-﻿using MosaicDroid.Core;
+// this file is to run the lexer/parser/semantic (the projects core logic) i the console to debug, theres no UI integrated here
+using MosaicDroid.Core;
 namespace MosaicDroid.Cli
 {
     class Program

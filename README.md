@@ -38,17 +38,15 @@ This application allows you to write commands in a text editor or load them from
 
 ## 📸 Pictures 📸
 
-* **Main Menu:**
-![Game Screenshot](Assets\paisajess.png)
-
 * **Example Code Execution:**
-    * *Imagine a screenshot here showing a piece of code in the editor and the corresponding pixel art drawn on the canvas.*
+<img width="959" alt="paisajess" src="https://github.com/user-attachments/assets/ae31caf8-64cd-4641-ac79-550c9ac3fee7" />
 
 * **Error Reporting:**
-    * *Imagine a screenshot here showing an error message displayed for invalid code.*
+<img width="959" alt="runtimess" src="https://github.com/user-attachments/assets/c32e75af-bdda-4c89-846b-3eadfac66e94" />
 
 * **Language Switch:**
-    * *Imagine a screenshot showing the UI in Spanish.*
+<img width="959" alt="spanish" src="https://github.com/user-attachments/assets/401f765c-0b8d-4b92-b6c1-e8b7511dc0a6" />
+
 
 ## 🪄 Initial Setup 🪄
 
