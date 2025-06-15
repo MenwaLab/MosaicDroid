@@ -1,4 +1,7 @@
+using System.Reflection.Metadata;
 using System.Resources;
+using System.Threading;
+using System.Windows.Interop;
 using System.Windows.Shapes;
 using System.Xml.Linq;
 
@@ -12,16 +15,14 @@ namespace MosaicDroid.Core
         // ===== Lexical =====
         public static void UnrecognizedChar(List<CompilingError> errs, CodeLocation loc, char c)
           => errs.Add(new LexicalError(loc, LexicalErrorCode.UnrecognizedCharacter,
-               $"{_resmgr.GetString("UnrecognizedChar")} '{c}'"));
+               $"{_resmgr.GetString("UnrecognizedChar")} '{c}' "));
 
         public static void UnterminatedString(List<CompilingError> errs, CodeLocation loc)
           => errs.Add(new LexicalError(loc, LexicalErrorCode.UnterminatedString, _resmgr.GetString("UnterminatedString")));
-            //   ""));
+
         public static void UnterminatedText(List<CompilingError> errs, CodeLocation loc, string closingDelimiter)
             => errs.Add(new LexicalError(loc, LexicalErrorCode.UnterminatedText,
                        $" {_resmgr.GetString("UnterminatedText")} '{closingDelimiter}'"));
-
-
 
         public static void InvalidIdentifier(List<CompilingError> errs, CodeLocation loc, string id)
           => errs.Add(new LexicalError(loc, LexicalErrorCode.InvalidIdentifier,
@@ -37,34 +38,17 @@ namespace MosaicDroid.Core
         public static void ExpectedSpawn(List<CompilingError> errs, CodeLocation loc)
             => errs.Add(new ParseError(loc, ParseErrorCode.ExpectedSpawn,
                  _resmgr.GetString("ExpectedSpawn")));
-        public static void MissingNewLine(
-              List<CompilingError> errs,
-              CodeLocation loc,
-              string suffix = null
-          )
+        public static void MissingNewLine(List<CompilingError> errs,CodeLocation loc,string suffix = null)
         {
-            string baseMsg = _resmgr.GetString("MissingnewLine");
             if (!string.IsNullOrEmpty(suffix))
-                baseMsg += $" after/después de {suffix}";
-            errs.Add(new ParseError(loc, ParseErrorCode.MissingNewLine, baseMsg));
+            errs.Add(new ParseError(loc, ParseErrorCode.MissingNewLine, $"{_resmgr.GetString("MissingNewLine")} {suffix}"));
         }
 
 
-        public static void MissingCloseParen(
-        List<CompilingError> errs,
-        CodeLocation loc,
-        string d
-    ) => errs.Add(new ParseError(loc, ParseErrorCode.MissingParenthesis,
-               $"Expected/Esperaba '{d}'"));
+        public static void MissingCloseParen( List<CompilingError> errs,CodeLocation loc, string d
+    ) => errs.Add(new ParseError(loc, ParseErrorCode.MissingParenthesis,$"Expected/Esperaba '{d}'"));
 
-
-
-
-        public static void MissingOpenParen(
-            List<CompilingError> errs,
-            CodeLocation loc,
-            string instructionName = null
-        )
+        public static void MissingOpenParen(List<CompilingError> errs,CodeLocation loc,string instructionName = null)
         {
             string baseMsg = _resmgr.GetString("MissingOpenParen");
             if (!string.IsNullOrEmpty(instructionName))
@@ -73,62 +57,75 @@ namespace MosaicDroid.Core
         }
 
         public static void InvalidVariableName(List<CompilingError> errs, CodeLocation loc, string variable)
-          => errs.Add(new ParseError(loc, ParseErrorCode.InvalidVariableName, $"{_resmgr.GetString("InvalidVariableName")} {variable}"));
-              // $"Sorry, please make sure the variable name {variable} is valid according to the grammar rules"));
-
+        {
+            var tpl = _resmgr.GetString("InvalidVariableName");
+            var msg = string.Format(tpl, variable);
+            errs.Add(new ParseError(loc, ParseErrorCode.InvalidVariableName, msg));
+        }
 
         public static void InvalidLabelName(List<CompilingError> errs, CodeLocation loc, string label)
-          => errs.Add(new ParseError(loc, ParseErrorCode.InvalidLabelName, $"{_resmgr.GetString("InvalidLabelName")} {label}"));
-              // $"Sorry, please make sure the label name {label} is valid according to the grammar rules"));
+        {
+            var tpl = _resmgr.GetString("InvalidLabelName");
+            var msg = string.Format(tpl, label);
+            errs.Add(new ParseError(loc, ParseErrorCode.InvalidLabelName, msg));
+        }
 
         public static void UnexpectedToken(List<CompilingError> errs, CodeLocation loc, string tok)
           => errs.Add(new ParseError(loc, ParseErrorCode.UnexpectedToken, $"{_resmgr.GetString("UnexpectedToken")} {tok}"));
-        //$"Unexpected token '{tok}'"));
 
         public static void MissingQuotation(List<CompilingError> errs, CodeLocation loc)
           => errs.Add(new ParseError(loc, ParseErrorCode.MissingQuotation, _resmgr.GetString("MissingQuotation")));
-             //  "Please make sure your color is inside quotations"));
 
         public static void UnknownInstrFunc(List<CompilingError> errs, CodeLocation loc, string instrFunc)
           => errs.Add(new ParseError(loc, ParseErrorCode.UnknownInstrFunc, $"{_resmgr.GetString("UnknownInstrFunc")} {instrFunc}"));
-              // $"Unknown Instruction or Function'{instrFunc}'"));
-
 
 
         // ===== Semantic =====
         public static void DuplicateSpawn(List<CompilingError> errs, CodeLocation loc)
           => errs.Add(new SemanticError(loc, SemanticErrorCode.DuplicateSpawn, _resmgr.GetString("DuplicateSpawn")));
 
-
         public static void DuplicateLabel(List<CompilingError> errs, CodeLocation loc, string label)
-          => errs.Add(new SemanticError(loc, SemanticErrorCode.DuplicateLabel, $"{_resmgr.GetString("DuplicateLabel")} {label}"));
-               //$"Sorry the label {label} can only be declared once."));
+        {
+            var tpl = _resmgr.GetString("DuplicateLabel");
+            var msg = string.Format(tpl, label);
+            errs.Add(new SemanticError(loc, SemanticErrorCode.DuplicateLabel, msg));
+        }
+         
 
         public static void UndefinedVariable(List<CompilingError> errs, CodeLocation loc, string name)
-          => errs.Add(new SemanticError(loc, SemanticErrorCode.UndefinedVariable, $"{_resmgr.GetString("UndefinedVariableSemantic")} {name}"));
-               //$"Variable '{name}' is not declared"));
+        {
+            var undef = _resmgr.GetString("InvalidOperands");
+            var message = string.Format(undef, name);
+            errs.Add(new SemanticError(loc, SemanticErrorCode.UndefinedVariable, message));
+
+        }
+
 
         public static void InvalidColor(List<CompilingError> errs, CodeLocation loc, string color)
           => errs.Add(new SemanticError(loc, SemanticErrorCode.InvalidColor, $"{_resmgr.GetString("InvalidColor")} {color}"));
-        // $"Sorry, unknown color detected: '{color}'"));
         public static void InvalidGoTo(List<CompilingError> errs, CodeLocation loc)
           => errs.Add(new SemanticError(loc, SemanticErrorCode.InvalidGoTo, _resmgr.GetString("InvalidGoTo")));
-              // $"Sorry, please make sure the condition for the GoTo is boolean"));
 
         public static void InvalidOperands(List<CompilingError> errs, CodeLocation loc, string op)
-          => errs.Add(new SemanticError(loc, SemanticErrorCode.InvalidOperands, $"{_resmgr.GetString("InvalidOperands")} {op}"));
-              // $"Sorry, both operands for the operation {op} need to be both integers or both be text (for boolean operations)"));
+        {
+            var inv = _resmgr.GetString("InvalidOperands");
+            var message = string.Format(inv, op);
+            errs.Add(new SemanticError(loc, SemanticErrorCode.InvalidOperands, message));
+        }
 
         public static void ArgMismatch(List<CompilingError> errs, CodeLocation loc, string name, int argIndex, ExpressionType type, ExpressionType actualType)
-          => errs.Add(new SemanticError(loc, SemanticErrorCode.ArgMismatch, $"{_resmgr.GetString("ArgMismatch")} {name} {argIndex} {type} {actualType}"));
-               //$"Sorry, for {name} we expect argument {argIndex} to be of type {type} but got {actualType}"));
-
-
-
+        {
+            var tpl = _resmgr.GetString("ArgMismatch");
+            var msg = string.Format(tpl, name, argIndex, type, actualType);
+            errs.Add(new SemanticError(loc, SemanticErrorCode.ArgMismatch, msg));
+        }
 
         public static void WrongArity(List<CompilingError> errs, CodeLocation loc, string name, int expecCount, int actCount)
-          => errs.Add(new SemanticError(loc, SemanticErrorCode.WrongArity, $"{_resmgr.GetString("WrongArity")} {name} {expecCount} {actCount}"));
-              // $"Sorry, for {name} we expect {expecCount} arguments but got {actCount}"));
+        {
+            var tpl = _resmgr.GetString("WrongArity");
+            var msg = string.Format(tpl, name, expecCount, actCount);
+            errs.Add(new SemanticError(loc, SemanticErrorCode.WrongArity, msg));
+        }
 
         public static void InvalidValue(
             List<CompilingError> errs,
@@ -137,19 +134,19 @@ namespace MosaicDroid.Core
         ) => errs.Add(new SemanticError(loc, SemanticErrorCode.InvalidValue,
                    $"{label} < 0: {value}"));
 
-        public static void UndefinedLabel(
-            List<CompilingError> errs,
-            CodeLocation loc,
-            string label
-        ) => errs.Add(new SemanticError(loc, SemanticErrorCode.UndefinedLabel, $"{_resmgr.GetString("UndefinedLabel")} {label}"));
-                  // $"Sorry, label '{label}' not declared"));
+        public static void UndefinedLabel(List<CompilingError> errs,CodeLocation loc,string label)
+        {
+            var tpl = _resmgr.GetString("UndefinedLabel");
+            var msg = string.Format(tpl, label);
+            errs.Add(new SemanticError(loc, SemanticErrorCode.UndefinedLabel, msg));
+        }
+        
 
         public static void InvalidAssign(List<CompilingError> errs, CodeLocation loc, string name)
           => errs.Add(new SemanticError(loc, SemanticErrorCode.InvalidAssign,
                $"{_resmgr.GetString("InvalidAssign")} '{name}"));
         public static void InvalidFunctionCall(List<CompilingError> errs, CodeLocation loc)
           => errs.Add(new SemanticError(loc, SemanticErrorCode.InvalidFunctionCall, _resmgr.GetString("InvalidFunctionCall")));
-               //"Function calls cannot be nested as arguments"));
        
         // ===== Runtime =====
         public static void DivisionByZero(List<CompilingError> errs, CodeLocation loc)
@@ -187,7 +184,6 @@ namespace MosaicDroid.Core
   => errs.Add(new RuntimeError(loc, RuntimeErrorCode.InvalidDirection,
        $"Invalid direction ({dx},{dy})"));
 
-        // 2) “distance” debe ser > 0:
         public static void InvalidDistance(List<CompilingError> errs, CodeLocation loc, int distance)
             => errs.Add(new RuntimeError(loc,
                                         RuntimeErrorCode.InvalidDistance,

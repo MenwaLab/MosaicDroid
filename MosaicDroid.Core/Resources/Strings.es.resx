@@ -142,7 +142,7 @@
     <value>Tamaño</value>
   </data>
   <data name="Err_MissingNewLine" xml:space="preserve">
-    <value>Salto de línea faltante después de {0}</value>
+    <value>Salto de línea faltante después de </value>
   </data>
   <data name="Err_Runtime" xml:space="preserve">
     <value>Error en tiempo de ejecución: {0}</value>
@@ -160,7 +160,7 @@
     <value>Argumento inválido en DrawLine</value>
   </data>
   <data name="Err_LabelUndefined" xml:space="preserve">
-    <value>Error en tiempo de ejecución: etiqueta '{0}' no declarada</value>
+    <value>Etiqueta {0} no declarada</value>
   </data>
   <data name="Btn_Unmute" xml:space="preserve">
     <value>Reproducir</value>
@@ -177,43 +177,45 @@
   <value>Argumentos inválidos para DrawLine en</value>
 </data>
 
+	<!-- Runtime errors-->
+
 	<data name="PotentialInfiniteLoop" xml:space="preserve">
-  <value>Posible bucle infinito en {0}:{1}</value>
+  <value>Posible bucle infinito en</value>
 </data>
 	<data name="MovedOutsideCanvas" xml:space="preserve">
-  <value>Movido fuera del lienzo en {0},{1}</value>
+  <value>Movido fuera del lienzo en</value>
 </data>
 	<data name="DivByZero" xml:space="preserve">
-  <value>División por cero en {0}:{1}</value>
+  <value>División por cero en</value>
 </data>
 	<data name="ModulusByZero" xml:space="preserve">
-  <value>Módulo por cero en {0}:{1}</value>
+  <value>Módulo por cero en</value>
 </data>
 	<data name="UndefinedVariable" xml:space="preserve">
-  <value>Variable indefinida {0}</value>
+  <value>Variable indefinida</value>
 </data>
 	<data name="ZeroToZeroPower" xml:space="preserve">
-  <value>Cero elevado a la potencia de cero (0^0) en {0}:{1}</value>
+  <value>Cero elevado a la potencia de cero (0^0) en</value>
 </data>
-
+	<!-- Parse Errors-->
 	<data name="ExpectedSpawn" xml:space="preserve">
   <value>Asegúrate de que tu código comience con un Spawn(x,y)</value>
 </data>
 
 	<data name="MissingNewLine" xml:space="preserve">
-  <value>Falta nueva línea {0}</value>
+  <value>Falta nueva línea después de</value>
 </data>
 
 	<data name="MissingnewLine" xml:space="preserve">
-  <value>Falta nueva línea</value>
+  <value>Falta nueva línea después de</value>
 </data>
 
 	<data name="MissingParenthesis" xml:space="preserve">
-  <value>Se esperaba {0}</value>
+  <value>Se esperaba </value>
 </data>
 
 	<data name="MissingOpenParen" xml:space="preserve">
-  <value>Lo siento, falta un paréntesis de apertura {0}</value>
+  <value>Lo siento, falta un paréntesis de apertura </value>
 </data>
 
 	<data name="InvalidVariableName" xml:space="preserve">
@@ -233,8 +235,10 @@
 </data>
 
 	<data name="UnknownInstrFunc" xml:space="preserve">
-  <value>Instrucción o Función desconocida {0}</value>
+  <value>Instrucción o Función desconocida</value>
 </data>
+
+	<!--Semantic-->
 
 	<data name="DuplicateSpawn" xml:space="preserve">
   <value>Solo se permite un Spawn(x,y)</value>
@@ -245,11 +249,11 @@
 </data>
 
 	<data name="UndefinedVariableSemantic" xml:space="preserve">
-  <value>La variable '{0}' no está declarada</value>
+  <value>La variable {0} no está declarada</value>
 </data>
 
 	<data name="InvalidColor" xml:space="preserve">
-  <value>Lo siento, color desconocido detectado: '{0}'</value>
+  <value>Lo siento, color desconocido detectado: </value>
 </data>
 
 	<data name="InvalidGoTo" xml:space="preserve">
@@ -269,7 +273,7 @@
 </data>
 
 	<data name="UndefinedLabel" xml:space="preserve">
-  <value>Lo siento, la etiqueta '{0}' no está declarada</value>
+  <value>Lo siento, la etiqueta {0} no está declarada</value>
 </data>
 
 	<data name="InvalidAssign" xml:space="preserve">
@@ -279,9 +283,9 @@
 	<data name="InvalidFunctionCall" xml:space="preserve">
   <value>Las llamadas a funciones no pueden anidarse como argumentos</value>
 </data>
-
+	<!--Lexer-->
 	<data name="UnrecognizedChar" xml:space="preserve">
-  <value>Carácter no reconocido</value>
+  <value>Caracter no reconocido</value>
 </data>
 
 	<data name="UnterminatedString" xml:space="preserve">

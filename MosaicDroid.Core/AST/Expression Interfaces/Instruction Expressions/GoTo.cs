@@ -23,20 +23,15 @@ namespace MosaicDroid.Core
             if (!context.IsLabelDeclared(Label))
             {
                 ErrorHelpers.UndefinedLabel(errors, Location, Label);
-                //okCond = false;
                 return false;
             }
-            // 1) Ensure the condition is boolean
+            // Asegura que la condicion sea valida
             bool okCond = Condition.CheckSemantic(context, scope, errors);
             if (Condition.Type != ExpressionType.Boolean)
             {
                 ErrorHelpers.InvalidGoTo(errors, Location);
                 okCond = false;
             }
-
-            // 2) Ensure the label has been declared somewhere
-
-
             return okCond;
         }
 

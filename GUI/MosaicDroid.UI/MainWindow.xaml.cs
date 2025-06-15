@@ -206,27 +206,27 @@ namespace MosaicDroid.UI
 
             var semErr = new List<CompilingError>();
             prog.CheckSemantic(new Context(), new Scope(), semErr);
+
             
-            if (lexErr.Any())
+            if (lexErr.Any() )
             {
                 var lexMsg = string.Join("\n",lexErr.Select(err1 => $"[{err1.Location.Line},{err1.Location.Column}] {err1.Message}" ));
                 MessageBox.Show(lexMsg, _resmgr.GetString("Lex_Err"));
-                return; // permite que cuando haya un error se pueda seguir escribiendo en el editor
             }
-            
-            if (parErr.Any())
+
+             if (parErr.Any())
             {
-                var parMsg = string.Join("\n",parErr.Select(err2 => $"[{err2.Location.Line},{err2.Location.Column}] {err2.Message}"));
-                MessageBox.Show(parMsg, _resmgr.GetString("Parse_Err"));
-                return;
+                var parMsg = string.Join("\n", parErr.Select(err2 => $"[{err2.Location.Line},{err2.Location.Column}] {err2.Message}"));
+                MessageBox.Show(parMsg, _resmgr.GetString("Parser_Error"));
             }
-            
-            if (semErr.Any())
+
+             if (semErr.Any())
             {
-                var semMsg = string.Join("\n",semErr.Select(err3 => $"[{err3.Location.Line},{err3.Location.Column}] {err3.Message}"));
+                var semMsg = string.Join("\n", semErr.Select(err3 => $"[{err3.Location.Line},{err3.Location.Column}] {err3.Message}"));
                 MessageBox.Show(semMsg, _resmgr.GetString("Sem_Err"));
-                return;
             }
+            if (lexErr.Any() || parErr.Any() || semErr.Any())
+                return;
 
             // Interpreta
             var runErr = new List<CompilingError>();
