@@ -39,7 +39,7 @@ namespace MosaicDroid.Core
         {
             if (value <= 0) // aseura direction siempre sea mayor q 0
             {
-                ErrorHelpers.InvalidValue(errors, loc, label, value); //$"{label} must be/ tiene que ser > 0; got/obtuvo {value}");
+                ErrorHelpers.InvalidValue(errors, loc, label, value); 
                 return false;
             }
             return true;
