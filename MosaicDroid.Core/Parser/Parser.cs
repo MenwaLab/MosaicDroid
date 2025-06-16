@@ -59,7 +59,7 @@ namespace MosaicDroid.Core
                         continue;
 
                     case TokenType.Label:
-                        if (Regex.IsMatch(la.Value, @"^(Spawn|Color|Size|DrawLine|DrawCircle|DrawRectangle|Fill|Move)(?=[^(\s])"))
+                        if (Regex.IsMatch(la.Value, @"^(Spawn|Color|Size|DrawLine|DrawCircle|DrawRectangle|Fill|Move)(?=[^(\s])")) // verifica si no es una instruccion malformada
                         {
                             ErrorHelpers.MissingOpenParen(_errors, la.Location, la.Value);
                             _stream.MoveNext();
@@ -256,7 +256,7 @@ namespace MosaicDroid.Core
             return new GotoCommand(lbl, cond, tok.Location);
         }
 
-        private Expression ParseExpression() => ParseLogicalOr();
+        private Expression ParseExpression() => ParseLogicalOr(); // garantiza la precedencia de OR por encima de AND
         private Expression ParseLogicalOr()
         {
             var left = ParseLogicalAnd();
@@ -372,7 +372,7 @@ namespace MosaicDroid.Core
                 && _stream.CanLookAhead(1)
                 && _stream.LookAhead(1).Type == TokenType.Integer)
             {
-                // consume el '-' y el #, then wrap into a # negativo
+                // consume el '-' y el #, entonces lo a # negativo
                 var minusTok = _stream.Advance();      // '-'
                 var numTok = _stream.Advance();      // #
                 double v = double.Parse(numTok.Value);

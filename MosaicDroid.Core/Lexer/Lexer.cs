@@ -17,13 +17,13 @@ namespace MosaicDroid.Core
 
             while (!stream.EOF)
             {
-                if (stream.Peek() == '\n')
+                if (stream.Peek() == '\n') // cuando Peek() es '\n', genera Jumpline
                 {
                     tokens.Add(new Token(TokenType.Jumpline, TokenValues.Jumpline, stream.Location));
                     stream.ReadAny();
                     continue;
                 }
-                if (stream.ReadWhiteSpace()) continue;
+                if (stream.ReadWhiteSpace()) continue; // Ignora espacios en blanco
 
                 // etiquetas del tipo [loop1]
                 if (stream.Match("["))
@@ -64,7 +64,8 @@ namespace MosaicDroid.Core
                              (lastToken.Value == TokenValues.OpenParenthesis || lastToken.Value == TokenValues.Comma);
 
                         bool afterAssign = lastToken != null && lastToken.Type == TokenType.Assign;
-                        if (afterParenOrComma || afterAssign)
+                        if (afterParenOrComma || afterAssign) // Si va tras paréntesis/coma/asignación, se trata como Variable.
+
                         {
                             tokens.Add(new Token(TokenType.Variable, id, stream.Location));
                         }
@@ -75,7 +76,7 @@ namespace MosaicDroid.Core
 
                             if (nextChar == '\n' || nextChar == '\r' || nextChar == '\0')
                             {
-                                tokens.Add(new Token(TokenType.Label, id, stream.Location));
+                                tokens.Add(new Token(TokenType.Label, id, stream.Location)); // Si va al final de línea, se considera Label.
                             }
 
                             else if (IsValidIdentifier(id))

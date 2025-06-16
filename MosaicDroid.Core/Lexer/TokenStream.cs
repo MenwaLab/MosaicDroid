@@ -4,6 +4,7 @@ namespace MosaicDroid.Core
 
     public class TokenStream : IEnumerable<Token>
     {
+        // encapsula la lista de tokens y un índice de posición
         private readonly List<Token> tokens;
         private int position;
         public int Position => position;
@@ -11,15 +12,12 @@ namespace MosaicDroid.Core
         public TokenStream(IEnumerable<Token> tokens)
         {
             this.tokens = new List<Token>(tokens);
-
-            
-
             position = 0;
         }
 
-        public void MoveNext(int k = 1) => position += k;
+        public void MoveNext(int k = 1) => position += k; // salta k posiciones
 
-        public bool Next(TokenType type)
+        public bool Next(TokenType type) //  comprueba y consume el siguiente token si coincide con type.
         {
             if (position < tokens.Count - 1 && LookAhead(1).Type == type)
             {
@@ -29,7 +27,7 @@ namespace MosaicDroid.Core
             return false;
         }
 
-        public Token Advance()
+        public Token Advance() // devuelve el token actual y avanza la posición
         {
             var tok = tokens[position];
             position++;
@@ -37,9 +35,8 @@ namespace MosaicDroid.Core
         }
 
         public bool CanLookAhead(int k = 0) => tokens.Count - position > k;
-        //public Token LookAhead(int k = 0) => tokens[position + k];
 
-        public Token LookAhead(int k = 0)
+        public Token LookAhead(int k = 0) // permiten inspeccionar tokens futuros sin avanzar.
         {
             // clamp so we never go out of range:
             int idx = position + k;
