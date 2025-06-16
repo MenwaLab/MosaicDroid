@@ -3,8 +3,8 @@ namespace MosaicDroid.Core
     public class Context
     {
         public Dictionary<string, ExpressionType> Variables { get; } = new Dictionary<string, ExpressionType>();
-        public HashSet<string> Labels { get; } = new HashSet<string>(); //pros?
-        public bool SpawnSeen { get; set; } = false; //y zheli
+        public HashSet<string> Labels { get; } = new HashSet<string>(); 
+        public bool SpawnSeen { get; set; } = false; 
 
         public ExpressionType GetVariableType(string name)
         {

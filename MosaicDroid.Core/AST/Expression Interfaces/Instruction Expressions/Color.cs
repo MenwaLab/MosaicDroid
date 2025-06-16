@@ -9,7 +9,6 @@ namespace MosaicDroid.Core
 
         public override bool CheckSemantic(Context ctx, Scope scope, List<CompilingError> errors)
         {
-            // 1) Arity
             bool ok = base.CheckSemantic(ctx, scope, errors);
             if (!ok) return false;
 

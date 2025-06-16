@@ -15,7 +15,9 @@ namespace MosaicDroid.Core
 
         public override bool CheckSemantic(Context ctx, Scope scope, List<CompilingError> errors)
         {
-            return base.CheckSemantic(ctx, scope, errors);
+            return base.CheckSemantic(ctx, scope, errors); 
+            // como solo acepta numeros como argumentos (no variables ni expresiones)
+            // solo tiene que chequear cant de arg y tipo
 
         }
 

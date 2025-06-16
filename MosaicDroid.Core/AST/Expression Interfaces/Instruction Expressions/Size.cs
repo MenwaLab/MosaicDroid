@@ -12,7 +12,7 @@ namespace MosaicDroid.Core
             bool ok = base.CheckSemantic(ctx, scope, errors);
             if (!ok) return false;
 
-            // 3) If it's a literal Number, adjust even values
+            // si es un numero, ajusta el valor si es un par
             if (Args[0] is Number literal && literal.IsInt)
             {
                 int iv = (int)(double)literal.Value;
@@ -24,7 +24,6 @@ namespace MosaicDroid.Core
             return true;
 
         }
-
 
         public override void Accept(IStmtVisitor visitor)
         {

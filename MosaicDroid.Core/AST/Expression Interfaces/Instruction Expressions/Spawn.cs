@@ -9,10 +9,10 @@ namespace MosaicDroid.Core
 
         public override bool CheckSemantic(Context ctx, Scope scope, List<CompilingError> errors)
         {
-            // 1) base does arity (2?) and type‐check (both Number)
+            // haceel chequeo de la cantidad de argumentos de spawn(2) y que ambos sean  Number
             bool ok = base.CheckSemantic(ctx, scope, errors);
 
-            // 2) exactly one Spawn
+            // solo un spawn
             if (ctx.SpawnSeen)
             {
                 ErrorHelpers.DuplicateSpawn(errors, Location);

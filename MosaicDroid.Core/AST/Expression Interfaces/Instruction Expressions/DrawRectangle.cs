@@ -12,8 +12,6 @@ namespace MosaicDroid.Core
             bool ok = true;
             int count = Math.Min(Args.Count, 5);
 
-            // Args[0] = dirX, Args[1] = dirY, Args[2] = distance,
-            // Args[3] = width, Args[4] = height
             for (int i = 0; i < count; i++)
             {
                 if (Args[i] is Number literalNum && literalNum.IsInt)
@@ -47,15 +45,15 @@ namespace MosaicDroid.Core
                         numNode.Location,
                         "DrawRectangle",
                         i + 1,
-                        ExpressionType.Number,  // esperado: literal entero
-                        ExpressionType.Number   // actual: literal no entero
+                        ExpressionType.Number,  
+                        ExpressionType.Number   
                     );
                     ok = false;
                 }
                 else
                 {
-                    // Si NO es literal Number, asumimos que es VariableExpression o expresión compuesta
-                    // cuyo tipo ya se validó como Number en CheckSemantic. No chequear rangos ahora.
+                    // Si NO es literal Number, sume que es VariableExpression o expresión compuesta
+                    // cuyo tipo ya se validó como Number en CheckSemantic. No chequear rangos ahora, se hara despues en el Visitor
                 }
             }
 

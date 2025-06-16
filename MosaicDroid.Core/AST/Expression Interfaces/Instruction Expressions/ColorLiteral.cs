@@ -14,12 +14,10 @@ namespace MosaicDroid.Core
                 : base(location)
         {
             Value = color;
-            // You could introduce a dedicated ExpressionType.Color if desired;
             _type = ExpressionType.Text;
         }
         public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
         {
-            // Color literals are always semantically valid
             return true;
         }
         public override void Evaluate() { /* no-op */ }

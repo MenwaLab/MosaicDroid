@@ -24,7 +24,6 @@ namespace MosaicDroid.Core
                     return false;
                 }
             }
-            // Use concrete CommandNode for validation
             var tempNode = new CommandNode(Name, Args, Location);
 
             return tempNode.CheckSemantic(context, scope, errors);

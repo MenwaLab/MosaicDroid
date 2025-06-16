@@ -25,11 +25,10 @@ namespace MosaicDroid.Core
                 double r = (double)Right.Value!;
                 Value = (l < r) ? 1 : 0;
             }
-            else // both must be text
+            else 
             {
                 string l = (string)Left.Value!;
                 string r = (string)Right.Value!;
-                // **BUG**: you used `>= 0`. For `<` you need `< 0`:
                 Value = (string.Compare(l, r, StringComparison.Ordinal) < 0) ? 1 : 0;
             }
 

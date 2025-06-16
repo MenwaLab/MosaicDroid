@@ -15,11 +15,10 @@ namespace MosaicDroid.Core
 
         public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
         {
-            var varType = context.GetVariableType(Name);
+            var varType = context.GetVariableType(Name); // consulta contexto para verificar existencia y tipo
             if (varType == ExpressionType.ErrorType)
             {
-                //errors.Add(new CompilingError(Location, ErrorCode.Invalid, $"Undeclared variable: {Name}"));
-                ErrorHelpers.UndefinedVariable(errors, Location, Name);
+                ErrorHelpers.UndefinedVariable(errors, Location, Name); // reporta error si la variable no está declarada
                 Type = ExpressionType.ErrorType;
                 return false;
             }
@@ -30,7 +29,7 @@ namespace MosaicDroid.Core
 
         public override void Evaluate()
         {
-            Value = 0; // Later during execution you will get the real value.
+            Value = 0; // despues en ejecucion se tendra el valor verdadero
         }
 
         public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)

@@ -23,15 +23,15 @@ namespace MosaicDroid.Core
                 double r = (double)Right.Value!;
                 Value = (l > r) ? 1 : 0;
             }
-            else  // both must be text
+            else  
             {
                 string l = (string)Left.Value!;
                 string r = (string)Right.Value!;
-                // string.Compare returns:
-                //   < 0 if l precedes r,
-                //   = 0 if equal,
-                //   > 0 if l follows  r
+
                 Value = (string.Compare(l, r, StringComparison.Ordinal) > 0) ? 1 : 0;
+                // retorna < 0 si l precede a r
+                //   = 0 si son iguales
+                //   > 0 si l sigue a r
             }
         }
 

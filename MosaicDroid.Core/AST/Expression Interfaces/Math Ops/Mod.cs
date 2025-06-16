@@ -11,7 +11,8 @@ namespace MosaicDroid.Core
         {
             Left.Evaluate();
             Right.Evaluate();
-            // Note: cast to int for modulus semantics
+
+            // castea a int para la semantica del mod
             Value = (double)((int)(double)Left.Value! % (int)(double)Right.Value!);
         }
 

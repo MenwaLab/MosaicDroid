@@ -10,11 +10,9 @@ namespace MosaicDroid.Core
             bool ok = true;
 
             int count = Math.Min(Args.Count, 3);
-            // Args[0] = dirX, Args[1] = dirY, Args[2] = distance
 
             for (int i = 0; i < count; i++)
             {
-                // If it is literally a Number node with an integer value, check range:
                 if (Args[i] is Number literalNum && literalNum.IsInt)
                 {
                     int value = (int)(double)literalNum.Value!;
@@ -31,21 +29,20 @@ namespace MosaicDroid.Core
                 }
                 else if (Args[i] is Number numNode && !numNode.IsInt)
                 {
-                    // A double‐literal is not allowed (must be an integer literal if literal):
+                    
                     ErrorHelpers.ArgMismatch(
                         errors,
                         numNode.Location,
                         "DrawCircle",
                         i + 1,
-                        ExpressionType.Number,  // expected an integer literal
-                        ExpressionType.Number   // actual is “Number but not integer literal”
+                        ExpressionType.Number,  
+                        ExpressionType.Number   
                     );
                     ok = false;
                 }
                 else
                 {
-                    // If it’s not a literal Number, it must be a VariableExpression or compound expression
-                    // whose type already looked up as Number.  In that case, we skip literal‐only checks.
+                    
                 }
             }
 

@@ -12,7 +12,7 @@ namespace MosaicDroid.Core
 
         public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
         {
-            // Asiempre es valido pero no tiene valor
+            // siempre es valido pero no tiene valor
             return true;
         }
         public override TResult Accept<TResult>(IExprVisitor<TResult> v)

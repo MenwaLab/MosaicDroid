@@ -23,7 +23,7 @@ namespace MosaicDroid.Core
                 double r = (double)Right.Value!;
                 Value = (l >= r) ? 1 : 0;
             }
-            else // both must be text
+            else 
             {
                 string l = (string)Left.Value!;
                 string r = (string)Right.Value!;

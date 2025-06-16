@@ -17,16 +17,12 @@ namespace MosaicDroid.Core
             bool ok = ValueExpr.CheckSemantic(context, scope, errors);
             if (!ok) return false;
 
-
-            // var exprType=ValueExpr.Type;
-            //context.SetVariableType(VariableName,exprType);
             if (ValueExpr.Type == ExpressionType.ErrorType)
             {
                 ErrorHelpers.InvalidAssign(errors, Location, VariableName);
                 return false;
             }
 
-            // 2) Declare the variable so future lookups succeed:
             context.SetVariableType(VariableName, ValueExpr.Type);
             return ok;
         }

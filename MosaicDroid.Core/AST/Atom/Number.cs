@@ -23,7 +23,7 @@ namespace MosaicDroid.Core
 
         public override bool CheckSemantic(Context context, Scope table, List<CompilingError> errors)
         {
-            return true;
+            return true; // siempre es valido sintacticamente
         }
 
         public override void Evaluate()

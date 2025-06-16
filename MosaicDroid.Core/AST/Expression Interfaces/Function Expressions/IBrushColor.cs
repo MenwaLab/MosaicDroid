@@ -11,7 +11,7 @@ namespace MosaicDroid.Core
         public override ExpressionType Type { get; set; }
         public override object? Value { get; set; }
 
-        public override void Evaluate() => Value = 0; // Stub
+        public override void Evaluate() => Value = 0; 
 
         public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
         {

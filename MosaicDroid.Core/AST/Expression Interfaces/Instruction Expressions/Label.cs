@@ -12,8 +12,8 @@ namespace MosaicDroid.Core
 
         public override bool CheckSemantic(Context context, Scope scope, List<CompilingError> errors)
         {
-            // The ProgramExpression will handle registering labels in the Context.
-            // No additional checks here.
+            // ProgramExpression se encarga de registrar la etiqeta en el Context.
+            // No requiere de chequeos adicionals aqui
             return true;
         }
 

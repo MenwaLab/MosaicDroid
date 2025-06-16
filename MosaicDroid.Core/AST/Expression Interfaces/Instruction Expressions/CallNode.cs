@@ -26,7 +26,6 @@ namespace MosaicDroid.Core
             {
 
                 ErrorHelpers.WrongArity(errors, Location, Name, spec.ArgsCount, Args.Count);
-                //ok = false;
                 return false;
             }
 
@@ -41,7 +40,7 @@ namespace MosaicDroid.Core
                     actualType = ExpressionType.Text;
                 else if (expr is VariableExpression v)
                     actualType = context.GetVariableType(v.Name);
-                // function call o expresión compuesta
+ 
                 else
                 {
                     expr.CheckSemantic(context, scope, errors);
@@ -65,7 +64,6 @@ namespace MosaicDroid.Core
         }
         protected virtual bool ExtraArgumentChecks(Context context, Scope scope, List<CompilingError> errors)
         {
-            // By default, do nothing extra
             return true;
         }
         public override abstract void Accept(IStmtVisitor visitor);

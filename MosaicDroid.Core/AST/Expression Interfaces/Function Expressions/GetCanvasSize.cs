@@ -14,8 +14,7 @@ namespace MosaicDroid.Core
 
         public override void Evaluate()
         {
-            // Stub implementation
-            Value = 0;  // Will be replaced with actual evaluation later
+            Value = 0;  
         }
 
         public override TResult Accept<TResult>(IExprVisitor<TResult> visitor)
