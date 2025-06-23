@@ -32,6 +32,10 @@ namespace MosaicDroid.Core
           => errs.Add(new LexicalError(loc, LexicalErrorCode.InvalidInteger,
                $"{_resmgr.GetString("InvalidInt")} {number}"));
 
+        public static void UnexpectedEOI(List<CompilingError> errs, CodeLocation loc, string number)
+          => errs.Add(new LexicalError(loc, LexicalErrorCode.UnexpectedEOI,
+               $"{_resmgr.GetString("UnexpectedEOI")} {number}"));
+
         // ===== Parse =====
 
 

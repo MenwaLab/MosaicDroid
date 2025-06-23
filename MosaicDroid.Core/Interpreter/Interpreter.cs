@@ -33,10 +33,10 @@ namespace MosaicDroid.Core
                 for (int x = 0; x < size; x++)
                     _canvas[x, y] = "w ";
 
-            _runtimeErrors = runtimeErrors ?? throw new ArgumentNullException(nameof(runtimeErrors));
+            _runtimeErrors = runtimeErrors ?? throw new PixelArtRuntimeException(nameof(runtimeErrors));
             _exprEval = new ExpressionEvaluatorVisitor(_variables, this, _runtimeErrors);
         }
-
+        
         public void VisitSpawn(SpawnCommand cmd)
         {
             int x = (int)cmd.Args[0].Accept(_exprEval);

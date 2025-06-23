@@ -10,6 +10,8 @@ namespace MosaicDroid.Core
         public override bool CheckSemantic(Context ctx, Scope scope, List<CompilingError> errors)
         {
             bool ok = base.CheckSemantic(ctx, scope, errors);
+
+            /*
             if (!ok) return false;
 
             // si es un numero, ajusta el valor si es un par
@@ -21,7 +23,10 @@ namespace MosaicDroid.Core
                     literal.Value = iv > 1 ? iv - 1 : 1;
                 }
             }
+
             return true;
+            */
+            return ok;
 
         }
 

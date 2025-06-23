@@ -1,8 +1,13 @@
 Spawn(0,0)
-Color("Red")
-DrawLine(GetActualY(),1,GetCanvasSize() - 1)
-x <- IsBrushColor("Red") 
-y <- IsBrushSize(3)
-n <- GetColorCount ("Red", y, y, x, x)
-Color("Green")
-DrawLine(1,0,n)
+Color("Black")
+i <- 1
+k <- 0
+loop
+Move(k,0)
+a <- k + i
+DrawLine(a,a,i)
+i <- i + 1
+k <-k+ 1
+GoTo[End](k == 8)
+GoTo[loop](k < 9)
+End

@@ -1,0 +1,60 @@
+
+
+
+Spawn(10,10) 
+
+radius_outermost <- 40
+radius_second_outer <- 30
+radius_third_outer <- 20
+radius_innermost <- 10
+
+
+current_radius <- radius_outermost
+ring_index <- 0 
+max_rings <- 4
+
+
+center_circle_x <- 50
+center_circle_y <- 50
+
+
+draw_rings_loop
+
+    GoTo[end_rings_loop](ring_index == max_rings) 
+      GoTo[select_yellow](ring_index == 0)
+    GoTo[select_orange](ring_index == 1)
+    GoTo[select_red](ring_index == 2)
+    GoTo[select_purple](ring_index == 3)
+    GoTo[after_color_selection](1 == 1) 
+
+    select_yellow
+        Color("Yellow")
+        GoTo[after_color_selection](1 == 1)
+    select_orange
+        Color("Orange")
+        GoTo[after_color_selection](1 == 1)
+    select_red
+        Color("Red")
+        GoTo[after_color_selection](1 == 1)
+    select_purple
+        Color("Crimson")
+
+    after_color_selection
+    Move(center_circle_x - 1, center_circle_y) 
+    DrawCircle(1, 0, current_radius) 
+
+
+    Move(center_circle_x, center_circle_y)
+    Fill()
+
+
+    temp_radius_decr <- current_radius - 10
+    current_radius <- temp_radius_decr
+
+
+    ring_index <- ring_index + 1
+
+    GoTo[draw_rings_loop](1 == 1) 
+end_rings_loop
+Move(1,1)
+

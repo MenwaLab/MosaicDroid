@@ -1,0 +1,18 @@
+Spawn(30,30)
+Color("SpringGreen")
+DrawLine(1,0,2)
+DrawLine(0,-1,2)
+x <- 4
+y <- 0
+loop
+y <-y + 1
+DrawLine(-1,0,x)
+Color("LawnGreen")
+DrawLine(0,1,x)
+Color("SpringGreen")
+DrawLine(1,0,x + 2)
+Color("Turquoise")
+DrawLine(0,-1,x + 2)
+Color("Cyan")
+x <-x + 4
+GoTo[loop](y < 14)

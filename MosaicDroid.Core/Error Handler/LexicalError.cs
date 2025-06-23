@@ -17,6 +17,7 @@ namespace MosaicDroid.Core
         UnterminatedString,
         InvalidIdentifier,
         InvalidInteger,
-        UnterminatedText
+        UnterminatedText,
+        UnexpectedEOI
     }
 }

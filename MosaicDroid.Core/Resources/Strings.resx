@@ -117,7 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-	
   <data name="Btn_Load" xml:space="preserve">
     <value>Load</value>
   </data>
@@ -160,15 +159,12 @@
   <data name="Inv_DrwLine" xml:space="preserve">
     <value>Invalid arguments to DrawLine at</value>
   </data>
-
-	<data name="Inv_DrwCircle" xml:space="preserve">
+  <data name="Inv_DrwCircle" xml:space="preserve">
     <value>Invalid arguments to DrawCircle at</value>
   </data>
-
-	<data name="Inv_DrwRectangle" xml:space="preserve">
+  <data name="Inv_DrwRectangle" xml:space="preserve">
     <value>Invalid arguments to DrawLine at</value>
   </data>
-	
   <data name="Err_LabelUndefined" xml:space="preserve">
     <value>Label {0} not declared</value>
   </data>
@@ -178,7 +174,6 @@
   <data name="Btn_Mute" xml:space="preserve">
     <value>Mute</value>
   </data>
-	<!-- Runtime errors-->
   <data name="PotentialInfiniteLoop" xml:space="preserve">
     <value>Potential infinite loop at</value>
   </data>
@@ -197,125 +192,85 @@
   <data name="ZeroToZeroPower" xml:space="preserve">
     <value>Zero to zero power (0^0) at</value>
   </data>
-	
-	<!-- Parse Errors-->
-
-	<data name="ExpectedSpawn" xml:space="preserve">
-  <value>Please make sure your code starts with a Spawn(x,y)</value>
-</data>
-
-	<data name="MissingNewLine" xml:space="preserve">
-  <value>Missing newline after</value>
-</data>
-
-	<data name="MissingnewLine" xml:space="preserve">
-  <value>Missing newline after </value>
-</data>
-
-	<data name="MissingParenthesis" xml:space="preserve">
-  <value>Expected</value>
-</data>
-
-	<data name="MissingOpenParen" xml:space="preserve">
-  <value>Sorry, there's a missing open parenthesis</value>
-</data>
-
-	<data name="InvalidVariableName" xml:space="preserve">
-  <value>Sorry, please make sure the variable name {0} is valid according to the grammar rules</value>
-</data>
-
-	<data name="InvalidLabelName" xml:space="preserve">
-  <value>Sorry, please make sure the label name {0} is valid according to the grammar rules</value>
-</data>
-
-	<data name="UnexpectedToken" xml:space="preserve">
-  <value>Unexpected token: </value>
-</data>
-
-	<data name="MissingQuotation" xml:space="preserve">
-  <value>Please make sure your color is inside quotations</value>
-</data>
-
-	<data name="UnknownInstrFunc" xml:space="preserve">
-  <value>Unknown Instruction or Function</value>
-</data>
-
-	<!--Semantic-->
-
-	<data name="DuplicateSpawn" xml:space="preserve">
-  <value>Only one Spawn(x,y) allowed</value>
-</data>
-
-
-	<data name="DuplicateLabel" xml:space="preserve">
-  <value>Sorry the label {0} can only be declared once</value>
-</data>
-
-
-	<data name="UndefinedVariableSemantic" xml:space="preserve">
-  <value>Variable {0} is not declared</value>
-</data>
-
-
-	<data name="InvalidColor" xml:space="preserve">
-  <value>Sorry, unknown color detected: </value>
-</data>
-
-
-	<data name="InvalidGoTo" xml:space="preserve">
-  <value>Sorry, please make sure the condition for the GoTo is boolean</value>
-</data>
-
-
-	<data name="InvalidOperands" xml:space="preserve">
-  <value>Sorry, both operands for the operation {0} need to be both integers or both be text (for boolean operations)</value>
-</data>
-
-
-	<data name="ArgMismatch" xml:space="preserve">
-  <value>Sorry, for {0} we expect argument {1} to be of type {2} but got {3}</value>
-</data>
-
-
-	<data name="WrongArity" xml:space="preserve">
-  <value>Sorry, for {0} we expect {1} arguments but got {2}</value>
-</data>
-
-
-
-
-	<data name="UndefinedLabel" xml:space="preserve">
-  <value>Sorry, label {0} not declared</value>
-</data>
-
-
-	<data name="InvalidAssign" xml:space="preserve">
-  <value>Cannot assign invalid expression to: </value>
-</data>
-
-
-	<data name="InvalidFunctionCall" xml:space="preserve">
-  <value>Function calls cannot be nested as arguments</value>
-</data>
-
-	<!--Lexer-->
-	<data name="UnrecognizedChar" xml:space="preserve">
-  <value>Unrecognized Character </value>
-</data>
-
-	<data name="UnterminatedString" xml:space="preserve">
-  <value>Sorry, unterminated string literal</value>
-</data>
-
-	<data name="UnterminatedText" xml:space="preserve">
-  <value>Sorry, unterminated text literal; expected closing</value>
-</data>
-
-	<data name="InvalidId" xml:space="preserve">
-  <value>Sorry, please fix the invalid identifier</value>
-</data>
-
-	<data name="InvalidInt" xml:space="preserve">
-  <value>Sorry, please fix the invalid integer</value>
-</data>
+  <data name="ExpectedSpawn" xml:space="preserve">
+    <value>Please make sure your code starts with a Spawn(x,y)</value>
+  </data>
+  <data name="MissingNewLine" xml:space="preserve">
+    <value>Missing newline after </value>
+  </data>
+  <data name="MissingParenthesis" xml:space="preserve">
+    <value>Expected</value>
+  </data>
+  <data name="MissingOpenParen" xml:space="preserve">
+    <value>Sorry, there's a missing open parenthesis</value>
+  </data>
+  <data name="InvalidVariableName" xml:space="preserve">
+    <value>Sorry, please make sure the variable name {0} is valid according to the grammar rules</value>
+  </data>
+  <data name="InvalidLabelName" xml:space="preserve">
+    <value>Sorry, please make sure the label name {0} is valid according to the grammar rules</value>
+  </data>
+  <data name="UnexpectedToken" xml:space="preserve">
+    <value>Unexpected token</value>
+  </data>
+  <data name="MissingQuotation" xml:space="preserve">
+    <value>Please make sure your color is inside quotations</value>
+  </data>
+  <data name="UnknownInstrFunc" xml:space="preserve">
+    <value>Unknown Instruction or Function</value>
+  </data>
+  <data name="DuplicateSpawn" xml:space="preserve">
+    <value>Only one Spawn(x,y) allowed</value>
+  </data>
+  <data name="DuplicateLabel" xml:space="preserve">
+    <value>Sorry the label {0} can only be declared once</value>
+  </data>
+  <data name="UndefinedVariableSemantic" xml:space="preserve">
+    <value>Variable {0} is not declared</value>
+  </data>
+  <data name="InvalidColor" xml:space="preserve">
+    <value>Sorry, unknown color detected: </value>
+  </data>
+  <data name="InvalidGoTo" xml:space="preserve">
+    <value>Sorry, please make sure the condition for the GoTo is boolean</value>
+  </data>
+  <data name="InvalidOperands" xml:space="preserve">
+    <value>Sorry, both operands for the operation {0} need to be both integers or both be text (for boolean operations)</value>
+  </data>
+  <data name="ArgMismatch" xml:space="preserve">
+    <value>Sorry, for {0} we expect argument {1} to be of type {2} but got {3}</value>
+  </data>
+  <data name="WrongArity" xml:space="preserve">
+    <value>Sorry, for {0} we expect {1} arguments but got {2}</value>
+  </data>
+  <data name="UndefinedLabel" xml:space="preserve">
+    <value>Sorry, label {0} not declared</value>
+  </data>
+  <data name="InvalidAssign" xml:space="preserve">
+    <value>Cannot assign invalid expression to: </value>
+  </data>
+  <data name="InvalidFunctionCall" xml:space="preserve">
+    <value>Function calls cannot be nested as arguments</value>
+  </data>
+  <data name="UnrecognizedChar" xml:space="preserve">
+    <value>Unrecognized Character </value>
+  </data>
+  <data name="UnterminatedString" xml:space="preserve">
+    <value>Sorry, unterminated string literal</value>
+  </data>
+  <data name="UnterminatedText" xml:space="preserve">
+    <value>Sorry, unterminated text literal; expected closing</value>
+  </data>
+  <data name="InvalidId" xml:space="preserve">
+    <value>Sorry, please fix the invalid identifier</value>
+  </data>
+  <data name="InvalidInt" xml:space="preserve">
+    <value>Sorry, please fix the invalid integer</value>
+  </data>
+  <data name="UnexpectedEOI" xml:space="preserve">
+    <value>Sorry, unexpected end of input in lexer</value>
+  </data>
+  <data name="MissingErrorList" xml:space="preserve">
+    <value>Internal error: missing runtime-errors list</value>
+  </data>
 </root>

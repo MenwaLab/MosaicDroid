@@ -93,7 +93,7 @@ namespace MosaicDroid.Cli
                 Console.WriteLine(ex.Message);
                 runTimeError = true;
             }
-            interpreter.PrintCanvas();
+           // interpreter.PrintCanvas();
 
             if (runTimeError && runtimeErrors.Count > 0)
             {
