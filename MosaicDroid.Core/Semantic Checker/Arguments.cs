@@ -37,7 +37,7 @@ namespace MosaicDroid.Core
 
         public static bool EnsurePositive(int value, CodeLocation loc, string label, List<CompilingError> errors)
         {
-            if (value <= 0) // aseura direction siempre sea mayor q 0
+            if (value < 0) // aseura direction siempre sea mayor q 0
             {
                 ErrorHelpers.InvalidValue(errors, loc, label, value); 
                 return false;

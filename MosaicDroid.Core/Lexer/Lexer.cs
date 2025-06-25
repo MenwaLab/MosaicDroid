@@ -27,7 +27,7 @@ namespace MosaicDroid.Core
                     if (stream.Peek() == '\n') // cuando Peek() es '\n', genera Jumpline
                     {
                         tokens.Add(new Token(TokenType.Jumpline, TokenValues.Jumpline, stream.Location));
-                        stream.ReadAny();
+                        stream.ReadAny(); // incrementar la pos
                         continue;
                     }
                     if (stream.ReadWhiteSpace()) continue; // Ignora espacios en blanco
@@ -128,7 +128,7 @@ namespace MosaicDroid.Core
             }
             catch(PixelArtRuntimeException)
             {
-                errors.Add(new LexicalError( stream.Location, LexicalErrorCode.UnexpectedEOI, _resmgr.GetString("Inv_DrwLine") ));
+                errors.Add(new LexicalError( stream.Location, LexicalErrorCode.UnexpectedEOI, _resmgr.GetString("UnexpectedEOI") ));
             }
 
             return tokens;
@@ -199,6 +199,7 @@ namespace MosaicDroid.Core
         private static bool IsValidIdentifier(string id) => !string.IsNullOrEmpty(id) &&
         (char.IsLetter(id[0]) || id[0] == '_') && id.All(c => char.IsLetterOrDigit(c) || c == '_' || c == '-');
     }
+
     class TokenReader
     {
         string code;
@@ -211,9 +212,9 @@ namespace MosaicDroid.Core
         public TokenReader(string code)
         {
             this.code = code;
-            pos = 0;
-            line = 1;
-            lastLB = -1;
+            pos = 0; // cuantas caracters consumidos
+            line = 1; // linea actual
+            lastLB = -1; // pos del ultimo /n
         }
 
         public CodeLocation Location
@@ -231,7 +232,7 @@ namespace MosaicDroid.Core
         public char Peek()
         {
             if (pos < 0 || pos >= code.Length)
-              //  throw new InvalidOperationException();
+
             throw new PixelArtRuntimeException($"{_resmgr.GetString("UnexpectedEOI")}");
 
             return code[pos];
@@ -279,7 +280,7 @@ namespace MosaicDroid.Core
         }
 
 
-        public bool ReadID(out string id)
+        public bool ReadID(out string id) //  extrae secuencias de caracteres válidos como posibles variables o palabras clav
         {
             id = "";
             while (!EOL && ValidIdCharacter(Peek(), id.Length == 0))
@@ -344,8 +345,6 @@ namespace MosaicDroid.Core
         public char ReadAny()
         {
             if (EOF)
-                //throw new InvalidOperationException();
-                //throw new PixelArtRuntimeException($"{_resmgr.GetString("UnexpectedEOI")}");
             throw new PixelArtRuntimeException($"{_resmgr.GetString("UnexpectedEOI")} ¨{Location.Line}:{Location.Column}");
 
             if (EOL)

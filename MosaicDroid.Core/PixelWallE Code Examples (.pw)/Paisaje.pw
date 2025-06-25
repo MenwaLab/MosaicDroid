@@ -1,0 +1,60 @@
+Spawn(0,0)
+Color("LightSkyBlue")
+
+Move(63, 30)
+DrawRectangle(1, 0, 1, 128, 60) 
+Move(64, 30) 
+Fill()
+
+Color("SaddleBrown")
+Size(1) 
+
+Move(20, 100) 
+DrawLine(1, 0, 50) 
+DrawLine(-1, -1, 25) 
+DrawLine(-1, 1, 25) 
+
+Move(45, 85) 
+Fill()
+
+Move(75, 110) 
+DrawLine(1, 0, 50) 
+DrawLine(-1, -1, 25) 
+DrawLine(-1, 1, 25) 
+Move(100, 95)
+Fill()
+
+Color("White")
+Size(1) 
+Move(29, 20)
+DrawRectangle(1, 0, 1, 10, 5)
+
+Move(34, 22)
+DrawRectangle(1, 0, 1, 8, 4)
+
+Move(39, 20)
+DrawRectangle(1, 0, 1, 7, 5)
+
+Move(35, 21) 
+Fill()
+
+Move(89, 15)
+DrawRectangle(1, 0, 1, 12, 6)
+
+Move(94, 18)
+DrawRectangle(1, 0, 1, 9, 5)
+
+Move(84, 17)
+DrawRectangle(1, 0, 1, 6, 4)
+
+Move(90, 16) 
+Fill()
+Color("Yellow")
+Move(106, 12)
+DrawCircle(1, 0, 11) 
+Move(120, 8) 
+Fill()
+
+Move(0,127)
+Color("LimeGreen")
+Fill()

@@ -14,7 +14,6 @@ namespace MosaicDroid.Core
         }
     }
 
-
     public struct CodeLocation
     {
         public int Line;

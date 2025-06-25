@@ -108,8 +108,8 @@ namespace MosaicDroid.Core
             }
 
             // centro:
-            int cx = CurrentX + dx * radius - dx, // mueve un pixel
-                cy = CurrentY + dy * radius - dy;
+            int cx = CurrentX + dx * radius;// - dx, // mueve un pixel
+           int cy = CurrentY + dy * radius;// - dy;
 
             int x = 0, y = radius, d = 3 - 2 * radius;
             while (x <= y)
@@ -127,8 +127,11 @@ namespace MosaicDroid.Core
                 else { d += 4 * (x - y) + 10; y--; }
                 x++;
             }
-            CurrentX += dx * (radius + 1);
-            CurrentY += dy * (radius + 1);
+           // CurrentX += dx * (radius + 1);
+           // CurrentY += dy * (radius + 1);
+
+            CurrentX = cx;
+CurrentY = cy;
 
         }
 
@@ -182,6 +185,7 @@ namespace MosaicDroid.Core
 
         public void VisitFill(FillCommand cmd)
         {
+            int startX = CurrentX, startY = CurrentY;
             if (CurrentX < 0 || CurrentX >= Size || CurrentY < 0 || CurrentY >= Size)
                 return;
 
@@ -199,6 +203,9 @@ namespace MosaicDroid.Core
                 q.Enqueue((x - 1, y));
                 q.Enqueue((x, y + 1));
                 q.Enqueue((x, y - 1));
+
+                CurrentX = startX;
+                CurrentY = startY;
             }
         }
         public void VisitMove(MoveCommand cmd)

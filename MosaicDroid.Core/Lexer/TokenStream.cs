@@ -34,11 +34,11 @@ namespace MosaicDroid.Core
             return tok;
         }
 
-        public bool CanLookAhead(int k = 0) => tokens.Count - position > k;
+        public bool CanLookAhead(int k = 0) => tokens.Count - position > k; // devuelve true si todavía hay tokens por leer.
 
         public Token LookAhead(int k = 0) // permiten inspeccionar tokens futuros sin avanzar.
         {
-            // clamp so we never go out of range:
+            // clamp para nunca salir fuera de rango
             int idx = position + k;
             if (idx < 0) idx = 0;
             if (idx >= tokens.Count) idx = tokens.Count - 1;

@@ -35,8 +35,7 @@ namespace MosaicDroid.Core
             return okCond;
         }
 
-        public override void Accept(IStmtVisitor visitor)
-              => visitor.VisitGoto(this);
+        public override void Accept(IStmtVisitor visitor) => visitor.VisitGoto(this);
         public override string ToString() =>
             $"GoTo [{Label}] ({Condition}) at {Location.Line}:{Location.Column}";
     }
