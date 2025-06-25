@@ -273,4 +273,7 @@
   <data name="MissingErrorList" xml:space="preserve">
     <value>Internal error: missing runtime-errors list</value>
   </data>
+  <data name="&#xD;&#xA;		" xml:space="preserve">
+    <value>Function calls cannot be nested as arguments</value>
+  </data>
 </root>

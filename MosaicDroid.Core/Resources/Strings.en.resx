@@ -249,7 +249,8 @@
   <data name="InvalidAssign" xml:space="preserve">
     <value>Cannot assign invalid expression to: </value>
   </data>
-  <data name="InvalidFunctionCall" xml:space="preserve">
+  <data name="
+		" xml:space="preserve">
     <value>Function calls cannot be nested as arguments</value>
   </data>
   <data name="UnrecognizedChar" xml:space="preserve">

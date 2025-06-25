@@ -160,7 +160,7 @@ namespace MosaicDroid.Core
             while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Jumpline)
                 _stream.MoveNext();
         }
-        private void Synchronize()
+        private void Synchronize() // avanza hasta que encuentre un jumpline, lo consume para recuperar el parseo 
         {
             while (_stream.CanLookAhead() && _stream.LookAhead().Type != TokenType.Jumpline)
                 _stream.MoveNext();
@@ -256,28 +256,29 @@ namespace MosaicDroid.Core
             return new GotoCommand(lbl, cond, tok.Location);
         }
 
-        private Expression ParseExpression() => ParseLogicalOr(); // garantiza la precedencia de OR por encima de AND
+        private Expression ParseExpression() => ParseLogicalAnd(); // garantiza la precedencia de OR por encima de AND
+    
+
+        private Expression ParseLogicalAnd()
+        {
+            var left = ParseLogicalOr();
+            while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Bool_OP && _stream.LookAhead().Value == TokenValues.And)
+            {
+                _stream.Advance();
+                var right = ParseLogicalOr();
+                left = new LogicalAndExpression(left, right, left.Location);
+            }
+            return left;
+        }
         private Expression ParseLogicalOr()
         {
-            var left = ParseLogicalAnd();
+            var left = ParseEquality();
             while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Bool_OP && _stream.LookAhead().Value == TokenValues.Or)
             {
                 _stream.Advance();
 
-                var right = ParseLogicalAnd();
-                left = new LogicalOrExpression(left, right, left.Location); 
-            }
-            return left;
-        }
-
-        private Expression ParseLogicalAnd()
-        {
-            var left = ParseEquality();
-            while (_stream.CanLookAhead() && _stream.LookAhead().Type == TokenType.Bool_OP && _stream.LookAhead().Value == TokenValues.And)
-            {
-                _stream.Advance();
                 var right = ParseEquality();
-                left = new LogicalAndExpression(left, right, left.Location);
+                left = new LogicalOrExpression(left, right, left.Location);
             }
             return left;
         }

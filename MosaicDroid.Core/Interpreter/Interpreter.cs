@@ -108,8 +108,8 @@ namespace MosaicDroid.Core
             }
 
             // centro:
-            int cx = CurrentX + dx * radius;// - dx, // mueve un pixel
-           int cy = CurrentY + dy * radius;// - dy;
+            int cx = CurrentX + dx * radius;
+           int cy = CurrentY + dy * radius;
 
             int x = 0, y = radius, d = 3 - 2 * radius;
             while (x <= y)
@@ -127,11 +127,9 @@ namespace MosaicDroid.Core
                 else { d += 4 * (x - y) + 10; y--; }
                 x++;
             }
-           // CurrentX += dx * (radius + 1);
-           // CurrentY += dy * (radius + 1);
 
             CurrentX = cx;
-CurrentY = cy;
+            CurrentY = cy;
 
         }
 

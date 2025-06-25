@@ -24,17 +24,6 @@ namespace MosaicDroid.Core
             bool okL = Left.CheckSemantic(ctx, sc, errs);
             bool okR = Right.CheckSemantic(ctx, sc, errs);
 
-            /*
-            bool isNumberComparison = Left.Type == ExpressionType.Number && Right.Type == ExpressionType.Number;
-            bool isTextComparison = Left.Type == ExpressionType.Text && Right.Type == ExpressionType.Text;
-
-            if (!isNumberComparison && !isTextComparison)
-            {
-                ErrorHelpers.InvalidOperands(errs, Location, "boolean and");
-                Type = ExpressionType.ErrorType;
-                return false;
-            }
-            */
             if (Left.Type != ExpressionType.Boolean || Right.Type != ExpressionType.Boolean)
             {
                 ErrorHelpers.InvalidOperands(errs, Location, "boolean and");

@@ -11,21 +11,7 @@ namespace MosaicDroid.Core
         {
             bool ok = base.CheckSemantic(ctx, scope, errors);
 
-            /*
-            if (!ok) return false;
 
-            // si es un numero, ajusta el valor si es un par
-            if (Args[0] is Number literal && literal.IsInt)
-            {
-                int iv = (int)(double)literal.Value;
-                if (iv % 2 == 0)
-                {
-                    literal.Value = iv > 1 ? iv - 1 : 1;
-                }
-            }
-
-            return true;
-            */
             return ok;
 
         }
